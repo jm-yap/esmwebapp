@@ -1,0 +1,50 @@
+// // page of survey modules (list)
+// localhost: 3000 / SurveyModule;
+
+// // page of survey module, along with its survey list
+// localhost: 3000 / SurveyModule / [accessKey];
+
+// // page of survey in a module
+// localhost: 3000 / SurveyModule / [accessKey] / [surveyId]; 
+
+// // page of survey questions
+// localhost: 3000 / SurveyModule / [accessKey] / [surveyId] / Questions;
+
+// // page of survey responses
+// localhost: 3000 / SurveyModule / [accessKey] / [surveyId] / Responses;
+// individual response: repondent 2 <- for future
+{
+    Respondent 2
+    question1: "fdshdsg"
+    question 2: "fshdgjsd"
+}
+// all responses <- for now
+{
+    Respondent 1
+    question1: "fdshdsg"
+    question 2: "fshdgjsd"
+}
+{
+    Respondent 2
+    question1: "fdshdsg"
+    question 2: "fshdgjsd"
+}
+
+
+// // page of list of users?
+// localhost: 3000 / SurveyModule / [accessKey] / Users; # ONLY AVAILABLE FOR CLINICIAN MODE. RESEARCHERS ARE BARRED FROM ACCESSING
+
+// // 
+// // if we want indiv response, pwedeng gumawa ng text field na irereturn yung individual response
+// // but in the same page parin - like dont need to make a whole page for that, but we can if we want to
+
+// for each folder:
+// - page.tsx <- need
+// - style.css <- for decor decor
+
+// re components:
+// - if may recurring design for certain objects, pwede gumawa ng component for that
+// - for ex we want a list of surveys
+// 1. we make a prop (parang class/interface sya)
+// 2. we get the data from the api
+// 3. we put it sa prop para madisplay sya nang ganyan

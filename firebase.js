@@ -5,6 +5,8 @@ import { initializeApp } from "firebase/app";
 
 import { getFirestore } from "firebase/firestore";
 
+import { getDatabase, ref, get } from "firebase/database";
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBNgGIW74VyqwKmnTm6WMXDjgLq4ivQs3E",
@@ -12,10 +14,12 @@ const firebaseConfig = {
   projectId: "esm-app-f0711",
   storageBucket: "esm-app-f0711.appspot.com",
   messagingSenderId: "383934678773",
-  appId: "1:383934678773:web:99c916c945713950cea7bc"
+  appId: "1:383934678773:web:99c916c945713950cea7bc",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 
+export { database };
 export const db = getFirestore(app);

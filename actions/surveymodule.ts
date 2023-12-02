@@ -3,16 +3,11 @@ import {
     collection,
     getDocs,
     QueryDocumentSnapshot,
-    addDoc
+    addDoc,
+    deleteDoc,
 } from 'firebase/firestore';
 import { db } from '../firebase';
-
-type SurveyModule = {
-    id: string;
-    data: {
-        isAnonymous: boolean;
-    };
-};
+import { doc } from 'firebase/firestore';
 
 export async function getSurveyModules() : Promise<any> {
     const surveyModuleCollection = collection(db, 'ResearchModule');
@@ -39,6 +34,18 @@ export async function addSurveyModule(isSurveyModuleAnonymous: boolean) {
         return true;
     } catch (error) {
         console.error("Error creating new survey module", error);
+        return false;
+    }
+}
+
+export async function deleteSurveyModule(surveyModuleID: string): Promise<boolean> {
+    try {
+        const surveyModuleCollection = collection(db, 'ResearchModule');
+        await deleteDoc(doc(surveyModuleCollection, surveyModuleID));
+        console.log("Survey module deleted with ID: ", surveyModuleID);
+        return true;
+    } catch (error) {
+        console.error("Error deleting survey module", error);
         return false;
     }
 }

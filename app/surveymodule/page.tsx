@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useEffect} from 'react'
-import { getSurveyModules, addSurveyModule } from '@/actions/surveymodule'
+import { getSurveyModules, addSurveyModule, deleteSurveyModule } from '@/actions/surveymodule'
 
 export default function surveyModule() {
     const [surveyModules, setSurveyModules] = useState([]); // Get the list of survey modules
-    const [isAnonymous, setIsAnonymous] = useState(false); // Get the list of survey modules
+    const [isChecked, setIsChecked] = useState(false); // Get the list of survey modules
     
     useEffect(() => {
         const fetchData = () => {
@@ -16,19 +16,27 @@ export default function surveyModule() {
         fetchData();
     }, []);
 
-    const handleIsNotAnonymous = async () => {
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setIsChecked(e.target.checked);
+    };
+    
+    const handleIsAnonymous = async () => {
         try {
-            await addSurveyModule(isAnonymous);
+            await addSurveyModule(isChecked);
+            const updatedModules = await getSurveyModules();
+            setSurveyModules(updatedModules);
         } catch (error: any) {
             console.error("Error adding survey module:", error.message);
         }
     };
 
-    const handleIsAnonymous = async () => {
+    const handleDeleteSurveyModule = async (surveyModuleID: string) => {
         try {
-            await addSurveyModule(true);
+            await deleteSurveyModule(surveyModuleID);
+            const updatedModules = await getSurveyModules();
+            setSurveyModules(updatedModules);
         } catch (error: any) {
-            console.error("Error adding survey module:", error.message);
+            console.error("Error deleting survey module:", error.message);
         }
     };
 
@@ -38,14 +46,16 @@ export default function surveyModule() {
             <ul>
                 {surveyModules.map((surveyModule: { id: string, data: { isAnonymous: boolean } }) => (
                     <li key={surveyModule.id}>
-                        {surveyModule.id}
+                        Access Code: {surveyModule.id} <br />
+                        Is Anonymous: {surveyModule.data.isAnonymous ? "Yes" : "No"} <br />
+                        <button onClick={() => handleDeleteSurveyModule(surveyModule.id)}>Delete</button> <br />
+                        <br />
                     </li>
                 ))}
             </ul>
-            <p>Create Survey Module</p>
-            <p>Is this Survey Module Anonymous?</p>
-            <button onClick={handleIsAnonymous}>Yes</button>
-            <button onClick={handleIsNotAnonymous}>No</button>
+            <br />
+            <button onClick={handleIsAnonymous}>Create Survey Module</button> <br />
+            <input type="checkbox" onChange={handleCheckboxChange} /> Is Anonymous
         </div>
     );
 }

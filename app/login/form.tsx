@@ -1,9 +1,16 @@
 "use client";
-import { FormEvent, use, useState } from "react";
+import { FormEvent, useState } from "react";
 import { signIn } from 'next-auth/react'
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
 export default function Form() {
+    const { data: session } = useSession();
+    if (session) {
+        redirect('/dashboard');
+    }
+
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
@@ -13,8 +20,7 @@ export default function Form() {
         const response = await signIn('credentials', {
             email: email,
             password: password,
-            redirect: true,
-            callbackUrl: '/dashboard',
+            redirect: false,
         });
 
         console.log("this is the error");

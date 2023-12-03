@@ -1,10 +1,23 @@
 "use client";
 import React, { useState, useEffect} from 'react'
 import { getSurveyModules, addSurveyModule, deleteSurveyModule } from '@/actions/surveymodule'
+import { signOut, useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
+import { auth } from "../../firebase";
+import { apiBaseUrl } from 'next-auth/client/_utils';
 
-export default function surveyModule() {
+export default function SurveyModule() {
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            redirect('/login');
+        },
+    });
+
+    const uid = auth.currentUser?.uid;
+
     const [surveyModules, setSurveyModules] = useState([]); // Get the list of survey modules
-    const [isChecked, setIsChecked] = useState(false); // Get the list of survey modules
+    const [isChecked, setIsChecked] = useState(false);
     
     useEffect(() => {
         const fetchData = () => {
@@ -22,7 +35,7 @@ export default function surveyModule() {
     
     const handleIsAnonymous = async () => {
         try {
-            await addSurveyModule(isChecked);
+            await addSurveyModule(uid, isChecked);
             const updatedModules = await getSurveyModules();
             setSurveyModules(updatedModules);
         } catch (error: any) {
@@ -44,9 +57,10 @@ export default function surveyModule() {
         <div>
             <h1>Survey Module</h1>
             <ul>
-                {surveyModules.map((surveyModule: { id: string, data: { isAnonymous: boolean } }) => (
+                {surveyModules.map((surveyModule: { id: string, data: { ClientID: string, isAnonymous: boolean } }) => (
                     <li key={surveyModule.id}>
                         Access Code: {surveyModule.id} <br />
+                        Client ID: {surveyModule.data.ClientID} <br />
                         Is Anonymous: {surveyModule.data.isAnonymous ? "Yes" : "No"} <br />
                         <button onClick={() => handleDeleteSurveyModule(surveyModule.id)}>Delete</button> <br />
                         <br />

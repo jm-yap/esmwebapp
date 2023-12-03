@@ -1,11 +1,17 @@
 "use client";
 import { FormEvent, useState } from "react";
 import { auth } from '../../firebase';
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { useSession, signIn } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 import Link  from "next/link";
 
 export default function Form() {
+    const { data: session } = useSession();
+    if (session) {
+        redirect('/dashboard');
+    }
     const router = useRouter();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -21,6 +27,11 @@ export default function Form() {
             createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 console.log(userCredential);
+                signIn('credentials', {
+                    email: email,
+                    password: password,
+                    redirect: false,
+                });
                 router.push(`/register/${userCredential.user.uid}`);
             })
             .catch((error) => {

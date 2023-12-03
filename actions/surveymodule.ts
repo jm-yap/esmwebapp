@@ -6,7 +6,7 @@ import {
     addDoc,
     deleteDoc,
 } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 import { doc } from 'firebase/firestore';
 
 export async function getSurveyModules() : Promise<any> {
@@ -16,17 +16,18 @@ export async function getSurveyModules() : Promise<any> {
     const surveyModuleList = surveyModuleSnapshot.docs.map((doc: QueryDocumentSnapshot) => {
         return {
             id: doc.id,
-            data: doc.data() as { isAnonymous: boolean },
+            data: doc.data() as { ClientID: string, isAnonymous: boolean },
         };
     });
 
     return surveyModuleList;
 }
 
-export async function addSurveyModule(isSurveyModuleAnonymous: boolean) {
+export async function addSurveyModule(uid : string, isSurveyModuleAnonymous: boolean) {
     try {
         const surveyModuleCollection = collection(db, 'ResearchModule');
         const newSurveyModule = await addDoc(surveyModuleCollection, {
+            ClientID: uid,
             isAnonymous: isSurveyModuleAnonymous
         });
         

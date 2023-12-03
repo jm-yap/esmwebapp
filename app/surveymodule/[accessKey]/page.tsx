@@ -3,8 +3,10 @@ import SurveyCard from "@/app/components/surveys";
 import { getSurveys, deleteSurvey } from "@/actions/survey";
 import { useEffect, useState } from "react";
 import { addDoc, collection } from "firebase/firestore";
-import { db } from "@/firebase";
+import { db, auth } from "@/firebase";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 interface SurveyPageProps {
   params: {
@@ -13,6 +15,12 @@ interface SurveyPageProps {
 }
 
 export default function QuestionsPage({ params }: SurveyPageProps) {
+  const session = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/login");
+    },
+  });
   const [SurveyList, setSurveyList] = useState([]);
 
   // Adding
@@ -33,10 +41,12 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
 
     try {
       const docRef = await addDoc(surveyRef, {
-        Description,
-        EndDate,
-        StartDate,
-        Title,
+        // ClientID: auth.currentUser?.uid,
+        ClientID: session.data.user?.email,
+        Description: Description,
+        EndDate: EndDate,
+        StartDate: StartDate,
+        Title: Title,
       });
 
       console.log("Survey added with ID:", docRef.id);
@@ -46,6 +56,11 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
     } catch (error) {
       console.error("Error adding  survey:", error);
     }
+    // clear text fields
+    e.target.elements.Title.value = "";
+    e.target.elements.Description.value = "";
+    e.target.elements.StartDate.value = "";
+    e.target.elements.EndDate.value = "";
   };
 
   // Fetching
@@ -72,37 +87,42 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
 
   // Rendering
   return (
-    <div className="p-4">
+    <div className="p-4 max-w-[600px] mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-4">Add Survey</h1>
-        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <h1 className="text-4xl font-bold mb-0 text-center">Add Survey</h1>
+        <Link href={`/surveymodule/`}>
+          <button className="font-bold mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded mb-4 flex justify-center">
+            Back
+          </button>
+        </Link>
+        <div className="bg-white border-solid border-2 border-black-300 rounded px-8 pt-6 pb-8 mb-4">
           <form onSubmit={handleAddSurvey}>
-            <div className="mb-4">
+            <div className="mb-2">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Title:
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full"
                 type="text"
                 name="Title"
               />
             </div>
-            <div className="mb-4">
+            <div className="mb-2">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Description:
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full"
                 type="text"
                 name="Description"
               />
             </div>
-            <div className="mb-4">
+            <div className="mb-2">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 StartDate:
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 type="date"
                 name="StartDate"
               />
@@ -112,7 +132,7 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
                 EndDate:
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 type="date"
                 name="EndDate"
               />
@@ -127,26 +147,27 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
         </div>
       </div>
 
-      <Link href={`/surveymodule/`}>
-        <button className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
-          Back
-        </button>
-      </Link>
-
       <h1 className="text-2xl font-bold mb-4">
         Surveys for Access Code: {params.accessKey}
       </h1>
       {SurveyList.map((survey: any) => (
         <div
           key={survey.id}
-          className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+          className="bg-white border-solid border-2 border-black-300 rounded px-8 pt-6 pb-9 mb-4 max-w-[600px] mx-auto"
         >
           <SurveyCard survey={survey} />
           <Link
             href={`/surveymodule/${params.accessKey}/${survey.id}/questions`}
           >
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-4">
-              View
+              Questions
+            </button>
+          </Link>
+          <Link
+            href={`/surveymodule/${params.accessKey}/${survey.id}/responses`}
+          >
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-4">
+              Responses
             </button>
           </Link>
           <button

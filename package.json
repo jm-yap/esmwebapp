@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.12.2",
     "bcrypt": "^5.1.1",
     "firebase": "^10.7.0",
     "next": "^14.0.3",

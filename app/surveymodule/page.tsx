@@ -73,6 +73,9 @@ export default function SurveyModule() {
                                 <div>
                                     <strong>Is Anonymous:</strong> {surveyModule.data.isAnonymous ? "Yes" : "No"}
                                 </div>
+                                <Link href={`/surveymodule/${surveyModule.id}`}>
+                                    <button className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">View</button>
+                                </Link>
                                 <button className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded" onClick={() => 
                                     handleDeleteSurveyModule(surveyModule.id)}>Delete</button>
                             </div>

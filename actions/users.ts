@@ -46,6 +46,8 @@ export async function getUsers(accessKey: string): Promise<any[]> {
     userDocsList.forEach((user: any) => {
         console.log({id: user.id});
         if (surveyModArr.some(surveyUser => surveyUser.id === user.id)) {
+            delete user.PasswordHash; // deletes passwordhash from the user object
+            delete user.Birthdate; // deletes birthdate from the user object
             filteredUserDocsList.push(user);
         }
     });
@@ -53,9 +55,6 @@ export async function getUsers(accessKey: string): Promise<any[]> {
     return filteredUserDocsList;
 }
 
-interface UserinSurveyModule {
-    id: string;    
-}
 
 async function getUserInfo(): Promise<any> {
 

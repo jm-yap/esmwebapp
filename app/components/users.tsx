@@ -8,8 +8,8 @@ export interface UserCardProps{
         FirstName: string;
         MiddleName: string;
         LastName: string;
-        PasswordHash: string; // maybe removed for security reasons
-        Birthdate: any;
+        //PasswordHash: string; // should be removed for security reasons
+        //Birthdate: any;
         ContactNumber: string;        
     }
 }

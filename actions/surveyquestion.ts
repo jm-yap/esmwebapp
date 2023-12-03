@@ -13,19 +13,19 @@ import {
 import { db } from "../firebase";
 
 export async function getQuestions(
-  accessKey: string,
+  AccessCode: string,
   surveyID: string
 ): Promise<any> {
   const surveyRef = collection(
     db,
-    `ResearchModule/${accessKey}/Survey/${surveyID}/SurveyQuestion`
+    `ResearchModule/${AccessCode}/Survey/${surveyID}/SurveyQuestion`
   );
 
   const querySnapshot = await getDocs(surveyRef);
   const itemsArr = querySnapshot.docs.map((doc) => {
     return {
       id: doc.id,
-      accessKey: accessKey,
+      AccessCode: AccessCode,
       data: doc.data(),
     };
   });
@@ -33,14 +33,14 @@ export async function getQuestions(
 }
 
 export async function deleteQuestion(
-  accessKey: string,
+  AccessCode: string,
   surveyID: string,
   questionID: string
 ): Promise<boolean> {
   try {
     const questionCollection = collection(
       db,
-      `/ResearchModule/${accessKey}/Survey/${surveyID}/SurveyQuestion`
+      `/ResearchModule/${AccessCode}/Survey/${surveyID}/SurveyQuestion`
     );
     await deleteDoc(doc(questionCollection, questionID));
     console.log("Question deleted with ID: ", questionID);

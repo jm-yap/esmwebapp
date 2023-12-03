@@ -1,27 +1,27 @@
 export interface QuestionCardProps {
-  question: {
+  Question: {
     id: string;
-    accessKey: string;
+    AccessCode: string;
     data: {
-      question: string;
-      required: boolean;
+      Question: string;
+      Required: boolean;
       surveyID: string;
-      type: string;
+      Type: string;
     };
   };
 }
 
-export default function QuestionCard({ question }: QuestionCardProps) {
-  const requirement = question.data.required ? "True" : "False";
+export default function QuestionCard({ Question }: QuestionCardProps) {
+  const requirement = Question.data.Required ? "True" : "False";
 
   return (
-    <div className="question">
-      <h1>Question ID: {question.id}</h1>
-      <h1>Question: {question.data.question}</h1>
+    <div className="Question">
+      <h1>Question ID: {Question.id}</h1>
+      <h1>Question: {Question.data.Question}</h1>
       <h2>Required: {requirement}</h2>
-      <h2>Type: {question.data.type}</h2>
-      <h3>Survey ID: {question.data.surveyID}</h3>
-      <h3>Access Key: {question.accessKey}</h3>
+      <h2>Type: {Question.data.Type}</h2>
+      <h3>Survey ID: {Question.data.surveyID}</h3>
+      <h3>Access Key: {Question.AccessCode}</h3>
     </div>
   );
 }

@@ -25,16 +25,16 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     e.preventDefault();
 
     const surveyID = params.surveyID;
-    const question = e.target.elements.question.value;
-    const required = e.target.elements.required.checked;
-    const type = e.target.elements.type.value;
+    const Question = e.target.elements.Question.value;
+    const Required = e.target.elements.Required.checked;
+    const Type = e.target.elements.Type.value;
 
     try {
       const docRef = await addDoc(surveyRef, {
         surveyID,
-        question,
-        required,
-        type,
+        Question,
+        Required,
+        Type,
       });
 
       console.log("Question added with ID:", docRef.id);
@@ -45,19 +45,19 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
       );
       setQuestionsList(updatedQuestions);
 
-      e.target.elements.question.value = "";
-      e.target.elements.required.checked = false;
-      e.target.elements.type.value = "";
+      e.target.elements.Question.value = "";
+      e.target.elements.Required.checked = false;
+      e.target.elements.Type.value = "";
     } catch (error) {
-      console.error("Error adding  question:", error);
+      console.error("Error adding  Question:", error);
     }
   };
 
   // Fetching
   useEffect(() => {
     const fetchData = () => {
-      getQuestions(params.accessKey, params.surveyID).then((questions: any) => {
-        setQuestionsList(questions);
+      getQuestions(params.accessKey, params.surveyID).then((Questions: any) => {
+        setQuestionsList(Questions);
       });
     };
 
@@ -65,16 +65,16 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   }, []);
 
   // Deletion
-  const handleDeleteQuestion = async (questionID: string) => {
+  const handleDeleteQuestion = async (QuestionID: string) => {
     try {
-      await deleteQuestion(params.accessKey, params.surveyID, questionID);
+      await deleteQuestion(params.accessKey, params.surveyID, QuestionID);
       const updatedQuestions = await getQuestions(
         params.accessKey,
         params.surveyID
       );
       setQuestionsList(updatedQuestions);
     } catch (error: any) {
-      console.error("Error deleting survey question:", error.message);
+      console.error("Error deleting survey Question:", error.message);
     }
   };
 
@@ -85,17 +85,17 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
       <form onSubmit={handleAddQuestion}>
         <label>
           Question:
-          <input type="text" name="question" />
+          <input type="text" name="Question" />
         </label>
         <br />
         <label>
           Required:
-          <input type="checkbox" name="required" />
+          <input type="checkbox" name="Required" />
         </label>
         <br />
         <label>
           Type:
-          <input type="text" name="type" />
+          <input type="text" name="Type" />
         </label>
         <br />
         <button type="submit">Submit</button>
@@ -104,10 +104,10 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
 
       <h1>Questions for Survey ID: {params.surveyID}</h1>
       <br />
-      {QuestionsList.map((question: any) => (
-        <div>
-          <QuestionCard key={question.id} question={question} />
-          <button onClick={() => handleDeleteQuestion(question.id)}>
+      {QuestionsList.map((Question: any) => (
+        <div key={Question.id}>
+          <QuestionCard key={Question.id} Question={Question} />
+          <button onClick={() => handleDeleteQuestion(Question.id)}>
             Delete
           </button>
           <br />

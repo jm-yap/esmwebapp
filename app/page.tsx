@@ -1,27 +1,21 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/router";
-import { database } from "../firebase.js"; // Adjust the path accordingly
-import { getDatabase, ref, get } from "firebase/database";
+import { useRouter } from "next/navigation";
+import { fetchMasterKey } from "@/actions/masterkey";
 
-const HomePage: React.FC = () => {
+function HomePage() {
   const router = useRouter();
   const [masterKey, setMasterKey] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
   const handleMasterKeySubmit = async () => {
     try {
-      // Validate master key against Firebase
-      const masterKeyRef = ref(
-        database,
-        "MasterKey/Xl6FTYysaFaApEnjF7dG/MasterKey"
-      );
-      const snapshot = await get(masterKeyRef);
-      const storedMasterKey = snapshot.val();
-
-      if (masterKey === storedMasterKey) {
+      // Get the master key from the database
+      const databaseMasterkey = await fetchMasterKey();
+      
+      if (masterKey === databaseMasterkey?.MasterKey) {
         // If master key is correct, navigate to the login/signup page
-        router.push("/home"); // Replace with the actual path of your login/signup page
+        router.push("/dashboard"); // Replace with the actual path of your login/signup page
       } else {
         setError("Invalid master key");
       }
@@ -32,11 +26,12 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Welcome to Your Web App</h1>
-      <p>Please enter the master key to proceed:</p>
+    <div className="flex flex-col gap-2 mx-auto max-w-md mt-10">
+      <h1 className="align-middle">Welcome to Your Web App</h1>
+      <h2>Please enter the master key to proceed:</h2>
       <input
-        type="password"
+        className="border border-black rounded-md"
+        type="text"
         value={masterKey}
         onChange={(e) => setMasterKey(e.target.value)}
       />

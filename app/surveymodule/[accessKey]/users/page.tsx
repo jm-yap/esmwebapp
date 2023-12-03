@@ -37,10 +37,11 @@ export default function UserList({ params }: UserListPageProps) {
                     setUserList(userList); 
                 }
             );
+            
         }
         fetchUserList();
     }, []); 
-    
+
     return (
         <div>
             <h1>The Users for Survey Module {params.accessKey}</h1>

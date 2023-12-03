@@ -1,16 +1,16 @@
 export interface UserCardProps{
     user: {
         id: string;
-        data: {
-            Email: string;
-            Pronouns: string;      
-            Gender: string;
-            Sex: string;      
-            FirstName: string;
-            MiddleName: string;
-            LastName: string;
-            // Birthdate: any;         
-        }
+        Email: string;
+        Pronouns: string;      
+        Gender: string;
+        Sex: string;      
+        FirstName: string;
+        MiddleName: string;
+        LastName: string;
+        PasswordHash: string; // maybe removed for security reasons
+        Birthdate: any;
+        ContactNumber: string;        
     }
 }
 
@@ -19,7 +19,7 @@ export default function UserCard({user}: UserCardProps) {
     return(
         <div className="my-px" style={{marginTop: '20px', marginBottom: '20px'}}>
             <h1>User ID: {user.id}</h1>
-            <h2>{user.data.LastName}, {user.data.FirstName} {user.data.MiddleName}</h2>
+            <h2>{user.LastName}, {user.FirstName} {user.MiddleName}</h2>
         </div>
     )
 }

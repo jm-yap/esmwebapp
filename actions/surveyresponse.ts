@@ -33,12 +33,12 @@ export async function getResponses(accessKey: string, surveyID: string): Promise
     });
     
     const oneResponse = await Promise.all(respArr.map(async (resp) => {
-        const list = await getResponse(accessKey, resp.id);
+        const list = await getResponse(accessKey, resp.id); // list of responses per responseID????????
         return {
             responseID: resp.id,
             data: {
                 ...resp.data,
-                Timestamp: new Date(resp.data.Timestamp.seconds * 1000), // Convert Timestamp to Date
+                Timestamp: new Date(resp.data.Timestamp.seconds * 1000), // Convert Timestamp to Date //Gamitin ang sinend ni jela para pogi
                 //not sure pa sa time stamp thingy na to
             },
             list: list,

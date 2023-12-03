@@ -2,14 +2,14 @@ export interface UserCardProps{
     user: {
         id: string;
         data: {
-            Birthdate: string;
             Email: string;
-            FirstName: string;
-            LastName: string;
-            MiddleName: string;
+            Pronouns: string;      
             Gender: string;
-            Sex: string;
-            Pronouns: string;
+            Sex: string;      
+            FirstName: string;
+            MiddleName: string;
+            LastName: string;
+            // Birthdate: any;         
         }
     }
 }

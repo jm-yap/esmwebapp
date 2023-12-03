@@ -10,7 +10,7 @@ import {
   doc,
   where,
 } from 'firebase/firestore';
-import {db} from '../../../firebase';
+import {db} from '../../../../firebase';
 // import { getResponses } from '@/actions/surveyresponse';
 // import ResponseCard from "@/app/components/responses";
 import { useRouter } from 'next/router'
@@ -40,10 +40,10 @@ export default function UserList({ params }: UserListPageProps) {
         }
         fetchUserList();
     }, []); 
-
+    
     return (
         <div>
-            <h1>The Users for {params.accessKey}</h1>
+            <h1>The Users for Survey Module {params.accessKey}</h1>
             {userList.map((user: any) => (
                 <UserCard key = {user.id} user = {user}/>
             ))}

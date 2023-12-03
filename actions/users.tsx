@@ -24,9 +24,10 @@ export async function getUsers(accessKey: string): Promise<any[]> {4
     const userSnapshot = await getDocs(allUsers); //all documents in `ResearchModule/${accessKey}/ModuleUsers
     const userDocsList = userSnapshot.docs.map((doc) => {
         return {
-            id: doc.id,    // hahahah
-            ...doc.data(), // LastName, Birthdate,... et. al
+            id: doc.id,  
+            data: doc.data(), // LastName, Birthdate,... et. al
         }
     })
+    console.log(userDocsList);
     return userDocsList;
 }

@@ -58,12 +58,10 @@ export default function Responses({ params }: ResponsePageProps) {
                 <h1>The Responses for SurveyID: {params.surveyID}</h1>
                 
                 {responses.map((response: any) => (
-                    <ResponseCard key = {response.id} response = {response}  />
-                    
-                    
+                    <ResponseCard key = {response.id} response = {response}  />                
                 ))}
                 
             </div>
         );
     }
-  }
+}

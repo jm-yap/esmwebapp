@@ -7,7 +7,7 @@ export interface ResponseCardProps {
         Timestamp: string;
         UserID: string;
       }
-      list: any[];
+      list: any[]; //List of all PerResponse na objects. ito yung mga documents na nakapaloob sa SurveyResponse (firebase)
     };
 }
 // dapat ang data, fields, same ordering and same exact names as with doon sa firebase. 
@@ -23,7 +23,7 @@ interface PerResponseProps {
 }
 
 function PerResponse({perresponse}: PerResponseProps) {
-    console.log(perresponse);
+    //console.log(perresponse);
     return (
         <div className = "perresponse">
             <h1>Question ID: {perresponse.data.QuestionID}</h1>
@@ -46,26 +46,3 @@ export default function ResponseCard({response}: ResponseCardProps) {
     ); 
 }
 
-// return {
-//     responseID: resp.id,
-//     data: resp.data,
-//     list: list,
-// };
-// }));
-// return oneResponse;
-// }
-
-// async function getResponse(accessKey: string, responseID: string): Promise<any> {
-// const response = collection(
-// db, 
-// `ResearchModule/${accessKey}/SurveyData/${responseID}/SurveyResponses`
-// );
-// const docSnapshot = await getDocs(response);
-// const userResponsesArray = docSnapshot.docs.map((doc) => {
-// return {
-//     surveyresponsesDocID: doc.id, // docID
-//     data: doc.data(), //hopefully, qID, response, rID
-// }
-// });
-// return userResponsesArray;
-// }

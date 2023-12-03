@@ -31,3 +31,9 @@ export async function getUsers(accessKey: string): Promise<any[]> {4
     console.log(userDocsList);
     return userDocsList;
 }
+
+async function getUserInfo(userID: string): Promise<any> {
+    const userInfo = doc(db, `Users/${userID}`);
+
+    const docSnapshot = await getDoc(userInfo);
+}

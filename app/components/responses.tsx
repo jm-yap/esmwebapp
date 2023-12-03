@@ -35,12 +35,12 @@ function PerResponse({perresponse}: PerResponseProps) {
 
 export default function ResponseCard({response}: ResponseCardProps) {
     return (
-        <div className = "response">
+        <div className="my-px" style={{marginTop: '20px', marginBottom: '20px'}}>
             <h1>Response ID: {response.id} by User {response.data.UserID}</h1>
             {response.list.map((perResponse: any) => (
-                <PerResponse key={perResponse.id} perresponse = {perResponse}/>             
+                <PerResponse key={perResponse.id} perresponse = {perResponse}/>        
                 
-            ))};
+            ))}
 
         </div>
     ); 

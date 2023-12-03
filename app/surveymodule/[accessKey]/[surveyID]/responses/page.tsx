@@ -50,16 +50,20 @@ export default function Responses({ params }: ResponsePageProps) {
     , []);
   
     // webpage rendering
-    return (        
-        <div>
-            <h1>The Responses for SurveyID: {params.surveyID}</h1>
-           
-            {responses.map((response: any) => (
-                <ResponseCard key = {response.id} response = {response}/>
+    if (!responses) {
+        return <div>No Answers for this survey yet.</div>;
+    } else {
+        return (        
+            <div>
+                <h1>The Responses for SurveyID: {params.surveyID}</h1>
                 
+                {responses.map((response: any) => (
+                    <ResponseCard key = {response.id} response = {response}  />
+                    
+                    
+                ))}
                 
-            ))}
-            
-        </div>
-    );
+            </div>
+        );
+    }
   }

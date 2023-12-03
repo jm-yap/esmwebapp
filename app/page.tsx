@@ -15,7 +15,7 @@ function HomePage() {
       
       if (masterKey === databaseMasterkey?.MasterKey) {
         // If master key is correct, navigate to the login/signup page
-        router.push("/home"); // Replace with the actual path of your login/signup page
+        router.push("/dashboard"); // Replace with the actual path of your login/signup page
       } else {
         setError("Invalid master key");
       }
@@ -26,10 +26,11 @@ function HomePage() {
   };
 
   return (
-    <div>
-      <h1>Welcome to Your Web App</h1>
-      <p>Please enter the master key to proceed:</p>
+    <div className="flex flex-col gap-2 mx-auto max-w-md mt-10">
+      <h1 className="align-middle">Welcome to Your Web App</h1>
+      <h2>Please enter the master key to proceed:</h2>
       <input
+        className="border border-black rounded-md"
         type="text"
         value={masterKey}
         onChange={(e) => setMasterKey(e.target.value)}

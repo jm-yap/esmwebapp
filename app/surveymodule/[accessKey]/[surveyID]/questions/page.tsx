@@ -4,6 +4,7 @@ import { getQuestions, deleteQuestion } from "@/actions/surveyquestion";
 import { useEffect, useState } from "react";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "@/firebase";
+import Link from "next/link";
 
 interface QuestionPageProps {
   params: {
@@ -80,34 +81,52 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
 
   // Rendering
   return (
-    <div>
-      <h1>Add Question</h1>
-      <form onSubmit={handleAddQuestion}>
-        <label>
+    <div className="container mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Add Question</h1>
+      <form onSubmit={handleAddQuestion} className="mb-4">
+        <label className="block mb-2">
           Question:
-          <input type="text" name="Question" />
+          <input
+            type="text"
+            name="Question"
+            className="border border-gray-300 rounded-md p-1"
+          />
         </label>
-        <br />
-        <label>
-          Required:
-          <input type="checkbox" name="Required" />
-        </label>
-        <br />
-        <label>
+        {/* <br /> */}
+        <label className="block mb-2">
           Type:
-          <input type="text" name="Type" />
+          <input
+            type="text"
+            name="Type"
+            className="border border-gray-300 rounded-md p-1"
+          />
+        </label>
+        {/* <br /> */}
+        <label className="block mb-2">
+          Required:
+          <input type="checkbox" name="Required" className="ml-2" />
         </label>
         <br />
-        <button type="submit">Submit</button>
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 rounded-md"
+        >
+          Submit
+        </button>
       </form>
       <br />
 
-      <h1>Questions for Survey ID: {params.surveyID}</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        Questions for Survey ID: {params.surveyID}
+      </h1>
       <br />
       {QuestionsList.map((Question: any) => (
-        <div key={Question.id}>
+        <div key={Question.id} className="mb-4">
           <QuestionCard key={Question.id} Question={Question} />
-          <button onClick={() => handleDeleteQuestion(Question.id)}>
+          <button
+            onClick={() => handleDeleteQuestion(Question.id)}
+            className="bg-red-500 text-white px-4 py-2 rounded-md"
+          >
             Delete
           </button>
           <br />

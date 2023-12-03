@@ -41,32 +41,38 @@ export default function Form() {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-2 mx-auto max-w-md mt-10">
-            <h1 className="align-middle">Register Account</h1>
-            <input 
-                className="border border-black rounded-md" 
-                type="email" 
-                placeholder="Type your email" 
-                value = {email}
-                onChange={(e) => setEmail(e.target.value)}   
-            />
-            <input 
-                className="border border-black rounded-md" 
-                type="password" 
-                placeholder="Type your password"
-                value = {password}
-                onChange={(e) => setPassword(e.target.value)} 
-            />
-            <input 
-                className="border border-black rounded-md" 
-                type="password" 
-                placeholder="Type your password again"
-                value = {repassword}
-                onChange={(e) => setRepassword(e.target.value)} 
-            />
-            <button className='border border-black rounded-md' type="submit">Register</button>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            <Link href="/login" className='text-sky-500' >Already have an account? Login here</Link>
-        </form>
+        
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 mx-auto max-w-md mt-10">
+        <h1 className="text-2xl font-bold text-center">Register Account</h1>
+        <input 
+            className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+            type="email" 
+            placeholder="Email" 
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}   
+        />
+        <input 
+            className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+            type="password" 
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)} 
+        />
+        <input 
+            className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+            type="password" 
+            placeholder="Confirm Password"
+            value={repassword}
+            onChange={(e) => setRepassword(e.target.value)} 
+        />
+        <button className="bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600" type="submit">Register</button>
+        {error && <p className="text-red-500">{error}</p>}
+        <p className="text-center">
+            Already have an account?{" "}
+            <Link href="/login" className="text-blue-500">
+                Login here
+            </Link>
+        </p>
+    </form>
     );
 }

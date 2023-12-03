@@ -14,20 +14,29 @@ export default function Dashboard() {
     });
 
     return (
-        <div>
-            <h1 className='align-middle'>Dashboard</h1>
-            <h1 className='align-middle'>Welcome {session?.data?.user?.email} with uid: {auth.currentUser?.uid}</h1>
-            <button onClick={() => signOut()}>Sign out</button>
-            <div>
+        <div className="flex flex-col items-center mt-10">
+            <h1 className="text-4xl font-bold mb-8">Dashboard</h1>
+            {session?.data?.user?.email && (
+                <h2 className="text-xl mb-4">Welcome {session.data.user.email}</h2>
+            )}
+            <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md mb-4"
+                onClick={() => signOut()}
+            >
+                Sign out
+            </button>
+            <div className="flex gap-4">
                 <Link href="/surveymodule">
-                    <button>Go to Survey Module</button>
+                    <button className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md">
+                        Go to Survey Module
+                    </button>
+                </Link>
+                <Link href="/clients">
+                    <button className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md">
+                        Go to Client Account
+                    </button>
                 </Link>
             </div>
-            <div>
-                <Link href="/clients">
-                    <button>Go to Client Account</button>
-                </Link>
-            </div> 
         </div>
     );
 }

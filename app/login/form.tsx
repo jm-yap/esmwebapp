@@ -28,25 +28,30 @@ export default function Form() {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-2 mx-auto max-w-md mt-10">
-            <h1>Login</h1>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 mx-auto max-w-md mt-10">
+            <h1 className="text-3xl font-bold text-center">Login</h1>
             <input 
-                className="border border-black rounded-md" 
+                className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
                 type="email" 
-                placeholder="Type your email" 
-                value = {email}
+                placeholder="Email" 
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}   
             />
             <input 
-                className="border border-black rounded-md" 
+                className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
                 type="password" 
-                placeholder="Type your password"
-                value = {password}
+                placeholder="Password"
+                value={password}
                 onChange={(e) => setPassword(e.target.value)} 
             />
-            <button className='border border-black rounded-md' type="submit">Login</button>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            <Link className='text-sky-500' href="/register">Dont have an account? Register here</Link>
+            <button className="bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600" type="submit">Login</button>
+            {error && <p className="text-red-500">{error}</p>}
+            <p className="text-center">
+                Dont have an account?{" "}
+                <Link href="/register" className="text-blue-500">
+                    Register here
+                </Link>
+        </p>
         </form>
     );
 }

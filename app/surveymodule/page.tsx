@@ -5,6 +5,7 @@ import { signOut, useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { auth } from "../../firebase";
 import { apiBaseUrl } from 'next-auth/client/_utils';
+import Link from 'next/link';
 
 export default function SurveyModule() {
     const session = useSession({
@@ -54,22 +55,36 @@ export default function SurveyModule() {
     };
 
     return (
-        <div>
-            <h1>Survey Module</h1>
-            <ul>
-                {surveyModules.map((surveyModule: { id: string, data: { ClientID: string, isAnonymous: boolean } }) => (
-                    <li key={surveyModule.id}>
-                        Access Code: {surveyModule.id} <br />
-                        Client ID: {surveyModule.data.ClientID} <br />
-                        Is Anonymous: {surveyModule.data.isAnonymous ? "Yes" : "No"} <br />
-                        <button onClick={() => handleDeleteSurveyModule(surveyModule.id)}>Delete</button> <br />
-                        <br />
-                    </li>
-                ))}
-            </ul>
-            <br />
-            <button onClick={handleIsAnonymous}>Create Survey Module</button> <br />
-            <input type="checkbox" onChange={handleCheckboxChange} /> Is Anonymous
-        </div>
+        <div className="flex flex-col items-center mt-10">
+        
+                    <h1 className="text-4xl font-bold mb-8">Survey Module</h1>
+                    <Link href="/dashboard">
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Back</button>
+                    </Link>
+                    <div className="grid grid-cols-3 gap-4 mt-5">
+                        {surveyModules.map((surveyModule: { id: string, data: { ClientID: string, isAnonymous: boolean } }) => (
+                            <div className="border border-black rounded-md p-4" key={surveyModule.id}>
+                                <div>
+                                    <strong>Access Code:</strong> {surveyModule.id}
+                                </div>
+                                <div>
+                                    <strong>Client ID:</strong> {surveyModule.data.ClientID}
+                                </div>
+                                <div>
+                                    <strong>Is Anonymous:</strong> {surveyModule.data.isAnonymous ? "Yes" : "No"}
+                                </div>
+                                <button className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded" onClick={() => 
+                                    handleDeleteSurveyModule(surveyModule.id)}>Delete</button>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="mt-8">
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded" onClick={handleIsAnonymous}>Create Survey Module</button>
+                        <label className="ml-4">
+                            <input type="checkbox" onChange={handleCheckboxChange} className="mr-2" />
+                            Is Anonymous
+                        </label>
+                    </div>
+                </div>
     );
 }

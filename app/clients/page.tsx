@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
-import { getClientAccount } from "@/actions/clients";
 import { apiBaseUrl } from "next-auth/client/_utils";
 import { redirect } from "next/navigation";
 import { auth } from "../../firebase";
@@ -17,7 +16,7 @@ export default function ClientAccount() {
   });
 
   async function getUserData(email: string) {
-    const userdata = await getClientAccount(email);
+    const userdata = await getClientAccountByEmail(email);
     return userdata;
   }
 

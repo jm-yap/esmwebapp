@@ -24,21 +24,17 @@ interface PerResponseProps {
 
 function PerResponse({ perresponse }: PerResponseProps) {
   return (
-    <div className="perresponse p-6 max-w-4.5xl mx-auto bg-gray-200 rounded-xl shadow-md flex flex-col items-center space-x-4 mb-2.5">
-      <h1 className="text-xl font-bold text-gray-700 text-center">
-        Question ID: {perresponse.data.QuestionID}
-      </h1>
-      <h1 className="text-xl font-bold text-gray-700 text-center">
-        Response: {perresponse.data.Response}
-      </h1>
+    <div className="perresponse border border-gray-200 rounded-md p-4 mb-2.5 shadow">
+      <h1>Question ID: {perresponse.data.QuestionID}</h1>
+      <h1>Response: {perresponse.data.Response}</h1>
     </div>
   );
 }
 
 export default function ResponseCard({ response }: ResponseCardProps) {
   return (
-    <div className="p-6 max-w-3xl mx-auto bg-gray-100 rounded-xl shadow-md flex flex-col items-center space-x-4 mb-4">
-      <h1 className="text-xl font-bold text-gray-600 text-center">
+    <div className="flex flex-col items-center mt-10 border border-gray-150 p-4">
+      <h1 className="text-xl font-bold mb-8">
         Response ID: {response.responseID} by User {response.data.UserID}
       </h1>
 

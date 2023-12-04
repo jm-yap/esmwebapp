@@ -3,8 +3,6 @@ import Form from "./form";
 import { auth } from "../../firebase";
 
 async function Dashboard() {
-  console.log("UID:");
-
   return <Form />;
 }
 

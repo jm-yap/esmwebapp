@@ -81,62 +81,67 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
 
   // Rendering
   return (
-    <div className="container mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Add Question</h1>
-      <form onSubmit={handleAddQuestion} className="mb-4">
-        <label className="block mb-2">
-          Question:
-          <input
-            type="text"
-            name="Question"
-            className="border border-gray-300 rounded-md p-1"
-          />
-        </label>
-        {/* <br /> */}
-        <label className="block mb-2">
-          Type:
-          <input
-            type="text"
-            name="Type"
-            className="border border-gray-300 rounded-md p-1"
-          />
-        </label>
-        {/* <br /> */}
-        <label className="block mb-2">
-          Required:
-          <input type="checkbox" name="Required" className="ml-2" />
-        </label>
-        <br />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md"
-        >
-          Submit
-        </button>
-      </form>
-      <br />
-
+    <div className="container max-w-[600px] mx-auto p-4">
       <Link href={`/surveymodule/${params.accessKey}`}>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded-md">
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4 mb-4">
           Back to Survey
         </button>
       </Link>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-4 text-center">Add Question</h1>
+        <div className="bg-white border-solid border-2 border-black-600 rounded px-8 pt-6 pb-8 mb-4">
+          <form onSubmit={handleAddQuestion}>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Question:
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                type="text"
+                name="Question"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Type:
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                type="text"
+                name="Type"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Required:
+              </label>
+              <input className="ml-2" type="checkbox" name="Required" />
+            </div>
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="submit"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
 
       <h1 className="text-2xl font-bold mb-4">
         Questions for Survey ID: {params.surveyID}
       </h1>
-      <br />
       {QuestionsList.map((Question: any) => (
-        <div key={Question.id} className="mb-4">
+        <div
+          key={Question.id}
+          className="bg-white border-solid border-2 border-black-600 rounded px-8 pt-6 pb-8 mb-4"
+        >
           <QuestionCard key={Question.id} Question={Question} />
           <button
+            className="bg-red-500 mt-4 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             onClick={() => handleDeleteQuestion(Question.id)}
-            className="bg-red-500 text-white px-4 py-2 rounded-md"
           >
             Delete
           </button>
-          <br />
-          <br />
         </div>
       ))}
     </div>

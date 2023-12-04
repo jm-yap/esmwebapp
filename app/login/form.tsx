@@ -1,5 +1,5 @@
 "use client";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
@@ -9,6 +9,15 @@ export default function Form() {
   const { data: session } = useSession();
   if (session) {
     redirect("/dashboard");
+  }
+
+  try {
+    const isMasterKeyPresent = sessionStorage.getItem("masterKey");
+    if (isMasterKeyPresent !== "true") {
+      redirect("/");
+    }
+  } catch (error) {
+    redirect("/");
   }
 
   const [email, setEmail] = useState<string>("");

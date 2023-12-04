@@ -12,9 +12,10 @@ function HomePage() {
     try {
       // Get the master key from the database
       const databaseMasterkey = await fetchMasterKey();
-      
+
       if (masterKey === databaseMasterkey?.MasterKey) {
         // If master key is correct, navigate to the login/signup page
+        sessionStorage.setItem("masterKey", "true");
         router.push("/dashboard"); // Replace with the actual path of your login/signup page
       } else {
         setError("Invalid master key");
@@ -26,19 +27,29 @@ function HomePage() {
   };
 
   return (
-    <div className="flex flex-col gap-2 mx-auto max-w-md mt-10">
-      <h1 className="align-middle">Welcome to Your Web App</h1>
-      <h2>Please enter the master key to proceed:</h2>
-      <input
-        className="border border-black rounded-md"
-        type="text"
-        value={masterKey}
-        onChange={(e) => setMasterKey(e.target.value)}
-      />
-      <button onClick={handleMasterKeySubmit}>Submit</button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className="flex flex-col items-center mt-10">
+      <h1 className="text-2xl font-bold mb-4">Welcome to Your Web App</h1>
+      <div className="flex flex-col gap-2">
+        <label htmlFor="masterKeyInput" className="text-lg">
+          Please enter the master key to proceed:
+        </label>
+        <input
+          id="masterKeyInput"
+          className="border border-black rounded-md px-2 py-1"
+          type="text"
+          value={masterKey}
+          onChange={(e) => setMasterKey(e.target.value)}
+        />
+        <button
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          onClick={handleMasterKeySubmit}
+        >
+          Submit
+        </button>
+        {error && <p className="text-red-500">{error}</p>}
+      </div>
     </div>
   );
-};
+}
 
 export default HomePage;

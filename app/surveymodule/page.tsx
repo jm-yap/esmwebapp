@@ -65,12 +65,12 @@ export default function SurveyModule() {
 
   return (
     <div className="flex flex-col items-center mt-10">
-      <h1 className="text-4xl font-bold mb-8">Survey Module</h1>
       <Link href="/dashboard">
-        <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
+        <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded mb-4">
           Back
         </button>
       </Link>
+      <h1 className="text-4xl font-bold mb-8">Survey Module</h1>
       <div className="grid grid-cols-3 gap-4 mt-5">
         {surveyModules.map(
           (surveyModule: {

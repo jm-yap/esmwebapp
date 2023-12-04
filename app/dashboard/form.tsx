@@ -7,6 +7,15 @@ import { auth } from "../../firebase";
 import { CheckProfile } from "@/actions/register";
 
 export default function Form() {
+  try {
+    const isMasterKeyPresent = sessionStorage.getItem("masterKey");
+    if (isMasterKeyPresent !== "true") {
+      redirect("/");
+    }
+  } catch (error) {
+    redirect("/");
+  }
+
   const session = useSession({
     required: true,
     onUnauthenticated() {

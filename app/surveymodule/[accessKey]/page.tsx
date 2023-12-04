@@ -88,13 +88,19 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   // Rendering
   return (
     <div className="p-4 max-w-[600px] mx-auto">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-0 text-center">Add Survey</h1>
+      <div className="mb-8 items-center">
         <Link href={`/surveymodule/`}>
           <button className="font-bold mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded mb-4 flex justify-center">
             Back
           </button>
         </Link>
+        <Link
+          href={`/surveymodule/${params.accessKey}/users`}
+          className="font-bold bg-blue-500 hover:bg-blue-600 text-white py-2 px-2 rounded p-4 mb-4"
+        >
+          See users
+        </Link>
+        <h1 className="text-4xl font-bold mb-4 text-center">Add Survey</h1>
         <div className="bg-white border-solid border-2 border-black-300 rounded px-8 pt-6 pb-8 mb-4">
           <form onSubmit={handleAddSurvey}>
             <div className="mb-2">
@@ -159,7 +165,7 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
           <Link
             href={`/surveymodule/${params.accessKey}/${survey.id}/questions`}
           >
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-4">
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded focus:outline-none focus:shadow-outline mr-4">
               Questions
             </button>
           </Link>

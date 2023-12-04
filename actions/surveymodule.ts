@@ -13,7 +13,7 @@ import { doc } from "firebase/firestore";
 
 export async function getSurveyModules(email: string): Promise<any> {
   const surveyModuleCollection = collection(db, "ResearchModule");
-  const q = query(surveyModuleCollection);
+  const q = query(surveyModuleCollection); //, where("ClientID", "==", email) for filtering
   const surveyModuleSnapshot = await getDocs(q);
   const surveyModuleList = surveyModuleSnapshot.docs.map(
     (doc: QueryDocumentSnapshot) => {

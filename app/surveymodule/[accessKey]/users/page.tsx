@@ -23,21 +23,40 @@ export default function UserList({ params }: UserListPageProps) {
     fetchUserList();
   }, []);
 
-  return (
-    <div className="p-6 max-w-3xl mx-auto bg-white rounded-xl shadow-md flex flex-col items-center space-x-4">
-      <h1 className="text-xl font-bold text-purple-600 text-center">
-        The Users for Survey Module {params.accessKey}
-      </h1>
-      <Link
-        href={`/surveymodule/${params.accessKey}`}
-        className="mt-4 inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-purple-500 rounded shadow ripple hover:shadow-lg hover:bg-purple-600 focus:outline-none"
-      >
-        Back to Survey Module
-      </Link>
+  if (userList.length === 0) {
+    return (
+      <div className="p-6 max-w-3xl mx-auto bg-white rounded-xl shadow-md flex flex-col items-center space-x-4">
+        <h1 className="text-xl font-bold text-blue-600 text-center mb-4">
+          The Users for Survey Module {params.accessKey}
+        </h1>
+        <Link
+          href={`/surveymodule/${params.accessKey}`}
+          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-2 rounded p-4 mb-4"
+        >
+          Back to Survey Module
+        </Link>
+        <p className="text-xl font-bold text-black-200 text-center mb-4">
+          Nothing to see here yet!
+        </p>
+      </div>
+    );
+  } else {
+    return (
+      <div className="p-6 max-w-3xl mx-auto bg-white rounded-xl shadow-md flex flex-col items-center space-x-4">
+        <h1 className="text-xl font-bold text-blue-600 text-center mb-4">
+          The Users for Survey Module {params.accessKey}
+        </h1>
+        <Link
+          href={`/surveymodule/${params.accessKey}`}
+          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-2 rounded p-4 mb-4"
+        >
+          Back to Survey Module
+        </Link>
 
-      {userList.map((user: any) => (
-        <UserCard key={user.id} user={user} />
-      ))}
-    </div>
-  );
+        {userList.map((user: any) => (
+          <UserCard key={user.id} user={user} />
+        ))}
+      </div>
+    );
+  }
 }

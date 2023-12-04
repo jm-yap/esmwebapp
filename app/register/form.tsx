@@ -1,5 +1,5 @@
 "use client";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { auth } from "../../firebase";
 import {
   createUserWithEmailAndPassword,
@@ -15,6 +15,16 @@ export default function Form() {
   if (session) {
     redirect("/dashboard");
   }
+
+  try {
+    const isMasterKeyPresent = sessionStorage.getItem("masterKey");
+    if (isMasterKeyPresent !== "true") {
+      redirect("/");
+    }
+  } catch (error) {
+    redirect("/");
+  }
+
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -30,11 +40,6 @@ export default function Form() {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           console.log(userCredential);
-          signIn("credentials", {
-            email: email,
-            password: password,
-            redirect: false,
-          });
           router.push(`/register/${userCredential.user.email}`);
         })
         .catch((error) => {

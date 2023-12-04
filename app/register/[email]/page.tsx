@@ -41,43 +41,43 @@ export default function Form({ params }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-2 mx-auto max-w-md mt-10"
+      className="flex flex-col gap-4 mx-auto max-w-md mt-10"
     >
-      <h1 className="align-middle">Register Account</h1>
+      <h1 className="text-3xl font-bold mb-4 text-center">Update Account Credentials</h1>
       <input
-        className="border border-black rounded-md"
+        className="border border-gray-300 rounded-md py-2 px-4"
         type="text"
-        placeholder="Type your contact number"
+        placeholder="Contact Number"
         value={contactNumber}
         onChange={(e) => setNumber(e.target.value)}
       />
 
       <input
-        className="border border-black rounded-md"
+        className="border border-gray-300 rounded-md py-2 px-4"
         type="text"
-        placeholder="Type your first name"
+        placeholder="First Name"
         value={firstName}
         onChange={(e) => setFirstName(e.target.value)}
       />
 
       <input
-        className="border border-black rounded-md"
+        className="border border-gray-300 rounded-md py-2 px-4"
         type="text"
-        placeholder="Type your last name"
+        placeholder="Last Name"
         value={lastName}
         onChange={(e) => setLastName(e.target.value)}
       />
 
       <input
-        className="border border-black rounded-md"
+        className="border border-gray-300 rounded-md py-2 px-4"
         type="text"
-        placeholder="Type your middle name"
+        placeholder="Middle Name"
         value={middleName}
         onChange={(e) => setMiddleName(e.target.value)}
       />
 
-      <button className="border border-black rounded-md" type="submit">
-        Update account information
+      <button className="bg-blue-500 text-white rounded-md py-2 px-4" type="submit">
+        Update Account Information
       </button>
     </form>
   );

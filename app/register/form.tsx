@@ -35,7 +35,7 @@ export default function Form() {
     e.preventDefault();
     if (password !== repassword) {
       setError("Passwords do not match");
-      return;
+    // } else if { 
     } else {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
@@ -43,7 +43,15 @@ export default function Form() {
           router.push(`/register/${userCredential.user.email}`);
         })
         .catch((error) => {
-          console.log(error);
+          if (error.code === "auth/email-already-in-use") {
+            setError("Email already in use");
+          } else if (error.code === "auth/invalid-email") {
+            setError("Invalid email");
+          } else if (error.code === "auth/weak-password") {
+            setError("Weak password");
+          } else {
+            setError("Invalid action");
+          }
         });
     }
   };

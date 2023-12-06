@@ -33,6 +33,8 @@ export default function Form() {
     });
     if (response.error === "CredentialsSignin") {
       setError("Email or password is incorrect");
+    } else if (response.error === "ConfigurationError") {
+      setError("Invalid action");
     }
   };
 

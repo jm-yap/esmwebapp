@@ -1,17 +1,15 @@
-'use server';
-import React, { useState, useEffect } from 'react';
-import {
-  collection,
-  addDoc,
-  getDoc,
-  QuerySnapshot,
-  query,
-  onSnapshot,
-  deleteDoc,
-  doc,
-} from 'firebase/firestore';
-import { db } from '../firebase';
+"use server";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
-export async function getAdditionalUserInfo(clientID: string) {
-  return (await getDoc(doc(db, "Client", clientID))).data();
+export async function getClientAccountByEmail(email: string): Promise<any> {
+  try {
+    const clientAccountSnapshot = await getDoc(doc(db, "Client", email));
+
+    return clientAccountSnapshot.data();
+  } catch (error) {
+    return "adsf";
+    console.error("Error fetching client account:", error);
+    throw error;
+  }
 }

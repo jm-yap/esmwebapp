@@ -1,27 +1,22 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/router";
-import { database } from "../firebase.js"; // Adjust the path accordingly
-import { getDatabase, ref, get } from "firebase/database";
+import { useRouter } from "next/navigation";
+import { fetchMasterKey } from "@/actions/masterkey";
 
-const HomePage: React.FC = () => {
+function HomePage() {
   const router = useRouter();
   const [masterKey, setMasterKey] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
   const handleMasterKeySubmit = async () => {
     try {
-      // Validate master key against Firebase
-      const masterKeyRef = ref(
-        database,
-        "MasterKey/Xl6FTYysaFaApEnjF7dG/MasterKey"
-      );
-      const snapshot = await get(masterKeyRef);
-      const storedMasterKey = snapshot.val();
+      // Get the master key from the database
+      const databaseMasterkey = await fetchMasterKey();
 
-      if (masterKey === storedMasterKey) {
+      if (masterKey === databaseMasterkey?.MasterKey) {
         // If master key is correct, navigate to the login/signup page
-        router.push("/home"); // Replace with the actual path of your login/signup page
+        sessionStorage.setItem("masterKey", "true");
+        router.push("/dashboard"); // Replace with the actual path of your login/signup page
       } else {
         setError("Invalid master key");
       }
@@ -32,18 +27,29 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Welcome to Your Web App</h1>
-      <p>Please enter the master key to proceed:</p>
-      <input
-        type="password"
-        value={masterKey}
-        onChange={(e) => setMasterKey(e.target.value)}
-      />
-      <button onClick={handleMasterKeySubmit}>Submit</button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className="flex flex-col items-center mt-10">
+      <h1 className="text-2xl font-bold mb-4">Welcome to Your Web App</h1>
+      <div className="flex flex-col gap-2">
+        <label htmlFor="masterKeyInput" className="text-lg">
+          Please enter the master key to proceed:
+        </label>
+        <input
+          id="masterKeyInput"
+          className="border border-black rounded-md px-2 py-1"
+          type="text"
+          value={masterKey}
+          onChange={(e) => setMasterKey(e.target.value)}
+        />
+        <button
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          onClick={handleMasterKeySubmit}
+        >
+          Submit
+        </button>
+        {error && <p className="text-red-500">{error}</p>}
+      </div>
     </div>
   );
-};
+}
 
 export default HomePage;

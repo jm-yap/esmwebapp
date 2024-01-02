@@ -48,3 +48,15 @@
 // 1. we make a prop (parang class/interface sya)
 // 2. we get the data from the api
 // 3. we put it sa prop para madisplay sya nang ganyan
+
+[As of Dec 4, 2023]
+
+TO BE IMPLEMENTED
+
+Survey Modules
+- Sort survey modules through date created
+- only visible to those who created it
+- add title & *description
+- List of Users for nonanonymous
+
+

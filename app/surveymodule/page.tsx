@@ -24,20 +24,20 @@ export default function SurveyModule() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const userEmail = session.data?.user?.email;
-      if (userEmail) {
+      // const userEmail = session.data?.user?.email;
+      // if (userEmail) {
         try {
-          await getSurveyModules(userEmail);
-          const modules = await getSurveyModules(userEmail);
+          await getSurveyModules(); // userEmail
+          const modules = await getSurveyModules(); // userEmail
           setSurveyModules(modules);
         } catch (error: any) {
           console.error("Error fetching survey modules:", error.message);
         }
       }
-    };
+    // };
 
     fetchData();
-  }, [session]);
+  }, []); // session
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked(e.target.checked);
@@ -45,8 +45,8 @@ export default function SurveyModule() {
 
   const handleIsAnonymous = async () => {
     try {
-      await addSurveyModule(session.data.user?.email, isChecked);
-      const updatedModules = await getSurveyModules(session?.data?.user?.email);
+      await addSurveyModule("vdispo@up.edu.ph", isChecked); // session.data.user?.email
+      const updatedModules = await getSurveyModules(); // session?.data?.user?.email // for filtering
       setSurveyModules(updatedModules);
     } catch (error: any) {
       console.error("Error adding survey module:", error.message);
@@ -56,7 +56,7 @@ export default function SurveyModule() {
   const handleDeleteSurveyModule = async (surveyModuleID: string) => {
     try {
       await deleteSurveyModule(surveyModuleID);
-      const updatedModules = await getSurveyModules(session?.data?.user?.email);
+      const updatedModules = await getSurveyModules(); // session?.data?.user?.email // for filtering
       setSurveyModules(updatedModules);
     } catch (error: any) {
       console.error("Error deleting survey module:", error.message);

@@ -1,11 +1,11 @@
 export interface ResponseCardProps {
   response: {
-    responseID: string;
+    ResponseID: string;
     data: {
       SurveyID: string;
       AccessCode: string;
       Timestamp: string;
-      UserID: string;
+      ClientEmail: string;
     };
     list: any[]; //List of all PerResponse na objects. ito yung mga documents na nakapaloob sa SurveyResponse (firebase)
   };
@@ -35,7 +35,7 @@ export default function ResponseCard({ response }: ResponseCardProps) {
   return (
     <div className="flex flex-col items-center mt-10 border border-gray-150 p-4">
       <h1 className="text-xl font-bold mb-8">
-        Response ID: {response.responseID} by User {response.data.UserID}
+        Response ID: {response.ResponseID} by User {response.data.ClientEmail}
       </h1>
 
       {response.list.map((perResponse: any) => (

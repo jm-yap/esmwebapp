@@ -5,17 +5,23 @@ export interface SurveyCardProps {
     id: string;
     AccessCode: string;
     data: {
-      ClientID: string;
-      Description: string;
-      EndDate: {
-        seconds: number;
-        nanoseconds: number;
-      };
-      StartDate: {
-        seconds: number;
-        nanoseconds: number;
-      };
+      BuilderID: string;
       Title: string;
+      Description: string;
+      SchedType: string;
+      LaunchStart: {
+        seconds: number;
+        nanoseconds: number;
+      };
+      LaunchEnd: {
+        seconds: number;
+        nanoseconds: number;
+      };
+      Deadline: {
+        seconds: number;
+        nanoseconds: number;
+      };
+      TotalQuestions: number;
     };
   };
 }
@@ -25,27 +31,37 @@ export default function SurveyCard({ survey }: SurveyCardProps) {
     <div className="survey">
       <h1>Access Code: {survey.AccessCode}</h1>
       <h1>Survey ID: {survey.id}</h1>
-      <h1>Client ID: {survey.data.ClientID}</h1>
+      <h1>Client ID: {survey.data.BuilderID}</h1>
       <h1>Title: {survey.data.Title}</h1>
       <h1>Description: {survey.data.Description}</h1>
       <h1>
-        Start Date:{" "}
+        Access from:{" "}
         {new Date(
           new Timestamp(
-            survey.data.StartDate.seconds,
-            survey.data.StartDate.nanoseconds
+            survey.data.LaunchStart.seconds,
+            survey.data.LaunchStart.nanoseconds
           ).toDate()
         ).toDateString()}
       </h1>
       <h1>
-        End Date:{" "}
+        Access to:{" "}
         {new Date(
           new Timestamp(
-            survey.data.EndDate.seconds,
-            survey.data.EndDate.nanoseconds
+            survey.data.LaunchEnd.seconds,
+            survey.data.LaunchEnd.nanoseconds
           ).toDate()
         ).toDateString()}
       </h1>
+      <h1>
+        Deadline:{" "}
+        {new Date(
+          new Timestamp(
+            survey.data.Deadline.seconds,
+            survey.data.Deadline.nanoseconds
+          ).toDate()
+        ).toDateString()}
+      </h1>
+      <h1>Total Questions: {survey.data.TotalQuestions}</h1>
     </div>
   );
 }

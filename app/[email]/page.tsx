@@ -1,7 +1,7 @@
 "use client";
 import React, { FormEvent, useState } from "react";
-import { auth } from "../../../firebase";
-import { useRouter } from "next/navigation";
+import { auth } from "../../firebase";
+import { redirect, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { AddClient } from "@/actions/register";
 
@@ -12,6 +12,22 @@ interface Props {
 }
 
 export default function Form({ params }: Props) {
+  try {
+    const isMasterKeyPresent = sessionStorage.getItem("masterKey");
+    if (isMasterKeyPresent !== "true") {
+      redirect("/");
+    }
+  } catch (error) {
+    redirect("/");
+  }
+
+  const session = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/login");
+    },
+  });
+
   const { data: session } = useSession();
 
   const router = useRouter();

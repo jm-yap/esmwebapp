@@ -15,12 +15,12 @@ interface SurveyPageProps {
 }
 
 export default function QuestionsPage({ params }: SurveyPageProps) {
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect("/login");
-    },
-  });
+  // const session = useSession({
+  //   required: true,
+  //   onUnauthenticated() {
+  //     redirect("/login");
+  //   },
+  // });
   const [SurveyList, setSurveyList] = useState([]);
 
   // Adding
@@ -36,17 +36,22 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
 
     const Title = e.target.elements.Title.value;
     const Description = e.target.elements.Description.value;
-    const StartDate = new Date(e.target.elements.StartDate.value);
-    const EndDate = new Date(e.target.elements.EndDate.value);
+    const SchedType = e.target.elements.SchedType.value;
+    const LaunchStart = new Date(e.target.elements.StartDate.value);
+    const LaunchEnd = new Date(e.target.elements.EndDate.value);
+    const Deadline = new Date(e.target.elements.Deadline.value);
+    const TotalQuestions = 0;
 
     try {
       const docRef = await addDoc(surveyRef, {
-        // ClientID: auth.currentUser?.uid,
-        ClientID: session.data.user?.email,
-        Description: Description,
-        EndDate: EndDate,
-        StartDate: StartDate,
+        // BuilderID: session.data.user?.email,
         Title: Title,
+        Description: Description,
+        SchedType: SchedType,
+        LaunchStart: LaunchStart,
+        LaunchEnd: LaunchEnd,
+        Deadline: Deadline,
+        TotalQuestions: TotalQuestions
       });
 
       console.log("Survey added with ID:", docRef.id);
@@ -59,8 +64,11 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
     // clear text fields
     e.target.elements.Title.value = "";
     e.target.elements.Description.value = "";
-    e.target.elements.StartDate.value = "";
-    e.target.elements.EndDate.value = "";
+    e.target.elements.SchedType.value = "";
+    e.target.elements.LaunchStart.value = "";
+    e.target.elements.LaunchEnd.value = "";
+    e.target.elements.Deadline.value = "";
+    e.target.elements.TotalQuestions.value = "";
   };
 
   // Fetching
@@ -125,12 +133,22 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
             </div>
             <div className="mb-2">
               <label className="block text-gray-700 text-sm font-bold mb-2">
+                SchedType:
+              </label>
+              <input
+                className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full"
+                type="text"
+                name="SchedType"
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
                 StartDate:
               </label>
               <input
                 className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 type="date"
-                name="StartDate"
+                name="LaunchStart"
               />
             </div>
             <div className="mb-4">
@@ -140,7 +158,17 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
               <input
                 className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 type="date"
-                name="EndDate"
+                name="LaunchEnd"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Deadline:
+              </label>
+              <input
+                className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                type="date"
+                name="Deadline"
               />
             </div>
             <button

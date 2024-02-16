@@ -11,10 +11,10 @@ import {
 import { db, auth } from "../firebase";
 import { doc } from "firebase/firestore";
 
-export async function getSurveyModules(email: string): Promise<any> {
+export async function getSurveyModules(): Promise<any> { // email: string // for filtering
   const surveyModuleCollection = collection(db, "ResearchModule");
-  const q = query(surveyModuleCollection, where("ClientID", "==", email));
-  const surveyModuleSnapshot = await getDocs(q);
+  // const q = query(surveyModuleCollection, where("ClientID", "==", email));
+  const surveyModuleSnapshot = await getDocs(surveyModuleCollection);
   const surveyModuleList = surveyModuleSnapshot.docs.map(
     (doc: QueryDocumentSnapshot) => {
       return {
@@ -32,9 +32,9 @@ export async function addSurveyModule(
   isSurveyModuleAnonymous: boolean
 ) {
   try {
-    const surveyModuleCollection = collection(db, "ResearchModule");
+    const surveyModuleCollection = collection(db, "ResearchModules");
     const newSurveyModule = await addDoc(surveyModuleCollection, {
-      ClientID: email,
+      BuilderID: email,
       isAnonymous: isSurveyModuleAnonymous,
     });
 
@@ -50,7 +50,7 @@ export async function deleteSurveyModule(
   surveyModuleID: string
 ): Promise<boolean> {
   try {
-    const surveyModuleCollection = collection(db, "ResearchModule");
+    const surveyModuleCollection = collection(db, "ResearchModules");
     await deleteDoc(doc(surveyModuleCollection, surveyModuleID));
     console.log("Survey module deleted with ID: ", surveyModuleID);
     return true;

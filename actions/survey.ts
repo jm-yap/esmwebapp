@@ -9,11 +9,13 @@ import {
   onSnapshot,
   deleteDoc,
   doc,
+  where,
 } from "firebase/firestore";
 import { db } from "../firebase";
 
 export async function getSurveys(AccessCode: string): Promise<any> {
-  const moduleRef = collection(db, `ResearchModule/${AccessCode}/Survey`);
+  const Ref = collection(db, `/Survey`);
+  const moduleRef = query(Ref, where("AccessCode", "==", AccessCode));
 
   const querySnapshot = await getDocs(moduleRef);
   const surveyArr = querySnapshot.docs.map((doc) => {

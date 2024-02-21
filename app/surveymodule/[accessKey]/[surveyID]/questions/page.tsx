@@ -20,35 +20,38 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   const handleAddQuestion = async (e: any) => {
     const surveyRef = collection(
       db,
-      `ResearchModule/${params.accessKey}/Survey/${params.surveyID}/SurveyQuestion`
+      `SurveyQuestion`
     );
 
     e.preventDefault();
 
-    const surveyID = params.surveyID;
-    const Question = e.target.elements.Question.value;
+    const SurveyID = params.surveyID;
+    const QuestionText = e.target.elements.Question.value;
+    const QuestionType = e.target.elements.Type.value;
     const Required = e.target.elements.Required.checked;
-    const Type = e.target.elements.Type.value;
 
     try {
+      // Add a new document with a generated id
       const docRef = await addDoc(surveyRef, {
-        surveyID,
-        Question,
-        Required,
-        Type,
+        SurveyID: SurveyID,
+        QuestionText: QuestionText,
+        QuestionType: QuestionType,
+        Required: Required
       });
 
       console.log("Question added with ID:", docRef.id);
 
+      // Update the list of questions
       const updatedQuestions = await getQuestions(
         params.accessKey,
         params.surveyID
       );
       setQuestionsList(updatedQuestions);
 
-      e.target.elements.Question.value = "";
+      // Clear form
+      e.target.elements.QuestionText.value = "";
+      e.target.elements.QuestionType.value = "";
       e.target.elements.Required.checked = false;
-      e.target.elements.Type.value = "";
     } catch (error) {
       console.error("Error adding  Question:", error);
     }
@@ -98,7 +101,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 type="text"
-                name="Question"
+                name="QuestionText"
               />
             </div>
             <div className="mb-4">
@@ -108,7 +111,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 type="text"
-                name="Type"
+                name="QuestionType"
               />
             </div>
             <div className="mb-4">
@@ -133,13 +136,11 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
       {QuestionsList.map((Question: any) => (
         <div
           key={Question.id}
-          className="bg-white border-solid border-2 border-black-600 rounded px-8 pt-6 pb-8 mb-4"
-        >
+          className="bg-white border-solid border-2 border-black-600 rounded px-8 pt-6 pb-8 mb-4">
           <QuestionCard key={Question.id} Question={Question} />
           <button
             className="bg-red-500 mt-4 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            onClick={() => handleDeleteQuestion(Question.id)}
-          >
+            onClick={() => handleDeleteQuestion(Question.id)}>
             Delete
           </button>
         </div>

@@ -21,12 +21,7 @@ export default function Form({ params }: Props) {
     redirect("/");
   }
 
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect("/login");
-    },
-  });
+  const { data: session } = useSession();
 
   const { data: session } = useSession();
 

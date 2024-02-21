@@ -3,8 +3,8 @@ import { Timestamp } from "firebase/firestore";
 export interface SurveyCardProps {
   survey: {
     id: string;
-    AccessCode: string;
     data: {
+      AccessCode: string;
       BuilderID: string;
       Title: string;
       Description: string;
@@ -29,7 +29,7 @@ export interface SurveyCardProps {
 export default function SurveyCard({ survey }: SurveyCardProps) {
   return (
     <div className="survey">
-      <h1>Access Code: {survey.AccessCode}</h1>
+      <h1>Access Code: {survey.data.AccessCode}</h1>
       <h1>Survey ID: {survey.id}</h1>
       <h1>Client ID: {survey.data.BuilderID}</h1>
       <h1>Title: {survey.data.Title}</h1>

@@ -9,6 +9,7 @@ import {
   onSnapshot,
   deleteDoc,
   doc,
+  where,
 } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -16,10 +17,8 @@ export async function getQuestions(
   AccessCode: string,
   surveyID: string
 ): Promise<any> {
-  const surveyRef = collection(
-    db,
-    `ResearchModule/${AccessCode}/Survey/${surveyID}/SurveyQuestion`
-  );
+  const Ref = collection(db, `SurveyQuestion`);
+  const surveyRef = query(Ref, where("SurveyID", "==", surveyID));
 
   const querySnapshot = await getDocs(surveyRef);
   const itemsArr = querySnapshot.docs.map((doc) => {

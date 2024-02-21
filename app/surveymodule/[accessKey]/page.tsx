@@ -15,12 +15,12 @@ interface SurveyPageProps {
 }
 
 export default function QuestionsPage({ params }: SurveyPageProps) {
-  // const session = useSession({
-  //   required: true,
-  //   onUnauthenticated() {
-  //     redirect("/login");
-  //   },
-  // });
+  const session = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/login");
+    },
+  });
   const [SurveyList, setSurveyList] = useState([]);
 
   // Adding
@@ -44,7 +44,8 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
 
     try {
       const docRef = await addDoc(surveyRef, {
-        // BuilderID: session.data.user?.email,
+        AccessCode: AccessCode,
+        BuilderID: session.data.user?.email,
         Title: Title,
         Description: Description,
         SchedType: SchedType,

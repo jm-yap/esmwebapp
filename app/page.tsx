@@ -36,7 +36,7 @@ function HomePage() {
         <input
           id="masterKeyInput"
           className="border border-black rounded-md px-2 py-1"
-          type="text"
+          type="password"
           value={masterKey}
           onChange={(e) => setMasterKey(e.target.value)}
         />

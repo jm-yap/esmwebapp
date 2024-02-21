@@ -40,7 +40,7 @@ export default function Form() {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           console.log(userCredential);
-          router.push(`/${userCredential.user.email}`);
+          router.push(`/login`);
         })
         .catch((error) => {
           if (error.code === "auth/email-already-in-use") {

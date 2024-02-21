@@ -1,10 +1,9 @@
 "use client";
-import React from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
 import { auth } from "../../firebase";
-import { CheckProfile } from "@/actions/register";
 
 export default function Form() {
   try {
@@ -22,7 +21,7 @@ export default function Form() {
       redirect("/login");
     },
   });
-
+  
   const router = useRouter();
 
   return (
@@ -47,7 +46,7 @@ export default function Form() {
         <button
           className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md"
           onClick={() => {
-            router.push("/clients");
+            router.push("/builderprofile");
           }}
         >
           Go to Client Account

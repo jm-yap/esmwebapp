@@ -18,7 +18,7 @@ export async function AddClient(
   contactNumber: string
 ) {
   try {
-    const clientCollection = collection(db, "Client");
+    const clientCollection = collection(db, "Builder");
     const newClient = await setDoc(doc(clientCollection, email), {
       FirstName: firstName,
       LastName: lastName,
@@ -26,21 +26,9 @@ export async function AddClient(
       ContactNumber: contactNumber,
     });
 
-    console.log("New client created with ID: ", email);
     return true;
   } catch (error) {
-    console.error("Error creating new account client", error);
+    console.log(error);
     return false;
-  }
-}
-
-export async function CheckProfile(email: string) {
-  try {
-    const clientCollection = collection(db, "Client");
-    const clientDoc = await getDoc(doc(clientCollection, email));
-    return clientDoc.data();
-  } catch (error) {
-    console.error("Error retrieving client profile", error);
-    return null;
   }
 }

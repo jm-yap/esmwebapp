@@ -1,9 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
-import { apiBaseUrl } from "next-auth/client/_utils";
-import { redirect } from "next/navigation";
-import { auth } from "../../firebase";
+import { redirect, useRouter } from "next/navigation";
 import { getClientAccountByEmail } from "@/actions/clients";
 import Link from "next/link";
 
@@ -14,10 +12,16 @@ export default function ClientAccount() {
       redirect("/login");
     },
   });
+  
+  const router = useRouter();
 
   async function getUserData(email: string) {
     const userdata = await getClientAccountByEmail(email);
     return userdata;
+  }
+
+  function editClientAccount() {
+    router.push("/editaccountinfo");
   }
 
   const [userdata, setUserData] = useState<any>(null);
@@ -25,7 +29,8 @@ export default function ClientAccount() {
   useEffect(() => {
     if (session.data?.user?.email) {
       getUserData(session.data.user.email).then((data: any) => {
-        setUserData(data);
+        if (data) setUserData(data);
+        else router.push("/editaccountinfo");
       });
     }
   }, [session.data?.user?.email]);
@@ -58,6 +63,12 @@ export default function ClientAccount() {
         <h2 className="text-xl font-semibold">Contact Number:</h2>
         <p>{ContactNumber}</p>
       </div>
+      <button
+        className="px-4 py-2 bg-blue-500 text-white rounded-md mt-4"
+        onClick={() => editClientAccount()}
+      >
+        Edit Account Information
+      </button>
       <button
         className="px-4 py-2 bg-blue-500 text-white rounded-md mt-4"
         onClick={() => signOut()}

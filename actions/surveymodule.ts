@@ -8,18 +8,17 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db, auth } from "../firebase";
+import { db } from "../firebase";
 import { doc } from "firebase/firestore";
 
-export async function getSurveyModules(): Promise<any> { // email: string // for filtering
-  const surveyModuleCollection = collection(db, "ResearchModule");
-  // const q = query(surveyModuleCollection, where("ClientID", "==", email));
+export async function getSurveyModules(): Promise<any> {
+  const surveyModuleCollection = collection(db, "ResearchModules");
   const surveyModuleSnapshot = await getDocs(surveyModuleCollection);
   const surveyModuleList = surveyModuleSnapshot.docs.map(
     (doc: QueryDocumentSnapshot) => {
       return {
         id: doc.id,
-        data: doc.data() as { ClientID: string; isAnonymous: boolean },
+        data: doc.data() as { BuilderEmail: string; Title: string; TotalSurveys: number; IsAnonymous: boolean }
       };
     }
   );
@@ -27,15 +26,29 @@ export async function getSurveyModules(): Promise<any> { // email: string // for
   return surveyModuleList;
 }
 
+export async function countSurveys(AccessCode: string): Promise<any> {
+  const surveyCollection = collection(db, "Survey");
+  const filteredSurveyCollection = query(surveyCollection, where("AccessCode", "==", AccessCode));
+  const surveyCollectionSnapshot = await getDocs(filteredSurveyCollection);
+
+  return surveyCollectionSnapshot.docs.length.toString();
+}
+
 export async function addSurveyModule(
-  email: string,
-  isSurveyModuleAnonymous: boolean
+  builderEmail: string,
+  title: string,
+  totalSurveys: number,
+  isAnonymous: boolean
 ) {
+  
+
   try {
     const surveyModuleCollection = collection(db, "ResearchModules");
     const newSurveyModule = await addDoc(surveyModuleCollection, {
-      BuilderID: email,
-      isAnonymous: isSurveyModuleAnonymous,
+      BuilderID: builderEmail,
+      Title: title,
+      TotalSurveys: totalSurveys,
+      IsAnonymous: isAnonymous
     });
 
     console.log("New survey module created with ID: ", newSurveyModule.id);

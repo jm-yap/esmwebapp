@@ -2,13 +2,12 @@
 import React, { useState, useEffect } from "react";
 import {
   getSurveyModules,
+  countSurveys,
   addSurveyModule,
-  deleteSurveyModule,
+  deleteSurveyModule
 } from "@/actions/surveymodule";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { auth } from "../../firebase";
-import { apiBaseUrl } from "next-auth/client/_utils";
 import Link from "next/link";
 
 export default function SurveyModule() {
@@ -19,44 +18,68 @@ export default function SurveyModule() {
     },
   });
 
+  const builderEmail = session.data?.user?.email;
   const [surveyModules, setSurveyModules] = useState([]); // Get the list of survey modules
-  const [isChecked, setIsChecked] = useState(false);
+  const [surveyCount, setSurveyCount] = useState<Record<string, number>>({});
+  const [isAnonymous, setIsAnonymous] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      // const userEmail = session.data?.user?.email;
-      // if (userEmail) {
+      if (builderEmail) {
         try {
-          await getSurveyModules(); // userEmail
-          const modules = await getSurveyModules(); // userEmail
+          const modules = await getSurveyModules();
           setSurveyModules(modules);
         } catch (error: any) {
           console.error("Error fetching survey modules:", error.message);
         }
       }
-    // };
+    };
 
     fetchData();
-  }, []); // session
+  }, [session]);
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChecked(e.target.checked);
+  useEffect(() => {
+    const fetchSurveyCounts = async () => {
+      const counts = await Promise.all(
+        surveyModules.map(async (surveyModule) => {
+          const count = await countSurveys(surveyModule.id);
+          return { id: surveyModule.id, count };
+        })
+      );
+  
+      const countMap = counts.reduce((map, { id, count }) => {
+        map[id] = count;
+        return map;
+      }, {});
+  
+      setSurveyCount(countMap);
+    };
+  
+    fetchSurveyCounts();
+  }, [surveyModules]);
+  
+  const handleCheckboxChange = (e: any) => {
+    setIsAnonymous(e.target.checked);
   };
 
-  const handleIsAnonymous = async () => {
+  const handleAddSurveyModule = async (e: any) => {
+    e.preventDefault();
     try {
-      await addSurveyModule("vdispo@up.edu.ph", isChecked); // session.data.user?.email
-      const updatedModules = await getSurveyModules(); // session?.data?.user?.email // for filtering
+      const title = e.target.elements.title.value;
+
+      await addSurveyModule(builderEmail, title, 0, isAnonymous);
+      const updatedModules = await getSurveyModules();
       setSurveyModules(updatedModules);
     } catch (error: any) {
       console.error("Error adding survey module:", error.message);
     }
+    e.target.elements.title.value = "";
   };
 
   const handleDeleteSurveyModule = async (surveyModuleID: string) => {
     try {
       await deleteSurveyModule(surveyModuleID);
-      const updatedModules = await getSurveyModules(); // session?.data?.user?.email // for filtering
+      const updatedModules = await getSurveyModules();
       setSurveyModules(updatedModules);
     } catch (error: any) {
       console.error("Error deleting survey module:", error.message);
@@ -75,7 +98,7 @@ export default function SurveyModule() {
         {surveyModules.map(
           (surveyModule: {
             id: string;
-            data: { ClientID: string; isAnonymous: boolean };
+            data: { BuilderID: string; Title: string; IsAnonymous: boolean };
           }) => (
             <div
               className="border border-black rounded-md p-4"
@@ -85,11 +108,17 @@ export default function SurveyModule() {
                 <strong>Access Code:</strong> {surveyModule.id}
               </div>
               <div>
-                <strong>Client ID:</strong> {surveyModule.data.ClientID}
+                <strong>Title:</strong> {surveyModule.data.Title}
+              </div>
+              <div>
+                <strong>Builder ID:</strong> {surveyModule.data.BuilderID}
+              </div>
+              <div>
+                <strong>Surveys:</strong> {surveyCount ? surveyCount[surveyModule.id] : 'Loading...'}
               </div>
               <div>
                 <strong>Is Anonymous:</strong>{" "}
-                {surveyModule.data.isAnonymous ? "Yes" : "No"}
+                {surveyModule.data.IsAnonymous ? "Yes" : "No"}
               </div>
               <Link href={`/surveymodule/${surveyModule.id}`}>
                 <button className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
@@ -106,22 +135,34 @@ export default function SurveyModule() {
           )
         )}
       </div>
-      <div className="mt-8">
-        <button
-          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-          onClick={handleIsAnonymous}
-        >
-          Create Survey Module
-        </button>
+    <form onSubmit={handleAddSurveyModule} className="border border-black rounded-md p-4 mt-8">
+      <div>
+        <strong>Title:</strong>
+        <input
+          type="text"
+          name="title"
+          placeholder="Title"
+          className="ml-2"
+        />
+      </div>
+      <div className="mt-4">
+        <strong>Is Anonymous:</strong>
         <label className="ml-4">
           <input
             type="checkbox"
             onChange={handleCheckboxChange}
             className="mr-2"
           />
-          Is Anonymous
+          Yes
         </label>
       </div>
-    </div>
+      <button
+        type="submit"
+        className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+      >
+        Create Survey Module
+      </button>
+    </form>
+  </div>
   );
 }

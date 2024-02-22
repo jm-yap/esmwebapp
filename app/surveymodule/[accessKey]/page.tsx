@@ -7,7 +7,6 @@ import { db, auth } from "@/firebase";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import Tiptap from '@/app/components/Tiptap';
 
 interface SurveyPageProps {
   params: {
@@ -97,7 +96,6 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   // Rendering
   return (
     <div className="p-4 max-w-[600px] mx-auto">
-      <Tiptap />
       <div className="mb-8 items-center">
         <Link href={`/surveymodule/`}>
           <button className="font-bold mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded mb-4 flex justify-center">

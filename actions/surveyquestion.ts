@@ -10,6 +10,8 @@ import {
   deleteDoc,
   doc,
   where,
+  updateDoc,
+  increment,
 } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -39,9 +41,13 @@ export async function deleteQuestion(
   try {
     const questionCollection = collection(
       db,
-      `/ResearchModule/${AccessCode}/Survey/${surveyID}/SurveyQuestion`
+      `/SurveyQuestion`
     );
     await deleteDoc(doc(questionCollection, questionID));
+    const surveyRef = doc(db, "/Survey", surveyID);
+      await updateDoc(surveyRef, {
+      TotalQuestions: increment(-1)
+      });
     console.log("Question deleted with ID: ", questionID);
     return true;
   } catch (error) {

@@ -7,6 +7,7 @@ import { db, auth } from "@/firebase";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import Tiptap from '@/app/components/Tiptap';
 
 interface SurveyPageProps {
   params: {
@@ -27,7 +28,7 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   const handleAddSurvey = async (e: any) => {
     const surveyRef = collection(
       db,
-      `ResearchModule/${params.accessKey}/Survey/`
+      `Survey`
     );
 
     e.preventDefault();
@@ -37,8 +38,8 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
     const Title = e.target.elements.Title.value;
     const Description = e.target.elements.Description.value;
     const SchedType = e.target.elements.SchedType.value;
-    const LaunchStart = new Date(e.target.elements.StartDate.value);
-    const LaunchEnd = new Date(e.target.elements.EndDate.value);
+    const LaunchStart = new Date(e.target.elements.LaunchStart.value);
+    const LaunchEnd = new Date(e.target.elements.LaunchEnd.value);
     const Deadline = new Date(e.target.elements.Deadline.value);
     const TotalQuestions = 0;
 
@@ -69,7 +70,6 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
     e.target.elements.LaunchStart.value = "";
     e.target.elements.LaunchEnd.value = "";
     e.target.elements.Deadline.value = "";
-    e.target.elements.TotalQuestions.value = "";
   };
 
   // Fetching
@@ -97,6 +97,7 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   // Rendering
   return (
     <div className="p-4 max-w-[600px] mx-auto">
+      <Tiptap />
       <div className="mb-8 items-center">
         <Link href={`/surveymodule/`}>
           <button className="font-bold mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded mb-4 flex justify-center">

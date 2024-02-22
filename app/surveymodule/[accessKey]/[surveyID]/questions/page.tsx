@@ -2,7 +2,7 @@
 import QuestionCard from "@/app/components/questions";
 import { getQuestions, deleteQuestion } from "@/actions/surveyquestion";
 import { useEffect, useState } from "react";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc, increment} from "firebase/firestore";
 import { db } from "@/firebase";
 import Link from "next/link";
 
@@ -18,21 +18,18 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
 
   // Adding
   const handleAddQuestion = async (e: any) => {
-    const surveyRef = collection(
-      db,
-      `SurveyQuestion`
-    );
+    const questionRef = collection(db, `SurveyQuestion`);
 
     e.preventDefault();
 
     const SurveyID = params.surveyID;
-    const QuestionText = e.target.elements.Question.value;
-    const QuestionType = e.target.elements.Type.value;
+    const QuestionText = e.target.elements.QuestionText.value;
+    const QuestionType = e.target.elements.QuestionType.value;
     const Required = e.target.elements.Required.checked;
 
     try {
       // Add a new document with a generated id
-      const docRef = await addDoc(surveyRef, {
+      const docRef = await addDoc(questionRef, {
         SurveyID: SurveyID,
         QuestionText: QuestionText,
         QuestionType: QuestionType,
@@ -47,6 +44,12 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
         params.surveyID
       );
       setQuestionsList(updatedQuestions);
+
+      // add 1 to total questions of survey
+      const surveyRef = doc(db, "/Survey", params.surveyID);
+      await updateDoc(surveyRef, {
+      TotalQuestions: increment(1)
+      });
 
       // Clear form
       e.target.elements.QuestionText.value = "";

@@ -35,7 +35,7 @@ export async function deleteSurvey(
   try {
     const surveyCollection = collection(
       db,
-      `/ResearchModule/${AccessCode}/Survey`
+      `/Survey`
     );
     await deleteDoc(doc(surveyCollection, SurveyID));
     console.log("Survey deleted with ID: ", SurveyID);

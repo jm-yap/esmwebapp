@@ -13,58 +13,70 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../firebase";
+import {Timestamp} from "firebase/firestore";
 
 export async function getResponses(
   accessKey: string,
-  surveyID: string
+  surveyID: string,
+  surveyQuestions: any[],
 ): Promise<any[]> {
-  const responseDocument = collection(
-    db,
-    `ResearchModule/${accessKey}/SurveyData`
-  );
-  const q = query(responseDocument, where("SurveyID", "==", `${surveyID}`));
-  const querySnapshot = await getDocs(q);
-  const respArr = querySnapshot?.docs.map((doc) => {
+  // surveyQuestions is already in the form of: return {
+  //   id: doc.id,
+  //   AccessCode: AccessCode,
+  //   data: doc.data(),
+  // };
+
+  // Retrieving all relevant response docs given a surveyID
+  const responseDocumentColl = collection(db, `Response`)  
+  const relevantResponsesQuery = query(responseDocumentColl, where("SurveyID", "==", `${surveyID}`));
+  const relevantResponses = await getDocs(relevantResponsesQuery);
+  const respArr = relevantResponses?.docs.map((doc) => {
     return {
       id: doc.id,
-      data: doc.data(), // data refers to the data within that document.
+      data: doc.data(), 
     };
   });
 
-  const oneResponse = await Promise.all(
-    respArr.map(async (resp) => {
-      const list = await getResponse(accessKey, resp.id); // list of responses per responseID
+  // Retrieving all responseInstances given a responseID
+  const responseInstanceColl = collection(db, `ResponseInstance`);
+    
+  const relevantResponseInstances = await Promise.all(respArr?.map(async (response) => {
+      let q =  query(responseInstanceColl, where("ResponseID", "==", `${response.id}`));
+      let getResponseInst = await getDocs(q);  // get all responseInstances of responseID
+      let docsToObj = getResponseInst?.docs.map((doc) => {              
+        return {
+          id: doc.id,
+          data: doc.data(), // qID, response, rID
+        };
+      });
 
-      return {
-        responseID: resp.id,
-        data: {
-          ...resp.data,
-          Timestamp: new Date(resp.data.Timestamp.seconds * 1000), // Update next time
-        },
-        list: list,
-      };
+      // arrange the responseInstances according to the order of the questions
+      let arrangedResponseInstances: any[] = []; 
+      
+      for (let i = 0; i < surveyQuestions.length; i++) {
+        let flag: boolean = false;
+        let respIt: any;
+        for (let j = 0; j < docsToObj.length; j++) {            
+            if (surveyQuestions[i].id === docsToObj[j].data.QuestionID) {              
+              flag = true; 
+              respIt = docsToObj[j];       
+              break;     
+            }
+        }
+        if (!flag) {
+          arrangedResponseInstances.push({id: "null", data: {QuestionID: surveyQuestions[i].id, Response: "", ResponseID: response.id}});
+        }
+        else {
+          arrangedResponseInstances.push(respIt);
+        }
+      }
+      let out = {respID: response.id, time: response.data.Timestamp, list: arrangedResponseInstances};
+
+      return out;
     })
   );
-  return oneResponse;
+
+  return relevantResponseInstances;  
 }
 
-async function getResponse(
-  accessKey: string,
-  responseID: string
-): Promise<any> {
-  const response = collection(
-    db,
-    `ResearchModule/${accessKey}/SurveyData/${responseID}/SurveyResponses`
-  );
-  const docSnapshot = await getDocs(response);
-  const userResponsesArray = docSnapshot.docs.map((doc) => {
-    return {
-      surveyresponsesDocID: doc.id, // docID
-      //data: doc.data(), //hopefully, qID, response, rID
-      data: {
-        ...doc.data(),
-      },
-    };
-  });
-  return userResponsesArray;
-}
+

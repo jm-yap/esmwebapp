@@ -10,6 +10,8 @@ import {
   deleteDoc,
   doc,
   where,
+  updateDoc,
+  increment,
 } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -38,6 +40,12 @@ export async function deleteSurvey(
       `/Survey`
     );
     await deleteDoc(doc(surveyCollection, SurveyID));
+    
+    const surveyModuleRef = doc(db, "ResearchModules", AccessCode);
+    await updateDoc(surveyModuleRef, {
+      TotalSurveys: increment(-1)
+    });
+
     console.log("Survey deleted with ID: ", SurveyID);
     return true;
   } catch (error) {

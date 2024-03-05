@@ -12,6 +12,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../firebase";
+import { NewSurveyProps, SurveyCardProps } from "@/app/components/surveys";
 
 export async function getSurveys(AccessCode: string): Promise<any> {
   const Ref = collection(db, `/Survey`);
@@ -26,6 +27,27 @@ export async function getSurveys(AccessCode: string): Promise<any> {
     };
   });
   return surveyArr;
+}
+
+export async function addSurvey({survey}:NewSurveyProps){
+  const surveyRef = collection(db,`Survey`);
+  try {
+      const docRef = await addDoc(surveyRef, {
+        AccessCode: survey.AccessCode,
+        BuilderID: survey.BuilderID,
+        Title: survey.Title,
+        Description: survey.Description,
+        SchedType: survey.SchedType,
+        LaunchStart: survey.LaunchStart,
+        LaunchEnd: survey.LaunchEnd,
+        Deadline: survey.Deadline,
+        TotalQuestions: survey.TotalQuestions
+      });
+
+      console.log("Survey added with ID:", docRef.id);
+    } catch (error) {
+      console.error("Error adding  survey:", error);
+    }
 }
 
 export async function deleteSurvey(

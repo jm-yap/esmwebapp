@@ -1,5 +1,19 @@
 import { Timestamp } from "firebase/firestore";
 
+export interface NewSurveyProps {
+  survey: {
+    AccessCode: string;
+    BuilderID: string;
+    Title: string;
+    Description: string;
+    SchedType: string;
+    LaunchStart: Date;
+    LaunchEnd: Date;
+    Deadline: Date;
+    TotalQuestions: number;
+  };
+}
+
 export interface SurveyCardProps {
   survey: {
     id: string;

@@ -70,7 +70,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
               {
                 headerQuestions.map((questionJSON: any) => {
                   return (
-                    <th scope="col" className="px-6 py-3 text-left text-xs text-black-500 uppercase tracking-wider border-2 border-gray-300 bg-gray-400">
+                    <th key={questionJSON.id} scope="col" className="px-6 py-3 text-left text-xs text-black-500 uppercase tracking-wider border-2 border-gray-300 bg-gray-400">
                       {questionJSON.data.QuestionText}
                     </th>
                   )
@@ -85,7 +85,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                 console.log(dateString)
                
                 return (
-                  <tr>
+                  <tr key={response.respID}>
                     <td className="px-6 py-4 whitespace-nowrap border-2 border-gray-300">
                       {response.respID}
                     </td>
@@ -98,13 +98,13 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                       response.list.map((perResponse: any) => {
                         if (perResponse.data.Response === "") {
                           return (
-                            <td className="px-6 py-4 whitespace-nowrap border-2 border-gray-300">                              
+                            <td key={perResponse.id} className="px-6 py-4 whitespace-nowrap border-2 border-gray-300">                              
                             </td>
                           )
                         }
                         else {
                           return (
-                            <td className="px-6 py-4 whitespace-nowrap border-2 border-gray-300">
+                            <td key={perResponse.id} className="px-6 py-4 whitespace-nowrap border-2 border-gray-300">
                               {perResponse.data.Response}
                             </td>
                           )

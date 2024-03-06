@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import {
   getSurveyModules,
-  countSurveys,
+  // countSurveys,
   addSurveyModule,
   deleteSurveyModule
 } from "@/actions/surveymodule";
@@ -20,7 +20,7 @@ export default function SurveyModule() {
 
   const builderEmail = session.data?.user?.email;
   const [surveyModules, setSurveyModules] = useState([]); // Get the list of survey modules
-  const [surveyCount, setSurveyCount] = useState<Record<string, number>>({});
+  // const [surveyCount, setSurveyCount] = useState<Record<string, number>>({});
   const [isAnonymous, setIsAnonymous] = useState(false);
 
   useEffect(() => {
@@ -38,25 +38,25 @@ export default function SurveyModule() {
     fetchData();
   }, [session]);
 
-  useEffect(() => {
-    const fetchSurveyCounts = async () => {
-      const counts = await Promise.all(
-        surveyModules.map(async (surveyModule) => {
-          const count = await countSurveys(surveyModule.id);
-          return { id: surveyModule.id, count };
-        })
-      );
+  // useEffect(() => {
+  //   const fetchSurveyCounts = async () => {
+  //     const counts = await Promise.all(
+  //       surveyModules.map(async (surveyModule) => {
+  //         const count = await countSurveys(surveyModule.id);
+  //         return { id: surveyModule.id, count };
+  //       })
+  //     );
   
-      const countMap = counts.reduce((map, { id, count }) => {
-        map[id] = count;
-        return map;
-      }, {});
+  //     const countMap = counts.reduce((map, { id, count }) => {
+  //       map[id] = count;
+  //       return map;
+  //     }, {});
   
-      setSurveyCount(countMap);
-    };
+  //     setSurveyCount(countMap);
+  //   };
   
-    fetchSurveyCounts();
-  }, [surveyModules]);
+  //   fetchSurveyCounts();
+  // }, [surveyModules]);
   
   const handleCheckboxChange = (e: any) => {
     setIsAnonymous(e.target.checked);
@@ -66,8 +66,9 @@ export default function SurveyModule() {
     e.preventDefault();
     try {
       const title = e.target.elements.title.value;
+      const description = e.target.elements.description.value;
 
-      await addSurveyModule(builderEmail, title, 0, isAnonymous);
+      await addSurveyModule(builderEmail, title, description, 0, isAnonymous);
       const updatedModules = await getSurveyModules();
       setSurveyModules(updatedModules);
     } catch (error: any) {
@@ -98,7 +99,7 @@ export default function SurveyModule() {
         {surveyModules.map(
           (surveyModule: {
             id: string;
-            data: { BuilderID: string; Title: string; IsAnonymous: boolean };
+            data: { BuilderID: string; Title: string; Description: string; TotalSurveys: number; IsAnonymous: boolean };
           }) => (
             <div
               className="border border-black rounded-md p-4"
@@ -111,10 +112,13 @@ export default function SurveyModule() {
                 <strong>Title:</strong> {surveyModule.data.Title}
               </div>
               <div>
-                <strong>Builder ID:</strong> {surveyModule.data.BuilderID}
+                <strong>Description:</strong> {surveyModule.data.Description}
               </div>
               <div>
-                <strong>Surveys:</strong> {surveyCount ? surveyCount[surveyModule.id] : 'Loading...'}
+                <strong>Builder Email:</strong> {surveyModule.data.BuilderID}
+              </div>
+              <div>
+                <strong>Surveys:</strong> {surveyModule.data.TotalSurveys}
               </div>
               <div>
                 <strong>Is Anonymous:</strong>{" "}
@@ -142,6 +146,15 @@ export default function SurveyModule() {
           type="text"
           name="title"
           placeholder="Title"
+          className="ml-2"
+        />
+      </div>
+      <div>
+        <strong>Description:</strong>
+        <input
+          type="text"
+          name="description"
+          placeholder="Description"
           className="ml-2"
         />
       </div>

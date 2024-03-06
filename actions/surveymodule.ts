@@ -5,8 +5,8 @@ import {
   QueryDocumentSnapshot,
   addDoc,
   deleteDoc,
-  query,
-  where,
+  // query,
+  // where,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { doc } from "firebase/firestore";
@@ -18,7 +18,7 @@ export async function getSurveyModules(): Promise<any> {
     (doc: QueryDocumentSnapshot) => {
       return {
         id: doc.id,
-        data: doc.data() as { BuilderEmail: string; Title: string; TotalSurveys: number; IsAnonymous: boolean }
+        data: doc.data() as { BuilderID: string; Title: string; Description: string; TotalSurveys: number; IsAnonymous: boolean }
       };
     }
   );
@@ -26,27 +26,27 @@ export async function getSurveyModules(): Promise<any> {
   return surveyModuleList;
 }
 
-export async function countSurveys(AccessCode: string): Promise<any> {
-  const surveyCollection = collection(db, "Survey");
-  const filteredSurveyCollection = query(surveyCollection, where("AccessCode", "==", AccessCode));
-  const surveyCollectionSnapshot = await getDocs(filteredSurveyCollection);
+// export async function countSurveys(AccessCode: string): Promise<any> {
+//   const surveyCollection = collection(db, "Survey");
+//   const filteredSurveyCollection = query(surveyCollection, where("AccessCode", "==", AccessCode));
+//   const surveyCollectionSnapshot = await getDocs(filteredSurveyCollection);
 
-  return surveyCollectionSnapshot.docs.length.toString();
-}
+//   return surveyCollectionSnapshot.docs.length.toString();
+// }
 
 export async function addSurveyModule(
   builderEmail: string,
   title: string,
+  description: string,
   totalSurveys: number,
   isAnonymous: boolean
 ) {
-  
-
   try {
     const surveyModuleCollection = collection(db, "ResearchModules");
     const newSurveyModule = await addDoc(surveyModuleCollection, {
       BuilderID: builderEmail,
       Title: title,
+      Description: description,
       TotalSurveys: totalSurveys,
       IsAnonymous: isAnonymous
     });

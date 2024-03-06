@@ -2,7 +2,7 @@
 import SurveyCard from "@/app/components/surveys";
 import { getSurveys, deleteSurvey, addSurvey } from "@/actions/survey";
 import { useEffect, useState } from "react";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc, increment } from "firebase/firestore";
 import { db, auth } from "@/firebase";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -45,7 +45,14 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
     const updatedSurveys = await getSurveys(params.accessKey);
       setSurveyList(updatedSurveys);
 
-    // Clear form
+      const surveyModuleRef = doc(db, "ResearchModules", params.accessKey);
+      await updateDoc(surveyModuleRef, {
+      TotalSurveys: increment(1)
+      });
+    } catch (error) {
+      console.error("Error adding  survey:", error);
+    }
+    // clear text fields
     e.target.elements.Title.value = "";
     e.target.elements.Description.value = "";
     e.target.elements.SchedType.value = "";

@@ -26,28 +26,27 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
 
   // Adding
   const handleAddSurvey = async (e: any) => {
-
     e.preventDefault();
+    try {
+      const survey_details = {
+        AccessCode : params.accessKey,
+        BuilderID : session.data.user?.email,
+        Title : e.target.elements.Title.value,
+        Description : e.target.elements.Description.value,
+        SchedType : e.target.elements.SchedType.value,
+        LaunchStart : new Date(e.target.elements.LaunchStart.value),
+        LaunchEnd : new Date(e.target.elements.LaunchEnd.value),
+        Deadline : new Date(e.target.elements.Deadline.value),
+        TotalQuestions : 0
+      };
 
-    const survey_details = {
-      AccessCode : params.accessKey,
-      BuilderID : session.data.user?.email,
-      Title : e.target.elements.Title.value,
-      Description : e.target.elements.Description.value,
-      SchedType : e.target.elements.SchedType.value,
-      LaunchStart : new Date(e.target.elements.LaunchStart.value),
-      LaunchEnd : new Date(e.target.elements.LaunchEnd.value),
-      Deadline : new Date(e.target.elements.Deadline.value),
-      TotalQuestions : 0
-    };
-
-    await addSurvey({survey: survey_details});
-    const updatedSurveys = await getSurveys(params.accessKey);
+      await addSurvey({survey: survey_details});
+      const updatedSurveys = await getSurveys(params.accessKey);
       setSurveyList(updatedSurveys);
 
       const surveyModuleRef = doc(db, "ResearchModules", params.accessKey);
       await updateDoc(surveyModuleRef, {
-      TotalSurveys: increment(1)
+        TotalSurveys: increment(1),
       });
     } catch (error) {
       console.error("Error adding  survey:", error);

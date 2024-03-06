@@ -1,12 +1,13 @@
 "use client";
 import SurveyCard from "@/app/components/surveys";
-import { getSurveys, deleteSurvey } from "@/actions/survey";
+import { getSurveys, deleteSurvey, addSurvey } from "@/actions/survey";
 import { useEffect, useState } from "react";
 import { addDoc, collection, doc, updateDoc, increment } from "firebase/firestore";
 import { db, auth } from "@/firebase";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { SurveyCardProps } from "@/app/components/surveys";
 
 interface SurveyPageProps {
   params: {
@@ -25,39 +26,23 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
 
   // Adding
   const handleAddSurvey = async (e: any) => {
-    const surveyRef = collection(
-      db,
-      `Survey`
-    );
 
     e.preventDefault();
 
-    const AccessCode = params.accessKey;
+    const survey_details = {
+      AccessCode : params.accessKey,
+      BuilderID : session.data.user?.email,
+      Title : e.target.elements.Title.value,
+      Description : e.target.elements.Description.value,
+      SchedType : e.target.elements.SchedType.value,
+      LaunchStart : new Date(e.target.elements.LaunchStart.value),
+      LaunchEnd : new Date(e.target.elements.LaunchEnd.value),
+      Deadline : new Date(e.target.elements.Deadline.value),
+      TotalQuestions : 0
+    };
 
-    const Title = e.target.elements.Title.value;
-    const Description = e.target.elements.Description.value;
-    const SchedType = e.target.elements.SchedType.value;
-    const LaunchStart = new Date(e.target.elements.LaunchStart.value);
-    const LaunchEnd = new Date(e.target.elements.LaunchEnd.value);
-    const Deadline = new Date(e.target.elements.Deadline.value);
-    const TotalQuestions = 0;
-
-    try {
-      const docRef = await addDoc(surveyRef, {
-        AccessCode: AccessCode,
-        BuilderID: session.data.user?.email,
-        Title: Title,
-        Description: Description,
-        SchedType: SchedType,
-        LaunchStart: LaunchStart,
-        LaunchEnd: LaunchEnd,
-        Deadline: Deadline,
-        TotalQuestions: TotalQuestions
-      });
-
-      console.log("Survey added with ID:", docRef.id);
-
-      const updatedSurveys = await getSurveys(params.accessKey);
+    await addSurvey({survey: survey_details});
+    const updatedSurveys = await getSurveys(params.accessKey);
       setSurveyList(updatedSurveys);
 
       const surveyModuleRef = doc(db, "ResearchModules", params.accessKey);

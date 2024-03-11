@@ -33,19 +33,19 @@ function HomePage() {
         <label htmlFor="masterKeyInput" className="text-lg">
           Please enter the master key to proceed:
         </label>
-        <input
-          id="masterKeyInput"
-          className="border border-black rounded-md px-2 py-1"
-          type="password"
-          value={masterKey}
-          onChange={(e) => setMasterKey(e.target.value)}
-        />
-        <button
-          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-          onClick={handleMasterKeySubmit}
-        >
-          Submit
-        </button>
+          <input
+            id="masterKeyInput"
+            className="border border-black rounded-md px-2 py-1"
+            type="password"
+            value={masterKey}
+            onChange={(e) => setMasterKey(e.target.value)}
+          />
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            onClick={handleMasterKeySubmit}
+          >
+            Submit
+          </button>
         {error && <p className="text-red-500">{error}</p>}
       </div>
     </div>

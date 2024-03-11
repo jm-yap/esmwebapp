@@ -39,10 +39,10 @@ export async function addSurvey({survey}:NewSurveyProps){
         BuilderID: survey.BuilderID,
         Title: survey.Title,
         Description: survey.Description,
-        SchedType: survey.SchedType,
-        LaunchStart: survey.LaunchStart,
-        LaunchEnd: survey.LaunchEnd,
-        Deadline: survey.Deadline,
+        StartDate: survey.StartDate,
+        EndDate: survey.EndDate,
+        Sessions: survey.Sessions,
+        Interval: survey.Interval,
         TotalQuestions: survey.TotalQuestions
       });
 

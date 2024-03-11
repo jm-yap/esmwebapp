@@ -125,7 +125,13 @@ export default function SurveyModule() {
                 {surveyModule.data.IsAnonymous ? "Yes" : "No"}
               </div>
               <Link href={`/surveymodule/${surveyModule.id}`}>
-                <button className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
+                <button 
+                  className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                  onClick={() =>
+                    // export survey module details
+                    localStorage.setItem("surveyModule", JSON.stringify(surveyModule))
+                  }
+                >
                   View
                 </button>
               </Link>

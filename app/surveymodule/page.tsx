@@ -8,7 +8,11 @@ import {
 } from "@/actions/surveymodule";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import styles from "@/app/surveymodule/styles.module.css";
 import Link from "next/link";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { CheckBox } from "@mui/icons-material";
+
 
 export default function SurveyModule() {
   const session = useSession({
@@ -88,100 +92,62 @@ export default function SurveyModule() {
   };
 
   return (
-    <div className="flex flex-col items-center mt-10">
-      <Link href="/dashboard">
-        <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded mb-4">
-          Back
-        </button>
-      </Link>
-      <h1 className="text-4xl font-bold mb-8">Survey Module</h1>
-      <div className="grid grid-cols-3 gap-4 mt-5">
-        {surveyModules.map(
-          (surveyModule: {
-            id: string;
-            data: { BuilderID: string; Title: string; Description: string; TotalSurveys: number; IsAnonymous: boolean };
-          }) => (
-            <div
-              className="border border-black rounded-md p-4"
-              key={surveyModule.id}
-            >
-              <div>
-                <strong>Access Code:</strong> {surveyModule.id}
-              </div>
-              <div>
-                <strong>Title:</strong> {surveyModule.data.Title}
-              </div>
-              <div>
-                <strong>Description:</strong> {surveyModule.data.Description}
-              </div>
-              <div>
-                <strong>Builder Email:</strong> {surveyModule.data.BuilderID}
-              </div>
-              <div>
-                <strong>Surveys:</strong> {surveyModule.data.TotalSurveys}
-              </div>
-              <div>
-                <strong>Is Anonymous:</strong>{" "}
-                {surveyModule.data.IsAnonymous ? "Yes" : "No"}
-              </div>
-              <Link href={`/surveymodule/${surveyModule.id}`}>
-                <button 
-                  className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-                  onClick={() =>
-                    // export survey module details
-                    localStorage.setItem("surveyModule", JSON.stringify(surveyModule))
-                  }
-                >
-                  View
-                </button>
-              </Link>
-              <button
-                className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
-                onClick={() => handleDeleteSurveyModule(surveyModule.id)}
-              >
-                Delete
-              </button>
-            </div>
-          )
-        )}
+    <div className={styles.container}>
+      <div className={styles.navbar}>
+        <Link href={`/surveymodule/`}>
+          <button>Home</button>
+        </Link>
       </div>
-    <form onSubmit={handleAddSurveyModule} className="border border-black rounded-md p-4 mt-8">
-      <div>
-        <strong>Title:</strong>
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          className="ml-2"
-        />
+
+      <div className={styles.sidebar}>
+        <div className={styles.sidebarContent}>
+          <div className={styles.sidebarTitleContainer}>
+            <h1 className={styles.sidebarTitle}>Create Survey Module</h1>
+          </div>
+          
+          <div className={styles.sidebarForm}>
+            <form className={styles.sidebarFormComp} onSubmit={handleAddSurveyModule}>
+              <div className={styles.sidebarFormBit}>
+                <label className={styles.sidebarLabel}>Title</label>
+                <input type="text" name="title" className={styles.sidebarTextField} />
+              </div>
+
+              <div className={styles.sidebarFormBit}>
+                <label className={styles.sidebarLabel}>Description</label>
+                <textarea rows={2}  name="description" className={styles.sidebarTextField} />
+              </div>
+
+              <button className={styles.sidebarButton} type="submit">C R E A T E</button>
+            </form>
+          </div>
+        </div>
       </div>
-      <div>
-        <strong>Description:</strong>
-        <input
-          type="text"
-          name="description"
-          placeholder="Description"
-          className="ml-2"
-        />
-      </div>
-      <div className="mt-4">
-        <strong>Is Anonymous:</strong>
-        <label className="ml-4">
-          <input
-            type="checkbox"
-            onChange={handleCheckboxChange}
-            className="mr-2"
-          />
-          Yes
-        </label>
-      </div>
-      <button
-        type="submit"
-        className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-      >
-        Create Survey Module
-      </button>
-    </form>
-  </div>
+
+      <main className={styles.main}>
+        {surveyModules.map((surveyModule: any) => (
+          <div key={surveyModule.id}>
+            
+              <div className={styles.SurveyContainer}>
+                <div className={styles.sidebarRow}>
+                  <Link href={`/surveymodule/${surveyModule.id}`}>
+                    <button onClick={() =>
+                      localStorage.setItem("surveyModule", JSON.stringify(surveyModule))} // export survey module details
+                      className={styles.SurveyTitle}>
+                        {surveyModule.data.Title}
+                    </button>
+                  </Link>
+                  <button onClick={() => handleDeleteSurveyModule(surveyModule.id)}>
+                    <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+                  </button>
+                </div>
+                <h1 className={styles.SurveyDescription}>{surveyModule.data.Description}</h1>
+                <h1 className={styles.BuilderInfo}>Prepared by: {surveyModule.data.BuilderID}</h1>
+              </div>
+            
+          </div>
+        ))}
+      </main>
+      
+    </div>
   );
 }

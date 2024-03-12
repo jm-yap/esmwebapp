@@ -187,3 +187,37 @@
   /* margin-bottom: 1em; */
   /* column-gap: 1rem; */
 }
+
+.sidebarOptionField {
+  /* width: 100%; */
+  margin-bottom: 0.2em;
+  border-radius: 20px;
+  padding: 10px;
+  border: 2px solid #f0f0f0;
+  color: #333;
+  font-weight: normal;
+  margin-left: 10px;
+}
+
+.sidebarOptionField:focus {
+  border: 2px solid #E07961;
+  outline: none;
+}
+
+.ChoiceContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 0.5em;
+  column-gap: 1rem;
+}
+
+.ChoiceCard {
+  background-color: #ffffff;
+  color: #333;
+  border-radius: 20px;
+  padding: 10px;
+  font-weight: 700;
+  font-size: 18px;
+}

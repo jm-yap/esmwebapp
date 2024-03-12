@@ -200,10 +200,10 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                                   }
                                   {
                                     Array.isArray(perResponse?.data?.Response) && perResponse?.data?.Response.map((option: any) => {
-                                    return (
-                                      `${option}, `
-                                    )
-                                  })
+                                      return (
+                                        `${option}, `
+                                      )
+                                    })
                                   }
                                 </td>
                               )

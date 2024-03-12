@@ -2,6 +2,8 @@
     display: flex;
     height: 100vh;
     /* overflow: hidden; */
+    /* height: 100%; */
+    /* overflow-y: auto; */
     
 }
 .main{
@@ -114,7 +116,7 @@
     display:flex;
 }
 .nothingH2{
-    font-size: 100px;
+    font-size: 80px;
     align-self: center;
     font-weight: bold;
     margin-top: 10%;

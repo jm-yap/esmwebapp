@@ -195,7 +195,16 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                             else {
                               return (
                                 <td key={perResponse.id} className="tableCell tr:hover">
-                                  {perResponse.data.Response}
+                                  {
+                                    (typeof perResponse?.data?.Response === 'string' || perResponse?.data?.Response instanceof String) && perResponse?.data?.Response
+                                  }
+                                  {
+                                    Array.isArray(perResponse?.data?.Response) && perResponse?.data?.Response.map((option: any) => {
+                                      return (
+                                        `${option}, `
+                                      )
+                                    })
+                                  }
                                 </td>
                               )
                             }

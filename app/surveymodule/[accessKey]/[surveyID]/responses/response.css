@@ -1,0 +1,122 @@
+.pageProperty{
+    display: flex;
+    height: 100vh;
+    /* overflow: hidden; */
+    
+}
+.main{
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y:auto;
+    height: 100%
+}
+
+.surveyInformation{
+    display: flex;
+    background-color: #F1F1F1;
+    padding-left: 70px;
+    padding-right: 70px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    justify-content: space-between;
+    
+}
+
+.surveyInfoLeft{
+
+    vertical-align:middle;
+    align-items: center;
+}
+
+.surveyInfoRight {
+    margin-top: 75px;
+}
+
+.surveyTitle{
+    font-weight: 625;
+    font-size:  45px;
+    margin: 7px;
+}
+.surveyInfoText {
+    font-weight: 625;
+    font-size:  25px;
+    margin: 5px;
+}
+
+.surveyTitleBack{
+    display:flex;
+    align-items: center;
+}
+
+.banner {
+    background-color: #E07961;
+    height:150px;
+    align-items: center;
+    display: flex;
+}
+
+.bannerTitle {
+    margin-left: 75px;
+}
+.bannerTitleChild {
+    font-size: 50px;
+    font-weight: bold;    
+    display: inline-block;    
+}
+
+.bannerKita {
+    color: white;
+}
+
+.builderName {
+    margin-right: 90px;
+    color: white;
+    font-size: 33px;
+    font-weight: bold;
+}
+
+.tableDiv {
+    background-color: #F1F1F1;
+    /* background-color: black; */
+    justify-content: center;
+    display: flex;
+    /* flex-flow: column;
+    height: 100%; */
+    /* padding: 70px; */
+}
+.table {
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+.tableHeader {
+    background-color: #F1F1F1;
+    font-size: 150%;
+    font-weight: bold;
+    padding: 20px;
+}
+
+.tableCell {
+    background-color: #F1F1F1;
+    border-bottom: 5px solid white;
+    font-size: 130%;
+    font-weight: 550;
+    white-space:pre;
+    padding: 6px;
+}
+.tr:hover{
+    background-color: pink;
+}
+.nothingDiv {
+    justify-content: center;
+    /* background-color: pink; */
+    display:flex;
+}
+.nothingH2{
+    font-size: 100px;
+    align-self: center;
+    font-weight: bold;
+    margin-top: 10%;
+
+}

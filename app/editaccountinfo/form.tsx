@@ -7,14 +7,14 @@ import { set } from "firebase/database";
 import styles from "./styles.module.css";
 
 export default function Form() {
-  // try {
-  //   const isMasterKeyPresent = sessionStorage.getItem("masterKey");
-  //   if (isMasterKeyPresent !== "true") {
-  //     redirect("/");
-  //   }
-  // } catch (error) {
-  //   redirect("/");
-  // }
+  try {
+    const isMasterKeyPresent = sessionStorage.getItem("masterKey");
+    if (isMasterKeyPresent !== "true") {
+      redirect("/");
+    }
+  } catch (error) {
+    redirect("/");
+  }
 
   const { data: session } = useSession();
 

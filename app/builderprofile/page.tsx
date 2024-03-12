@@ -122,7 +122,9 @@ export default function ClientAccount() {
 
         <div className={styles.buttonContainer}>
           <button className={styles.button} onClick={() => editClientAccount()}>E D I T</button>
-          <button className={styles.button} onClick={() => signOut()}>L O G O U T</button>
+          <button className={styles.button} onClick={() => {
+            signOut();
+          }}>L O G O U T</button>
         </div>
       </div>
     </div>

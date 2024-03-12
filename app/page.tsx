@@ -17,7 +17,7 @@ function HomePage() {
       if (masterKey === databaseMasterkey?.MasterKey) {
         // If master key is correct, navigate to the login/signup page
         sessionStorage.setItem("masterKey", "true");
-        router.push("/dashboard"); // Replace with the actual path of your login/signup page
+        router.push("/surveymodule"); // Replace with the actual path of your login/signup page
       } else {
         setError("Invalid master key");
       }

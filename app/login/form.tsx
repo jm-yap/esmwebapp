@@ -14,7 +14,11 @@ export default function Form() {
   const { data: session } = useSession();
   if (session) {
     sessionStorage.setItem("userEmail", email);
-    redirect("/dashboard");
+    sessionStorage.removeItem("firstName");
+    sessionStorage.removeItem("lastName");
+    sessionStorage.removeItem("middleName");
+    sessionStorage.removeItem("contactNumber");
+    redirect("/surveymodule");
   }
 
   try {

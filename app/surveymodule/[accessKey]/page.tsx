@@ -11,6 +11,7 @@ import { SurveyCardProps } from "@/app/components/surveys";
 import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
 import TextField from "@mui/material/TextField";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 interface SurveyPageProps {
   params: {
@@ -110,28 +111,28 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
             <form className={styles.sidebarFormComp} onSubmit={handleAddSurvey}>
               <div className={styles.sidebarFormBit}>
                 <label className={styles.sidebarLabel}>Title</label>
-                <input type="text" name="Title" className={styles.sidebarTextField} />
+                <input type="text" required name="Title" className={styles.sidebarTextField} />
               </div>
               <div className={styles.sidebarFormBit}>
                 <label className={styles.sidebarLabel}>Description</label>
-                <textarea rows={2}  name="Description" className={styles.sidebarTextField} />
+                <textarea required rows={2}  name="Description" className={styles.sidebarTextField} />
               </div>
               <div className={styles.sidebarFormBit}>
                 <label className={styles.sidebarLabel}>Required No. of Sessions</label>
-                <input type="number" name="Sessions" className={styles.sidebarTextField} />
+                <input type="number" required min="1" name="Sessions" className={styles.sidebarTextField} />
               </div>
               <div className={styles.sidebarFormBit}>
                 <label className={styles.sidebarLabel}>Minimum Interval (in hours)</label>
-                <input type="number" name="Interval" className={styles.sidebarTextField} />
+                <input type="number" required min="0" step="0.5" name="Interval" className={styles.sidebarTextField} />
               </div>
               <div className={styles.sidebarRow}>
                 <div className={styles.sidebarFormBit}>
                   <label className={styles.sidebarLabel}>Opens on</label>
-                  <input type="date" name="StartDate" className={styles.sidebarDateField}/>
+                  <input type="date" required name="StartDate" className={styles.sidebarDateField}/>
                 </div>
                 <div className={styles.sidebarFormBit}>
                   <label className={styles.sidebarLabel}>Closes on</label>
-                  <input type="date" name="EndDate" className={styles.sidebarDateField}/>
+                  <input type="date" required name="EndDate" className={styles.sidebarDateField}/>
                 </div>
               </div>
               <button className={styles.sidebarButton} type="submit">C R E A T E</button>
@@ -151,14 +152,35 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
         <h3 className={styles.SurveyModuleAccessCode}>Access Code: {surveyModule.id}</h3>
         {SurveyList.map((survey: any) => (
           <div key={survey.id}>
-            <SurveyCard survey={survey} />
-            <Link href={`/surveymodule/${params.accessKey}/${survey.id}/questions`}>
-              <button>Questions</button>
-            </Link>
-            <Link href={`/surveymodule/${params.accessKey}/${survey.id}/responses`}>
-              <button>Responses</button>
-            </Link>
-            <button onClick={() => handleDeleteSurvey(survey.id)}>Delete</button>
+            <div className={styles.SurveyContainer}>
+              <div className={styles.mainRow}>
+                <h1 className={styles.SurveyTitle}>{survey.data.Title}</h1>
+                <div className={styles.sidebarRow}>
+                  <button onClick={() => handleDeleteSurvey(survey.id)}>
+                    <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+                  </button>
+                  <button onClick={() => handleDeleteSurvey(survey.id)}>
+                    <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+                  </button>
+                  <button onClick={() => handleDeleteSurvey(survey.id)}>
+                    <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+                  </button>
+                </div>
+              </div>
+              <h1 className={styles.SurveyDescription}>{survey.data.Description}</h1>
+              <h1 className={styles.BuilderInfo}>Prepared by: {survey.data.BuilderID}</h1>
+              <Link href={`/surveymodule/${params.accessKey}/${survey.id}/questions`}>
+                <button onClick={() =>
+                      // export survey module details
+                      localStorage.setItem("survey", JSON.stringify(survey))
+                    }>Questions
+                </button>
+              </Link>
+              <Link href={`/surveymodule/${params.accessKey}/${survey.id}/responses`}>
+                <button>Responses</button>
+              </Link>
+              {/* <button onClick={() => handleDeleteSurvey(survey.id)}>Delete</button> */}
+            </div>
           </div>
         ))}
       </main>

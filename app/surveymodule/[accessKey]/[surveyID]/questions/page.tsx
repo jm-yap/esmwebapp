@@ -5,6 +5,16 @@ import { useEffect, useState } from "react";
 import { addDoc, collection, doc, updateDoc, increment} from "firebase/firestore";
 import { db } from "@/firebase";
 import Link from "next/link";
+import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import FormGroup from '@mui/material/FormGroup';
+import Checkbox from '@mui/material/Checkbox';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 interface QuestionPageProps {
   params: {
@@ -12,6 +22,11 @@ interface QuestionPageProps {
     surveyID: string;
   };
 }
+
+// get the survey modules from local storage
+const surveyStr = localStorage.getItem("survey");
+// parse
+const survey = JSON.parse(surveyStr);
 
 export default function QuestionsPage({ params }: QuestionPageProps) {
   const [QuestionsList, setQuestionsList] = useState([]);
@@ -25,7 +40,6 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     const SurveyID = params.surveyID;
     const QuestionText = e.target.elements.QuestionText.value;
     const QuestionType = e.target.elements.QuestionType.value;
-    const Required = e.target.elements.Required.checked;
 
     try {
       // Add a new document with a generated id
@@ -33,7 +47,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
         SurveyID: SurveyID,
         QuestionText: QuestionText,
         QuestionType: QuestionType,
-        Required: Required
+        Choices: fields,
       });
 
       console.log("Question added with ID:", docRef.id);
@@ -48,13 +62,15 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
       // add 1 to total questions of survey
       const surveyRef = doc(db, "/Survey", params.surveyID);
       await updateDoc(surveyRef, {
-      TotalQuestions: increment(1)
+        TotalQuestions: increment(1)
       });
 
       // Clear form
       e.target.elements.QuestionText.value = "";
       e.target.elements.QuestionType.value = "";
-      e.target.elements.Required.checked = false;
+      setNumFields(0);
+      e.target.elements.NumOptions.value = 0;
+      setFields([]);
     } catch (error) {
       console.error("Error adding  Question:", error);
     }
@@ -75,79 +91,164 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   const handleDeleteQuestion = async (QuestionID: string) => {
     try {
       await deleteQuestion(params.accessKey, params.surveyID, QuestionID);
-      const updatedQuestions = await getQuestions(
-        params.accessKey,
-        params.surveyID
-      );
+      const updatedQuestions = await getQuestions(params.accessKey,params.surveyID);
       setQuestionsList(updatedQuestions);
     } catch (error: any) {
       console.error("Error deleting survey Question:", error.message);
     }
   };
 
+  // Question Type
+  const [questionType, setQuestionType] = useState('1');
+
+  const handleQuestionTypeChange = (e) => {
+    setQuestionType(e.target.value);
+  };
+
+  const [numFields, setNumFields] = useState(0);
+  const [fields, setFields] = useState([]);
+
+  const handleNumFieldsChange = (e) => {
+    const value = parseInt(e.target.value);
+    setNumFields(value);
+
+    if (value > fields.length) {
+      setFields([...fields, ...Array(value - fields.length).fill('')]);
+    }
+    else if (value < fields.length) {
+      setFields(fields.slice(0, value));
+    }
+  };
+
+  const handleFieldChange = (e, index) => {
+    const updatedFields = [...fields];
+    updatedFields[index] = e.target.value;
+    setFields(updatedFields);
+  };
+
   // Rendering
   return (
-    <div className="container max-w-[600px] mx-auto p-4">
-      <Link href={`/surveymodule/${params.accessKey}`}>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4 mb-4">
-          Back to Survey
-        </button>
-      </Link>
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-4 text-center">Add Question</h1>
-        <div className="bg-white border-solid border-2 border-black-600 rounded px-8 pt-6 pb-8 mb-4">
-          <form onSubmit={handleAddQuestion}>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Question:
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                type="text"
-                name="QuestionText"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Type:
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                type="text"
-                name="QuestionType"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Required:
-              </label>
-              <input className="ml-2" type="checkbox" name="Required" />
-            </div>
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="submit"
-            >
-              Submit
-            </button>
-          </form>
+    <div className={styles.container}>
+      {/* Navbar */}
+      <div className={styles.navbar}>
+        <Link href={`/surveymodule/`}>
+          <button>Home</button>
+        </Link>
+      </div>
+
+      {/* Sidebar - Create Question */}
+      <div className={styles.sidebar}>
+        <div className={styles.sidebarContent}>
+          <div className={styles.sidebarTitle}>
+            <h1 className={styles.SurveyModuleTitle}>Create Question</h1>
+          </div>
+          <div className={styles.sidebarForm}>
+            <form className={styles.sidebarFormComp} onSubmit={handleAddQuestion}>
+              <div className={styles.sidebarFormBit}>
+                <label className={styles.sidebarLabel}>Question</label>
+                <textarea rows={2} required name="QuestionText" className={styles.sidebarTextField} />
+              </div>
+              <div className={styles.sidebarFormBit}>
+                <label className={styles.sidebarLabel}>Type</label>
+                <select name="QuestionType" className={styles.sidebarTextField} 
+                  value={questionType}
+                  onChange={handleQuestionTypeChange}>
+                  <option value="1">Text</option>
+                  <option value="2">Multiple Choice</option>
+                  <option value="3">Checkbox</option>
+                  {/* <option value="4">Date</option> */}
+                </select>
+              </div>
+              {
+                (questionType === "2" || questionType === "3") ? ( 
+                  <div className={styles.sidebarFormBit}>
+                    <label className={styles.sidebarLabel}>Number of Choices</label>
+                    <input value={numFields} type="number" required onChange={handleNumFieldsChange} min="1" name="NumOptions" className={styles.sidebarTextField} />
+                  </div>
+                ) : null
+              }
+              {fields.map((field, index) => (
+                <div key={index} className={styles.sidebarFormBit}>
+                  <label className={styles.sidebarLabel}>
+                    Option {index + 1}:
+                    <input
+                    className={styles.sidebarOptionField}
+                    type="text"
+                    required
+                    value={field}
+                    onChange={(e) => handleFieldChange(e, index)}
+                    />
+                  </label>
+                </div>
+              ))}
+              <button className={styles.sidebarButton} type="submit">C R E A T E</button>
+            </form>
+          </div>
         </div>
       </div>
 
-      <h1 className="text-2xl font-bold mb-4">
-        Questions for Survey ID: {params.surveyID}
-      </h1>
-      {QuestionsList.map((Question: any) => (
-        <div
-          key={Question.id}
-          className="bg-white border-solid border-2 border-black-600 rounded px-8 pt-6 pb-8 mb-4">
-          <QuestionCard key={Question.id} Question={Question} />
-          <button
-            className="bg-red-500 mt-4 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            onClick={() => handleDeleteQuestion(Question.id)}>
-            Delete
-          </button>
+      <main className={styles.main}>
+        <div className={styles.mainRow}>
+          <Link href={`/surveymodule/${params.accessKey}`}>
+            <ArrowBackIcon sx={{ fontSize: 40 }}/>
+          </Link>
+          <h1 className={styles.SurveyModuleTitle}>{survey.data.Title}</h1>
         </div>
-      ))}
+        <h2 className={styles.SurveyModuleDescription}>{survey.data.Description}</h2>
+        <h2 className={styles.SurveyModuleDescription}>Required No. of Sessions: {survey.data.Sessions}</h2>
+        <h2 className={styles.SurveyModuleDescription}>Minimum Interval (in hours): {survey.data.Interval}</h2>
+        {QuestionsList.map((Question: any) => (
+        <div key={Question.id}> 
+          <div className={styles.SurveyContainer}>
+            <div className={styles.sidebarRow}>
+              <h1 className={styles.SurveyTitle}>{Question.data.QuestionText}</h1>
+              <button onClick={() => handleDeleteQuestion(Question.id)}>
+                <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+              </button>
+            </div>
+            {
+              (Question.data.QuestionType === "1") ? (
+              <div className={styles.sidebarFormBit}>
+                  <textarea rows={1}  name="QuestionText" className={styles.sidebarTextField} />
+                </div>
+              ) :
+                  
+              (Question.data.QuestionType === "2") ? (
+                <FormControl>
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                >
+                {Question.data.Choices.map((choice, index) => {
+                  return <FormControlLabel key={index} value={choice} control={<Radio className="ChoiceCard" sx={{
+                  color: '#E07961',
+                  '&.Mui-checked': {
+                    color: '#E07961',
+                  },
+                }}/>} label={choice} />
+                })}
+              </RadioGroup>
+            </FormControl> ) : 
+            (Question.data.QuestionType === "3") ? (
+              <FormControl>
+              <FormGroup row>
+                {Question.data.Choices.map((choice, index) => {
+                  return <FormControlLabel key={index} control={<Checkbox sx={{
+                  color: '#E07961',
+                  '&.Mui-checked': {
+                    color: '#E07961',
+                  },
+                }} />} label={choice} />
+                })}
+              </FormGroup>
+            </FormControl>
+            ) : null
+            }
+          </div>
+        </div>
+        ))}
+      </main>
     </div>
   );
 }

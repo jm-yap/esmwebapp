@@ -11,9 +11,10 @@ import { redirect, useRouter } from "next/navigation";
 import styles from "@/app/surveymodule/styles.module.css";
 import Link from "next/link";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { CheckBox } from "@mui/icons-material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { getClientAccountByEmail } from "@/actions/clients";
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 
 export default function SurveyModule() {
@@ -136,14 +137,24 @@ export default function SurveyModule() {
             <form className={styles.sidebarFormComp} onSubmit={handleAddSurveyModule}>
               <div className={styles.sidebarFormBit}>
                 <label className={styles.sidebarLabel}>Title</label>
-                <input type="text" name="title" className={styles.sidebarTextField} />
+                <input type="text" name="title" className={styles.sidebarTextField} required/>
               </div>
 
               <div className={styles.sidebarFormBit}>
                 <label className={styles.sidebarLabel}>Description</label>
-                <textarea rows={2}  name="description" className={styles.sidebarTextField} />
+                <textarea rows={2}  name="description" className={styles.sidebarTextField} required/>
               </div>
 
+              <div className={styles.sidebarFormBit}>
+                <FormControlLabel 
+                  control={<Checkbox
+                      onChange={handleCheckboxChange} 
+                      sx={{'&.Mui-checked': {color: '#E07961'}}}
+                    />}
+                  label="Are Clients Anonymous"
+                />
+              </div>
+              
               <button className={styles.sidebarButton} type="submit">C R E A T E</button>
             </form>
           </div>

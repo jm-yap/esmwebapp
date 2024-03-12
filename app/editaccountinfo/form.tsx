@@ -104,7 +104,7 @@ export default function Form() {
       </div>
       <div className={styles.buttonContainer}>
         <button className={styles.button} type="submit">
-          Update Account Information
+          R E G I S T E R
         </button>
       </div>
     </form>

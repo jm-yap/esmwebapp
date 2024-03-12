@@ -92,7 +92,7 @@
     margin-top: 2%;
     padding: 5%;
     border-radius: 25px;
-    border: 2px solid #000000;
+    border: 2px solid #f0f0f0;
 }
 
 .input:focus {
@@ -123,10 +123,16 @@
 
 .clickableText {
     font-family: 'Roboto', sans-serif;
+    font-size: large;
     font-weight: bold;
     color: #E07961;
     margin-right: auto;
     margin-left: 20%;
+}
+
+.clickableText:hover {
+    color: #b8624f;
+    text-decoration: underline;
 }
 
 .button {
@@ -137,4 +143,8 @@
     background-color: #E07961;
     color: #ffffff;
     margin-left: auto;
+}
+
+.button:hover {
+    background-color: #b8624f;
 }

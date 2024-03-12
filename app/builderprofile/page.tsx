@@ -16,6 +16,7 @@ export default function ClientAccount() {
   const router = useRouter();
 
   async function getUserData(email: string) {
+    
     const userdata = await getClientAccountByEmail(email);
     return userdata;
   }

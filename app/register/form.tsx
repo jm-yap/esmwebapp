@@ -106,7 +106,7 @@ export default function Form() {
           className={styles.button}
           type="submit"
         >
-          Register
+          N E X T
         </button>
       </div>
     </form>

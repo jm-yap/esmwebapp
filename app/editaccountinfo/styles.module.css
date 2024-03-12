@@ -129,6 +129,11 @@
     margin-left: 20%;
 }
 
+.clickableText:hover {
+    color: #b8624f;
+    text-decoration: underline;
+}
+
 .button {
     font-family: 'Roboto', sans-serif;
     width: 80%;
@@ -137,4 +142,8 @@
     background-color: #E07961;
     color: #ffffff;
     margin-left: auto;
+}
+
+.button:hover {
+    background-color: #b8624f;
 }

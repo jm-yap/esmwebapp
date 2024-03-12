@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import {Timestamp} from "firebase/firestore";
+import { getClientAccountByEmail } from "@/actions/clients";
 
 export async function getResponses(
   accessKey: string,
@@ -80,3 +81,21 @@ export async function getResponses(
 }
 
 
+export async function getSurveyDetails(
+  surveyID: string,
+): Promise<any> {
+
+  const docRef = doc(db, `Survey`, `${surveyID}`);
+  const fetchedInfo = await getDoc(docRef);
+  
+  return {
+    id: fetchedInfo.id,
+    ...fetchedInfo.data(),
+  }
+}
+
+export async function getBuilderDetails(
+  builderMail: string, 
+): Promise<any> {
+  
+}

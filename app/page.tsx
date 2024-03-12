@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { fetchMasterKey } from "@/actions/masterkey";
+import styles from "./styles.module.css";
 
 function HomePage() {
   const router = useRouter();
@@ -27,26 +28,35 @@ function HomePage() {
   };
 
   return (
-    <div className="flex flex-col items-center mt-10">
-      <h1 className="text-2xl font-bold mb-4">Welcome to Your Web App</h1>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="masterKeyInput" className="text-lg">
-          Please enter the master key to proceed:
-        </label>
-          <input
-            id="masterKeyInput"
-            className="border border-black rounded-md px-2 py-1"
-            type="password"
-            value={masterKey}
-            onChange={(e) => setMasterKey(e.target.value)}
-          />
-          <button
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-            onClick={handleMasterKeySubmit}
-          >
-            Submit
-          </button>
-        {error && <p className="text-red-500">{error}</p>}
+    <div className={styles.container}>
+      <div className={styles.centerBox}>
+        <div className={styles.titleBox}>
+          <div className={styles.titleWebPage}>
+            <h1>Sagot</h1><h1 className={styles.titleOrange}>Kita</h1><h1>.</h1>
+            
+          </div>
+        </div>
+        <div className={styles.titleBox}>
+          <div className={styles.masterKeyForm}>
+            <h1 className={styles.masterKeyText}>Masterkey</h1>
+            <input
+              id="masterKeyInput"
+              className={styles.inputBox}
+              type="password"
+              value={masterKey}
+              onChange={(e) => setMasterKey(e.target.value)}
+            />
+            {error && <p  className={styles.errorText}>{error}</p>}
+          </div>
+          <div className={styles.masterKeyForm}>
+            <button
+              className={styles.submitButton}
+              onClick={handleMasterKeySubmit}
+            > 
+              N E X T
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

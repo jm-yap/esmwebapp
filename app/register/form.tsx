@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import styles from "./styles.module.css";
 
 export default function Form() {
   const { data: session } = useSession();
@@ -16,14 +17,14 @@ export default function Form() {
     redirect("/dashboard");
   }
 
-  try {
-    const isMasterKeyPresent = sessionStorage.getItem("masterKey");
-    if (isMasterKeyPresent !== "true") {
-      redirect("/");
-    }
-  } catch (error) {
-    redirect("/");
-  }
+  // try {
+  //   const isMasterKeyPresent = sessionStorage.getItem("masterKey");
+  //   if (isMasterKeyPresent !== "true") {
+  //     redirect("/");
+  //   }
+  // } catch (error) {
+  //   redirect("/");
+  // }
 
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
@@ -40,7 +41,8 @@ export default function Form() {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           console.log(userCredential);
-          router.push(`/login`);
+          sessionStorage.setItem("userEmail", email);
+          router.push(`/editaccountinfo`);
         })
         .catch((error) => {
           if (error.code === "auth/email-already-in-use") {
@@ -57,45 +59,56 @@ export default function Form() {
   };
 
   return (
-    <form
+    <form 
       onSubmit={handleSubmit}
-      className="flex flex-col gap-4 mx-auto max-w-md mt-10"
     >
-      <h1 className="text-2xl font-bold text-center">Register Account</h1>
-      <input
-        className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        type="password"
-        placeholder="Confirm Password"
-        value={repassword}
-        onChange={(e) => setRepassword(e.target.value)}
-      />
-      <button
-        className="bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600"
-        type="submit"
-      >
-        Register
-      </button>
-      {error && <p className="text-red-500">{error}</p>}
-      <p className="text-center">
-        Already have an account?{" "}
-        <Link href="/login" className="text-blue-500">
-          Login here
-        </Link>
-      </p>
+      <div className={styles.rowInputContainer}>
+        <div className={styles.oneInputContainer}>
+          <label className={styles.inputLabel}>Email</label>
+          <input
+            className={styles.input}
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+      </div>
+      <div className={styles.rowInputContainer}>
+        <div className={styles.inputContainer}>
+          <label className={styles.inputLabel}>Password</label>
+          <input
+            className={styles.input}
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <div className={styles.inputContainer}>
+          <label className={styles.inputLabel}>Confirm Password</label>
+          <input
+            className={styles.input}
+            type="password"
+            placeholder="Confirm Password"
+            value={repassword}
+            onChange={(e) => setRepassword(e.target.value)}
+          />
+        </div>
+      </div>
+      <div className={styles.errorContainer}>
+        {error && <p className={styles.errorText}>{error}</p>}
+      </div>
+      <div className={styles.buttonContainer}>
+
+        <Link href="/login" className={styles.clickableText}>Back</Link>
+        <button
+          className={styles.button}
+          type="submit"
+        >
+          Register
+        </button>
+      </div>
     </form>
   );
 }

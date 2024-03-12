@@ -6,6 +6,7 @@
 
 .navbar {
     position: fixed;
+    display: flex;
     height: 100px;
     width: 100%;
     top: 0;
@@ -14,8 +15,50 @@
     background-color: #E07961;
     color: #fff;
     padding: 10px;
+    align-items: center;
     z-index: 1; /* ensure the navbar is on top */
-    }
+}
+
+.navtext {
+    font-size: xx-large;
+    font-weight: bold;
+    margin-left: 35px;
+    display: flex;
+    flex-direction: row;
+}
+
+.navtext:hover {
+    text-decoration: underline;
+    text-decoration-color: #252525;
+}
+
+.navblack {
+    color: #252525;
+}
+
+.navwhite {
+    color: #ffffff;
+}
+
+.navprofilecontainer {
+    display:flex;
+    flex-direction: row;
+    margin-left: auto;
+    margin-right: 35px;
+}
+
+.navprofilecontainer:hover {
+    text-decoration: underline;
+}
+
+.navinfotext {
+    font-size: x-large;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: row;
+}
 
 .sidebar {
     width: 480px;

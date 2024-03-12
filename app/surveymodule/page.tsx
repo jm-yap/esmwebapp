@@ -6,12 +6,14 @@ import {
   addSurveyModule,
   deleteSurveyModule
 } from "@/actions/surveymodule";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+import { redirect, useRouter } from "next/navigation";
 import styles from "@/app/surveymodule/styles.module.css";
 import Link from "next/link";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { CheckBox } from "@mui/icons-material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { getClientAccountByEmail } from "@/actions/clients";
 
 
 export default function SurveyModule() {
@@ -22,25 +24,44 @@ export default function SurveyModule() {
     },
   });
 
-  const builderEmail = session.data?.user?.email;
+  const router = useRouter();
+
+  const [builderEmail, setBuilderEmail] = useState(""); 
   const [surveyModules, setSurveyModules] = useState([]); // Get the list of survey modules
   // const [surveyCount, setSurveyCount] = useState<Record<string, number>>({});
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
+      const builderEmail = sessionStorage.getItem("userEmail");
       if (builderEmail) {
         try {
           const modules = await getSurveyModules();
           setSurveyModules(modules);
+          const userdata = await getClientAccountByEmail(builderEmail);
+          if (userdata) {
+            sessionStorage.setItem("firstName", userdata.FirstName);
+            sessionStorage.setItem("lastName", userdata.LastName);
+            sessionStorage.setItem("middleName", userdata.MiddleName);
+            sessionStorage.setItem("contactNumber", userdata.ContactNumber);
+            setFirstName(userdata.FirstName);
+            setLastName(userdata.LastName);
+          } else {
+            router.push("/editaccountinfo");
+          }
         } catch (error: any) {
           console.error("Error fetching survey modules:", error.message);
         }
+      } else {
+        signOut();
       }
     };
 
     fetchData();
   }, [session]);
+
 
   // useEffect(() => {
   //   const fetchSurveyCounts = async () => {
@@ -94,8 +115,14 @@ export default function SurveyModule() {
   return (
     <div className={styles.container}>
       <div className={styles.navbar}>
-        <Link href={`/surveymodule/`}>
-          <button>Home</button>
+        <Link href="/surveymodule" className={styles.navtext}>
+          <h1 className={styles.navblack}>Sagot</h1>
+          <h1 className={styles.navwhite}>Kita</h1>
+          <h1 className={styles.navblack}>.</h1>
+        </Link>
+        <Link href="/builderprofile" className={styles.navprofilecontainer}>
+          <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
+          <AccountCircleIcon fontSize="large" />
         </Link>
       </div>
 

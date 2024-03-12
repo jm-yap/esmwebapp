@@ -4,7 +4,7 @@ import Form from "./form";
 import { auth } from "../../firebase";
 import styles from "./styles.module.css";
 
-async function EditInfo() {
+async function EditAccInfo() {
   return (
     <div className={styles.container}>
         <div className={styles.centerBox}>
@@ -26,4 +26,4 @@ async function EditInfo() {
 );
 }
 
-export default EditInfo;
+export default EditAccInfo;

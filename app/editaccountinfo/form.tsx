@@ -1,10 +1,11 @@
 "use client";
 import React, { FormEvent, useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { AddClient } from "@/actions/register";
 import { set } from "firebase/database";
 import styles from "./styles.module.css";
+import { sign } from "crypto";
 
 export default function Form() {
   try {
@@ -27,7 +28,14 @@ export default function Form() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setEmail(sessionStorage.getItem("userEmail")!);
+    const email = sessionStorage.getItem("userEmail");
+
+    if (email) {
+      setEmail(email);
+    } else {
+      signOut();
+    }
+    
   }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

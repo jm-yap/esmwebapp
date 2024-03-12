@@ -12,6 +12,8 @@ import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
 import TextField from "@mui/material/TextField";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 interface SurveyPageProps {
   params: {
@@ -63,7 +65,6 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
     e.target.elements.EndDate.value = "";
     e.target.elements.Sessions.value = "";
     e.target.elements.Interval.value = "";
-    // e.target.elements.Deadline.value = "";
   };
 
   // Fetching
@@ -93,12 +94,21 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   // parse it
   const surveyModule = JSON.parse(surveyModuleStr);
 
+  const firstName = sessionStorage.getItem("firstName");
+  const lastName = sessionStorage.getItem("lastName");
+
   // Rendering
   return (
     <div className={styles.container}>
       <div className={styles.navbar}>
-        <Link href={`/surveymodule/`}>
-          <button>Home</button>
+        <Link href="/surveymodule" className={styles.navtext}>
+          <h1 className={styles.navblack}>Sagot</h1>
+          <h1 className={styles.navwhite}>Kita</h1>
+          <h1 className={styles.navblack}>.</h1>
+        </Link>
+        <Link href="/builderprofile" className={styles.navprofilecontainer}>
+          <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
+          <AccountCircleIcon fontSize="large" />
         </Link>
       </div>
 
@@ -128,11 +138,11 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
               <div className={styles.sidebarRow}>
                 <div className={styles.sidebarFormBit}>
                   <label className={styles.sidebarLabel}>Opens on</label>
-                  <input type="date" required name="StartDate" className={styles.sidebarDateField}/>
+                  <input type="datetime-local" required name="StartDate" className={styles.sidebarDateField}/>
                 </div>
                 <div className={styles.sidebarFormBit}>
                   <label className={styles.sidebarLabel}>Closes on</label>
-                  <input type="date" required name="EndDate" className={styles.sidebarDateField}/>
+                  <input type="datetime-local" required name="EndDate" className={styles.sidebarDateField}/>
                 </div>
               </div>
               <button className={styles.sidebarButton} type="submit">C R E A T E</button>
@@ -153,33 +163,23 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
         {SurveyList.map((survey: any) => (
           <div key={survey.id}>
             <div className={styles.SurveyContainer}>
-              <div className={styles.mainRow}>
-                <h1 className={styles.SurveyTitle}>{survey.data.Title}</h1>
-                <div className={styles.sidebarRow}>
-                  <button onClick={() => handleDeleteSurvey(survey.id)}>
-                    <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+              <div className={styles.cardRow}>
+                <Link href={`/surveymodule/${params.accessKey}/${survey.id}/questions`}>
+                  <button className={styles.SurveyTitle} onClick={() =>localStorage.setItem("survey", JSON.stringify(survey))}>
+                    {survey.data.Title}
                   </button>
-                  <button onClick={() => handleDeleteSurvey(survey.id)}>
-                    <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
-                  </button>
-                  <button onClick={() => handleDeleteSurvey(survey.id)}>
-                    <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
-                  </button>
+                </Link>
+                <div className={styles.cardRow}>
+                <Link href={`/surveymodule/${params.accessKey}/${survey.id}/responses`}>
+                  <ListAltOutlinedIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+                </Link>
+                <button onClick={() => handleDeleteSurvey(survey.id)}>
+                  <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+                </button>
                 </div>
               </div>
               <h1 className={styles.SurveyDescription}>{survey.data.Description}</h1>
               <h1 className={styles.BuilderInfo}>Prepared by: {survey.data.BuilderID}</h1>
-              <Link href={`/surveymodule/${params.accessKey}/${survey.id}/questions`}>
-                <button onClick={() =>
-                      // export survey module details
-                      localStorage.setItem("survey", JSON.stringify(survey))
-                    }>Questions
-                </button>
-              </Link>
-              <Link href={`/surveymodule/${params.accessKey}/${survey.id}/responses`}>
-                <button>Responses</button>
-              </Link>
-              {/* <button onClick={() => handleDeleteSurvey(survey.id)}>Delete</button> */}
             </div>
           </div>
         ))}

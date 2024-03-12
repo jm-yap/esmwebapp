@@ -15,6 +15,7 @@ import FormLabel from '@mui/material/FormLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 interface QuestionPageProps {
   params: {
@@ -126,13 +127,28 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     setFields(updatedFields);
   };
 
+  const newStart = new Date(survey?.data.StartDate.seconds * 1000)
+  const startDate = newStart.toLocaleString();
+
+  const newEnd = new Date(survey?.data.EndDate.seconds * 1000)
+  const endDate = newEnd.toLocaleString();
+
+  const firstName = sessionStorage.getItem("firstName");
+  const lastName = sessionStorage.getItem("lastName");
+
   // Rendering
   return (
     <div className={styles.container}>
       {/* Navbar */}
       <div className={styles.navbar}>
-        <Link href={`/surveymodule/`}>
-          <button>Home</button>
+        <Link href="/surveymodule" className={styles.navtext}>
+          <h1 className={styles.navblack}>Sagot</h1>
+          <h1 className={styles.navwhite}>Kita</h1>
+          <h1 className={styles.navblack}>.</h1>
+        </Link>
+        <Link href="/builderprofile" className={styles.navprofilecontainer}>
+          <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
+          <AccountCircleIcon fontSize="large" />
         </Link>
       </div>
 
@@ -194,13 +210,22 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
           </Link>
           <h1 className={styles.SurveyModuleTitle}>{survey.data.Title}</h1>
         </div>
-        <h2 className={styles.SurveyModuleDescription}>{survey.data.Description}</h2>
-        <h2 className={styles.SurveyModuleDescription}>Required No. of Sessions: {survey.data.Sessions}</h2>
-        <h2 className={styles.SurveyModuleDescription}>Minimum Interval (in hours): {survey.data.Interval}</h2>
+        <h2 className={styles.SurveyInfo}>{survey.data.Description}</h2>
+        <div className={styles.cardRow}>
+          <h2 className={styles.SurveyInfo}>Required No. of Sessions: {survey.data.Sessions}</h2>
+          <h2 className={styles.SurveyInfo}>Opens on: {startDate}</h2>
+        </div>
+        <div className={styles.cardRow}>
+          <h2 className={styles.SurveyInfo}>Minimum Interval (in hours): {survey.data.Interval}</h2>
+          <h2 className={styles.SurveyInfo}>Closes on: {endDate}</h2>
+        </div>
+
+        
+        
         {QuestionsList.map((Question: any) => (
         <div key={Question.id}> 
           <div className={styles.SurveyContainer}>
-            <div className={styles.sidebarRow}>
+            <div className={styles.cardRow}>
               <h1 className={styles.SurveyTitle}>{Question.data.QuestionText}</h1>
               <button onClick={() => handleDeleteQuestion(Question.id)}>
                 <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
@@ -215,35 +240,35 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                   
               (Question.data.QuestionType === "2") ? (
                 <FormControl>
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-                >
-                {Question.data.Choices.map((choice, index) => {
-                  return <FormControlLabel key={index} value={choice} control={<Radio className="ChoiceCard" sx={{
-                  color: '#E07961',
-                  '&.Mui-checked': {
-                    color: '#E07961',
-                  },
-                }}/>} label={choice} />
-                })}
-              </RadioGroup>
-            </FormControl> ) : 
-            (Question.data.QuestionType === "3") ? (
-              <FormControl>
-              <FormGroup row>
-                {Question.data.Choices.map((choice, index) => {
-                  return <FormControlLabel key={index} control={<Checkbox sx={{
-                  color: '#E07961',
-                  '&.Mui-checked': {
-                    color: '#E07961',
-                  },
-                }} />} label={choice} />
-                })}
-              </FormGroup>
-            </FormControl>
-            ) : null
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    >
+                    {Question.data.Choices.map((choice, index) => {
+                      return <FormControlLabel key={index} value={choice} control={<Radio className="ChoiceCard" sx={{
+                      color: '#E07961',
+                      '&.Mui-checked': {
+                        color: '#E07961',
+                      },
+                    }}/>} label={choice} />
+                    })}
+                  </RadioGroup>
+                </FormControl> ) : 
+              (Question.data.QuestionType === "3") ? (
+                <FormControl>
+                  <FormGroup row>
+                    {Question.data.Choices.map((choice, index) => {
+                      return <FormControlLabel key={index} control={<Checkbox sx={{
+                      color: '#E07961',
+                      '&.Mui-checked': {
+                        color: '#E07961',
+                      },
+                    }} />} label={choice} />
+                    })}
+                  </FormGroup>
+                </FormControl>
+              ) : null
             }
           </div>
         </div>

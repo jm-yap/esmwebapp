@@ -53,7 +53,13 @@ export default function Form() {
     e.preventDefault();
     if (!email || !contactNumber || !firstName || !lastName ) {
       setError("Please fill out all required fields");
-    } else {
+    } else if (isNaN(Number(contactNumber))) {  
+      setError("Contact number can only contain numbers");
+    } else if (contactNumber.slice(0, 2) !== "09") {
+      setError("Invalid contact number format");
+    } else if (contactNumber.length !== 11) {
+      setError("Invalid contact number length");
+    } else { 
       const response = await AddClient(
         email,
         firstName,
@@ -132,10 +138,14 @@ export default function Form() {
           <input
             className={styles.input}
             type="text"
-            placeholder="+63 9XX XXX XXXX"
+            placeholder="09XXXXXXXXX"
             value={contactNumber}
             onChange={(e) => setNumber(e.target.value)}
           />
+        </div>
+
+        <div className={styles.errorContainer}>
+          {error && <p className={styles.errorText}>{error}</p>}
         </div>
 
         <div className={styles.buttonContainer}>

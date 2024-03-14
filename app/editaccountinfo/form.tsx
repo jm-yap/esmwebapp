@@ -42,6 +42,12 @@ export default function Form() {
     e.preventDefault();
     if (!email || !contactNumber || !firstName || !lastName ) {
       setError("Please fill out all required fields");
+    } else if (isNaN(Number(contactNumber))) {  
+      setError("Contact number can only contain numbers");
+    } else if (contactNumber.slice(0, 2) !== "09") {
+      setError("Invalid contact number format");
+    } else if (contactNumber.length !== 11) {
+      setError("Invalid contact number length");
     } else {
       const response = await AddClient(
         email,
@@ -51,7 +57,11 @@ export default function Form() {
         contactNumber
       );
       if (response) {
-        router.push("/dashboard");
+        if (sessionStorage.getItem("validInfo") === "true") {
+          router.push("/surveymodule");
+        } else {
+          router.push("/login");
+        }
       } else {
         console.log("error updating account info");
       }
@@ -101,7 +111,7 @@ export default function Form() {
           <input
             className={styles.input}
             type="text"
-            placeholder="+63 9XX XXX XXXX"
+            placeholder="09XXXXXXXXX"
             value={contactNumber}
             onChange={(e) => setNumber(e.target.value)}
           />

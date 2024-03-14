@@ -6,8 +6,11 @@ import SessionProvider from "./SessionProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ESM Web App",
-  description: "ESM Web App",
+  title: "SagotKita",
+  description: "SagotKita ESM Builder Web App",
+  icons: {
+    icon: "/images/favicon.ico",
+  },
 };
 
 export default function RootLayout({

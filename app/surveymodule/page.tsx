@@ -18,6 +18,15 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 
 export default function SurveyModule() {
+  try {
+    const isMasterKeyPresent = sessionStorage.getItem("masterKey");
+    if (isMasterKeyPresent !== "true") {
+      redirect("/");
+    }
+  } catch (error) {
+    redirect("/");
+  }
+
   const session = useSession({
     required: true,
     onUnauthenticated() {

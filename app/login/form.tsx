@@ -14,10 +14,7 @@ export default function Form() {
   const { data: session } = useSession();
   if (session) {
     sessionStorage.setItem("userEmail", email);
-    sessionStorage.removeItem("firstName");
-    sessionStorage.removeItem("lastName");
-    sessionStorage.removeItem("middleName");
-    sessionStorage.removeItem("contactNumber");
+    sessionStorage.setItem("validInfo", "true");
     redirect("/surveymodule");
   }
 

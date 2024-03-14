@@ -33,12 +33,12 @@ export default function Form() {
 
   useEffect(() => {
     const email = sessionStorage.getItem("userEmail");
-    const firstName = sessionStorage.getItem("firstName");
+    const isValid = sessionStorage.getItem("validInfo");
 
     if (email) {
       setEmail(email);
-      if (firstName) {
-        setFirstName(firstName);
+      if (isValid === "true") {
+        setFirstName(sessionStorage.getItem("firstName"));
         setLastName(sessionStorage.getItem("lastName"));
         setMiddleName(sessionStorage.getItem("middleName"));
         setNumber(sessionStorage.getItem("contactNumber"));

@@ -20,7 +20,7 @@ function HomePage() {
         router.push("/surveymodule"); // Replace with the actual path of your login/signup page
       } else {
         setError("Invalid master key");
-      }
+      }   
     } catch (error: any) {
       console.error("Error validating master key:", error.message);
       setError("An error occurred while validating the master key");

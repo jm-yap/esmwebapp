@@ -9,6 +9,15 @@ import { set } from "firebase/database";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export default function ClientAccount() {
+  try {
+    const isMasterKeyPresent = sessionStorage.getItem("masterKey");
+    if (isMasterKeyPresent !== "true") {
+      redirect("/");
+    }
+  } catch (error) {
+    redirect("/");
+  }
+
   const session = useSession({
     required: true,
     onUnauthenticated() {
@@ -25,12 +34,14 @@ export default function ClientAccount() {
   const [contactNumber, setContactNumber] = useState<string>("");
 
   async function getUserData(email: string) {
-    const firstName = sessionStorage.getItem("firstName");
-    const lastName = sessionStorage.getItem("lastName");
-    const middleName = sessionStorage.getItem("middleName");
-    const contactNumber = sessionStorage.getItem("contactNumber");
+    const isValid = sessionStorage.getItem("validInfo");
 
-    if (firstName) {
+    if (isValid === "true") {
+      const firstName = sessionStorage.getItem("firstName");
+      const lastName = sessionStorage.getItem("lastName");
+      const middleName = sessionStorage.getItem("middleName");
+      const contactNumber = sessionStorage.getItem("contactNumber");
+      
       setFirstName(firstName);
       setLastName(lastName);
       setMiddleName(middleName);
@@ -123,6 +134,7 @@ export default function ClientAccount() {
         <div className={styles.buttonContainer}>
           <button className={styles.button} onClick={() => editClientAccount()}>E D I T</button>
           <button className={styles.button} onClick={() => {
+            sessionStorage.setItem("validInfo", "false");
             signOut();
           }}>L O G O U T</button>
         </div>

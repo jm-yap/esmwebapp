@@ -5,8 +5,8 @@ import {
   QueryDocumentSnapshot,
   addDoc,
   deleteDoc,
-  // query,
-  // where,
+  getDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { doc } from "firebase/firestore";
@@ -25,14 +25,6 @@ export async function getSurveyModules(): Promise<any> {
 
   return surveyModuleList;
 }
-
-// export async function countSurveys(AccessCode: string): Promise<any> {
-//   const surveyCollection = collection(db, "Survey");
-//   const filteredSurveyCollection = query(surveyCollection, where("AccessCode", "==", AccessCode));
-//   const surveyCollectionSnapshot = await getDocs(filteredSurveyCollection);
-
-//   return surveyCollectionSnapshot.docs.length.toString();
-// }
 
 export async function addSurveyModule(
   builderEmail: string,
@@ -69,6 +61,25 @@ export async function deleteSurveyModule(
     return true;
   } catch (error) {
     console.error("Error deleting survey module", error);
+    return false;
+  }
+}
+
+export async function updateSurveyModule(accessCode: string, title: string, description: string, isAnonymous: Boolean): Promise<any> {
+  const surveyModuleDocRef = doc(db, "ResearchModules", accessCode);
+
+  // surveyModuleDoc = await getDoc(surveyModuleDocRef);
+  try {
+    await updateDoc(surveyModuleDocRef, {
+      Title: title,
+      Description: description,
+      IsAnonymous: isAnonymous
+    });
+    
+    console.log("Survey module updated with ID: ", accessCode);
+    return true;
+  } catch (error) {
+    console.error("Error updating survey module", error);
     return false;
   }
 }

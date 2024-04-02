@@ -75,3 +75,33 @@ export async function deleteSurvey(
     return false;
   }
 }
+
+export async function updateSurvey(
+  accessCode: string,
+  title: string,
+  description: string,
+  sessions: number,
+  interval: number,
+  startDate: string,
+  endDate: string
+  ): Promise<any> {
+  const surveyDocRef = doc(db, "Survey", accessCode);
+
+  // surveyDoc = await getDoc(surveyModuleDocRef);
+  try {
+    await updateDoc(surveyDocRef, {
+      Title: title,
+      Description: description,
+      Sessions: sessions,
+      Interval: interval,
+      StartDate: startDate,
+      EndDate: endDate
+    });
+    
+    console.log("Survey updated with ID: ", accessCode);
+    return true;
+  } catch (error) {
+    console.error("Error updating survey", error);
+    return false;
+  }
+}

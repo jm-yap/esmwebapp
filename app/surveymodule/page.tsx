@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import {
   getSurveyModules,
-  // countSurveys,
   addSurveyModule,
   deleteSurveyModule
 } from "@/actions/surveymodule";
@@ -37,8 +36,7 @@ export default function SurveyModule() {
   const router = useRouter();
 
   const [builderEmail, setBuilderEmail] = useState(""); 
-  const [surveyModules, setSurveyModules] = useState([]); // Get the list of survey modules
-  // const [surveyCount, setSurveyCount] = useState<Record<string, number>>({});
+  const [surveyModules, setSurveyModules] = useState([]);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
@@ -71,27 +69,6 @@ export default function SurveyModule() {
 
     fetchData();
   }, [session]);
-
-
-  // useEffect(() => {
-  //   const fetchSurveyCounts = async () => {
-  //     const counts = await Promise.all(
-  //       surveyModules.map(async (surveyModule) => {
-  //         const count = await countSurveys(surveyModule.id);
-  //         return { id: surveyModule.id, count };
-  //       })
-  //     );
-  
-  //     const countMap = counts.reduce((map, { id, count }) => {
-  //       map[id] = count;
-  //       return map;
-  //     }, {});
-  
-  //     setSurveyCount(countMap);
-  //   };
-  
-  //   fetchSurveyCounts();
-  // }, [surveyModules]);
   
   const handleCheckboxChange = (e: any) => {
     setIsAnonymous(e.target.checked);

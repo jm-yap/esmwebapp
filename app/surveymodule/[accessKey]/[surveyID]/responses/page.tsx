@@ -44,10 +44,15 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
   console.log(session)
   const newStart = new Date(surveyInfo?.StartDate.seconds * 1000)
   const startDate = newStart.toLocaleDateString();
-
   const newEnd = new Date(surveyInfo?.EndDate.seconds * 1000)
   const endDate = newEnd.toLocaleDateString();
-  if (responses.length == 0) {
+
+  const builderFirstName = sessionStorage.getItem("firstName");
+  const builderLastName = sessionStorage.getItem("lastName");
+
+  console.log(builderFirstName, builderLastName)
+
+  if (responses.length === 0) {
     return (
           <div className="pageProperty">         
             <main className="main">
@@ -60,11 +65,11 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                 </div>   
                 </Link> 
     
-                {/* <div className="builderName">
+                <div className="builderName">
                   <h1>
                     First Name Last Name  
                   </h1> 
-                </div> */}
+                </div>
     
     
               </div>
@@ -87,7 +92,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
     
                 <div className="surveyInfoRight">
                   {/* right */}
-              
+                  <h1 className="surveyInfoText">convert cv here</h1>
                   <h1 className="surveyInfoText">Opens on: {startDate}</h1>
                   <h1 className="surveyInfoText">Closes on: {endDate}</h1>
                   <h1 className="surveyInfoText">Total Questions: {surveyInfo?.TotalQuestions}</h1>
@@ -109,18 +114,20 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
         <main className="main">
           <div className = "banner">
             <Link href={`/surveymodule/`}>
-            <div className = "bannerTitle">
-              <h1 className="bannerTitleChild">Sagot</h1>
-              <h1 className="bannerTitleChild bannerKita">Kita</h1>
-              <h1 className="bannerTitleChild">.</h1>
-            </div>   
+              <div className = "bannerTitle">
+                <h1 className="bannerTitleChild">Sagot</h1>
+                <h1 className="bannerTitleChild bannerKita">Kita</h1>
+                <h1 className="bannerTitleChild">.</h1>
+              </div>   
             </Link> 
 
-            {/* <div className="builderName">
-              <h1>
-                First Name Last Name  
-              </h1> 
-            </div> */}
+            <Link href={``}>
+              <div className="builderName">
+                <h1>
+                  {builderFirstName} {builderLastName}
+                </h1> 
+              </div>
+            </Link>
 
 
           </div>
@@ -142,8 +149,8 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
             </div>
 
             <div className="surveyInfoRight">
-              {/* right */}
-          
+                  {/* right */}
+              <h1 className="surveyInfoText">Convert cv here</h1>
               <h1 className="surveyInfoText">Opens on: {startDate}</h1>
               <h1 className="surveyInfoText">Closes on: {endDate}</h1>
               <h1 className="surveyInfoText">Total Questions: {surveyInfo?.TotalQuestions}</h1>
@@ -153,7 +160,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
           <div className = "tableDiv">
             <table className="table">
               <thead className="">
-                <tr>
+                <tr key = {surveyInfo?.id}>
                   <th scope="col" className="tableHeader">ResponseID</th>
                   <th scope="col" className="tableHeader">Timestamp</th>
                   {
@@ -170,23 +177,19 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
               <tbody>
                 {
                   responses.map((response: any) => {
-                    const date = new Date(response.time.seconds * 1000);
-                    const dateString = date.toLocaleString();
-                    console.log(dateString)
-                    
                     return (
-                      <tr key={response.respID}>
+                      <tr key={response?.respID}>
                         <td className="tableCell tr:hover">
                           {response.respID}
                         </td>
 
                         <td className="tableCell tr:hover">
-                          {dateString}
+                          {response.time}
                         </td>
                         
                         {
                           response.list.map((perResponse: any) => {
-                            if (perResponse.data.Response === "") {
+                            if (perResponse.Response === "") {
                               return (
                                 <td key={perResponse.id} className="tableCell tr:hover">                              
                                 </td>
@@ -196,10 +199,10 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                               return (
                                 <td key={perResponse.id} className="tableCell tr:hover">
                                   {
-                                    (typeof perResponse?.data?.Response === 'string' || perResponse?.data?.Response instanceof String) && perResponse?.data?.Response
+                                    (typeof perResponse?.Response === 'string' || perResponse?.Response instanceof String) && perResponse?.Response
                                   }
                                   {
-                                    Array.isArray(perResponse?.data?.Response) && perResponse?.data?.Response.map((option: any) => {
+                                    Array.isArray(perResponse?.Response) && perResponse?.Response.map((option: any) => {
                                       return (
                                         `${option}, `
                                       )

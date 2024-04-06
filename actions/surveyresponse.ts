@@ -37,7 +37,7 @@ export async function getResponses(
       data: doc.data(), 
     };
   });
-
+  // console.log(respArr, 'bruh')
   // Retrieving all responseInstances given a responseID
   const responseInstanceColl = collection(db, `ResponseInstance`);
     
@@ -47,7 +47,7 @@ export async function getResponses(
       let docsToObj = getResponseInst?.docs.map((doc) => {              
         return {
           id: doc.id,
-          data: doc.data(), // qID, response, rID
+          ...doc.data(), // qID, response, rID
         };
       });
 
@@ -58,21 +58,27 @@ export async function getResponses(
         let flag: boolean = false;
         let respIt: any;
         for (let j = 0; j < docsToObj.length; j++) {            
-            if (surveyQuestions[i].id === docsToObj[j].data.QuestionID) {              
+            if (surveyQuestions[i].id === docsToObj[j].QuestionID) {              
               flag = true; 
               respIt = docsToObj[j];       
               break;     
             }
         }
         if (!flag) {
-          arrangedResponseInstances.push({id: "null", data: {QuestionID: surveyQuestions[i].id, Response: "", ResponseID: response.id}});
+          // why did i add the QID and RID if the responseinstance does not exist (e.g. no answer to that question)?
+          // to still create a unique ID and prevent console error
+          arrangedResponseInstances.push({id: surveyQuestions[i].id + response.id, 
+            QuestionID: surveyQuestions[i].id, Response: "", ResponseID: response.id});
         }
         else {
           arrangedResponseInstances.push(respIt);
         }
       }
-      let out = {respID: response.id, time: response.data.Timestamp, list: arrangedResponseInstances};
 
+      const date = new Date(response.data.Timestamp.seconds * 1000);
+      const dateString = date.toLocaleString();
+      let out = {respID: response.id, time: dateString, list: arrangedResponseInstances};
+      // console.log(out)
       return out;
     })
   );
@@ -94,8 +100,3 @@ export async function getSurveyDetails(
   }
 }
 
-export async function getBuilderDetails(
-  builderMail: string, 
-): Promise<any> {
-  
-}

@@ -37,7 +37,7 @@ export async function getResponses(
       data: doc.data(), 
     };
   });
-  console.log(respArr, 'bruh')
+  // console.log(respArr, 'bruh')
   // Retrieving all responseInstances given a responseID
   const responseInstanceColl = collection(db, `ResponseInstance`);
     
@@ -78,7 +78,7 @@ export async function getResponses(
       const date = new Date(response.data.Timestamp.seconds * 1000);
       const dateString = date.toLocaleString();
       let out = {respID: response.id, time: dateString, list: arrangedResponseInstances};
-      console.log(out)
+      // console.log(out)
       return out;
     })
   );
@@ -100,8 +100,3 @@ export async function getSurveyDetails(
   }
 }
 
-export async function getBuilderDetails(
-  builderMail: string, 
-): Promise<any> {
-  
-}

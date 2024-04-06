@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getResponses, getSurveyDetails, getBuilderDetails } from "@/actions/surveyresponse";
+import { getResponses, getSurveyDetails, getBuilderDetails, } from "@/actions/surveyresponse";
 import { getQuestions } from "@/actions/surveyquestion";
 import './response.css';
 import Link from "next/link";
@@ -13,6 +13,10 @@ interface ResponsePageProps {
     surveyID: string;
   };
 }
+
+
+
+
 
 export default function ResponsesPage({ params }: ResponsePageProps) {
   const [responses, setResponses] = useState([]);
@@ -32,7 +36,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
       });
       getSurveyDetails(params.surveyID).then((info: any) => {
         setSurveyInfo(info);
-        console.log(surveyInfo)
+        // console.log(surveyInfo)
 
       
       })
@@ -40,8 +44,9 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
     fetchData();
   }, []);
 
-  console.log(surveyInfo)
-  console.log(session)
+  console.log(headerQuestions)
+  // console.log(surveyInfo)
+  // console.log(session)
   const newStart = new Date(surveyInfo?.StartDate.seconds * 1000)
   const startDate = newStart.toLocaleDateString();
   const newEnd = new Date(surveyInfo?.EndDate.seconds * 1000)
@@ -50,8 +55,23 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
   const builderFirstName = sessionStorage.getItem("firstName");
   const builderLastName = sessionStorage.getItem("lastName");
 
-  console.log(builderFirstName, builderLastName)
+  // console.log(builderFirstName, builderLastName)
+  console.log(responses)
 
+  const downloadCSV = () => {
+    alert("Downloading CSV file");
+    console.log("MARKER OF THIS EVENT",headerQuestions)
+    console.log("MARKER OF THIS EVENT",responses)
+    let questionIDToText = {};
+    // let questionIDToResponseInst: any[] = [];
+
+    headerQuestions?.map((object, index)=>{
+      questionIDToText[object.id] = object.data.QuestionText
+    })
+
+    
+    console.log("hellaur",questionIDToText)
+  }
   if (responses.length === 0) {
     return (
           <div className="pageProperty">         
@@ -92,7 +112,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
     
                 <div className="surveyInfoRight">
                   {/* right */}
-                  <h1 className="surveyInfoText">convert cv here</h1>
+                  {/* <h1 className="surveyInfoText">convert cv here</h1> */}
                   <h1 className="surveyInfoText">Opens on: {startDate}</h1>
                   <h1 className="surveyInfoText">Closes on: {endDate}</h1>
                   <h1 className="surveyInfoText">Total Questions: {surveyInfo?.TotalQuestions}</h1>
@@ -150,7 +170,8 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
 
             <div className="surveyInfoRight">
                   {/* right */}
-              <h1 className="surveyInfoText">Convert cv here</h1>
+              {/* <h1 className="surveyInfoText">Convert cv here</h1> */}
+              <button className="downloadCSVText" onClick={downloadCSV}>sdsds</button>
               <h1 className="surveyInfoText">Opens on: {startDate}</h1>
               <h1 className="surveyInfoText">Closes on: {endDate}</h1>
               <h1 className="surveyInfoText">Total Questions: {surveyInfo?.TotalQuestions}</h1>

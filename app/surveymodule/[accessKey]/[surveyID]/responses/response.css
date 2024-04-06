@@ -42,10 +42,17 @@
 }
 .surveyInfoText {
     font-weight: 625;
-    /* font-size:  25px; */
     font-size: 25px;
     margin: 5px;
 }
+
+.downloadCSVText {
+    font-weight: 625;
+    font-size: 25px;
+    margin: 5px;
+    color:#E07961;
+}
+
 
 .surveyTitleBack{
     display:flex;
@@ -85,11 +92,12 @@
     /* background-color: black; */
     justify-content: center;
     display: flex;
-    /* flex-flow: column;
-    height: 100%; */
+    flex-flow: column;
+    /* height: 100%; */
     /* padding: 70px; */
     overflow-x: auto;
-    /* overflow-y: auto; */
+    overflow-y: auto;
+    /* width: 100%; */
 
 }
 .table {

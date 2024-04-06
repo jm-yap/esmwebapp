@@ -14,6 +14,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { clear } from "console";
 
 interface SurveyPageProps {
   params: {
@@ -74,8 +75,8 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
         setSurveyList(surveys);
       });
     };
-
     fetchData();
+    localStorage.removeItem("survey");
   }, []);
 
   // Deletion
@@ -88,6 +89,8 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
       console.error("Error deleting survey question:", error.message);
     }
   };
+
+
 
   // get the survey modules from local storage
   const surveyModuleStr = localStorage.getItem("surveyModule");
@@ -165,7 +168,7 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
             <div className={styles.SurveyContainer}>
               <div className={styles.cardRow}>
                 <Link href={`/surveymodule/${params.accessKey}/${survey.id}/questions`}>
-                  <button className={styles.SurveyTitle} onClick={() =>localStorage.setItem("survey", JSON.stringify(survey))}>
+                  <button className={styles.SurveyTitle} onClick={() => localStorage.setItem("survey", JSON.stringify(survey))}>
                     {survey.data.Title}
                   </button>
                 </Link>

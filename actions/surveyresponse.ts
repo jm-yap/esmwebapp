@@ -16,18 +16,14 @@ import { db } from "../firebase";
 import {Timestamp} from "firebase/firestore";
 import { getClientAccountByEmail } from "@/actions/clients";
 
+// For every Response to a Survey, fetches all the 
 export async function getResponses(
   accessKey: string,
   surveyID: string,
   surveyQuestions: any[],
 ): Promise<any[]> {
-  // surveyQuestions is already in the form of: return {
-  //   id: doc.id,
-  //   AccessCode: AccessCode,
-  //   data: doc.data(),
-  // };
 
-  // Retrieving all relevant response docs given a surveyID
+  // Retrieve all relevant response docs given a surveyID
   const responseDocumentColl = collection(db, `Response`)  
   const relevantResponsesQuery = query(responseDocumentColl, where("SurveyID", "==", `${surveyID}`));
   const relevantResponses = await getDocs(relevantResponsesQuery);
@@ -37,17 +33,35 @@ export async function getResponses(
       data: doc.data(), 
     };
   });
-  // console.log(respArr, 'bruh')
-  // Retrieving all responseInstances given a responseID
-  const responseInstanceColl = collection(db, `ResponseInstance`);
-    
+  // console.log(respArr, 'disaster')
+
+  // Retrieve the client associated with a response
+  // Data used when the survey module is not set to anonymous.
+  const clientEmailColl = collection(db, `Client`)
+  const clientToModuleQuery = query(clientEmailColl, where("EnrolledIn", 'array-contains-any', [accessKey]))
+  const getRelevantClients = await getDocs(clientToModuleQuery)
+
+  const associateEmailToClient = {}
+
+  getRelevantClients?.docs.forEach((doc)=> {
+    associateEmailToClient[doc.id] = doc.data().FullName
+  })
+  console.log(associateEmailToClient, "THIS ISISISISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+
+  // respArr.forEach((responseObj)=>{
+
+  // })
+
+  // Retrieve all responseInstances given a responseID, for all responseIDs
+  const responseInstanceColl = collection(db, `ResponseInstance`);    
   const relevantResponseInstances = await Promise.all(respArr?.map(async (response) => {
       let q =  query(responseInstanceColl, where("ResponseID", "==", `${response.id}`));
       let getResponseInst = await getDocs(q);  // get all responseInstances of responseID
       let docsToObj = getResponseInst?.docs.map((doc) => {              
         return {
-          id: doc.id,
-          ...doc.data(), // qID, response, rID
+          id: doc.id,  
+          QuestionID: doc.data().QuestionID,
+          Response: doc.data().Response,
         };
       });
 
@@ -68,7 +82,7 @@ export async function getResponses(
           // why did i add the QID and RID if the responseinstance does not exist (e.g. no answer to that question)?
           // to still create a unique ID and prevent console error
           arrangedResponseInstances.push({id: surveyQuestions[i].id + response.id, 
-            QuestionID: surveyQuestions[i].id, Response: "", ResponseID: response.id});
+            QuestionID: surveyQuestions[i].id, Response: "", });
         }
         else {
           arrangedResponseInstances.push(respIt);
@@ -77,12 +91,13 @@ export async function getResponses(
 
       const date = new Date(response.data.Timestamp.seconds * 1000);
       const dateString = date.toLocaleString();
-      let out = {respID: response.id, time: dateString, list: arrangedResponseInstances};
+      let out = {respID: response.id, clientName: associateEmailToClient[response.data.ClientEmail],time: dateString, list: arrangedResponseInstances};
       // console.log(out)
       return out;
     })
   );
-
+  
+  console.log(relevantResponseInstances)
   return relevantResponseInstances;  
 }
 
@@ -100,3 +115,63 @@ export async function getSurveyDetails(
   }
 }
 
+export async function getModuleAnon(
+  moduleID: string,
+): Promise<any> {
+  const docRef = doc(db, `ResearchModules`, `${moduleID}` );
+  const fetchedModuleInfo = await getDoc(docRef);
+
+  return {
+    id: fetchedModuleInfo.id,
+    anon: fetchedModuleInfo.data().IsAnonymous,
+  }
+}
+
+// export async function downloadCSV (
+//   headerQuestions: any[], 
+//   responses: any[],
+//   anonymity?: boolean,
+// ): Promise<any> {
+
+//   let questionIDToText = [];
+//   let questionIDToResponseInst = [];
+
+//   questionIDToText = headerQuestions?.map((object, index)=>{
+//     return {
+//       id: object.id,
+//       displayName: object.data.QuestionText
+//     };
+//   })
+
+//   // Required: Timestamp column
+//   // if anon: response ID, if not anon: name
+
+//   questionIDToResponseInst = responses.map((responseObj, responseIdx) => {
+//     // questionIDToResponseInst[responseObj.QuestionID] = responseObj.Response;
+
+//     // responseObj.map()
+//     let perRow = {}; //Assuming anonymous pa to ah
+
+//     responseObj.list.forEach((value: any)=>{
+//       // perRow[value.QuestionID] 
+//       if (Array.isArray(value.Response)) {
+//         if (!value.Response.length) {
+//           // empty array
+//           perRow[value.QuestionID] = ""
+//         } else {
+//           perRow[value.QuestionID] = value.Response.join(', ')
+//         }
+//       } else {
+//         perRow[value.QuestionID] = value.Response
+//       }
+
+//     })
+
+//     return perRow;
+//   })
+
+  
+//   console.log("hellaurssssss",questionIDToText, "mangaa");
+//   console.log("obiwan", questionIDToResponseInst)
+//   return [questionIDToText, questionIDToResponseInst]
+// }

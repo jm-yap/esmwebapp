@@ -86,6 +86,7 @@ export default function ClientAccount() {
     } else {
       signOut();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { FirstName, MiddleName, LastName, ContactNumber } = userdata || {};

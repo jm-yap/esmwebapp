@@ -2,7 +2,7 @@
 import QuestionCard from "@/app/components/questions";
 import { getQuestions, deleteQuestion } from "@/actions/surveyquestion";
 import { useEffect, useState } from "react";
-import { addDoc, collection, doc, updateDoc, increment} from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc, increment, arrayUnion} from "firebase/firestore";
 import { db } from "@/firebase";
 import Link from "next/link";
 import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
@@ -18,6 +18,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
+import { set } from "firebase/database";
 
 interface QuestionPageProps {
   params: {
@@ -49,13 +50,14 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     const QuestionType = e.target.elements.QuestionType.value;
 
     try {
+      let docRef;
       // Add a new document with a generated id
       if (QuestionType === "5") {
         const MinValue = parseInt(e.target.elements.MinValue.value);
         const MaxValue = parseInt(e.target.elements.MaxValue.value);
         const Step = parseInt(e.target.elements.Step.value);
         const slider = [MinValue, MaxValue, Step];
-        const docRef = await addDoc(questionRef, {
+        docRef = await addDoc(questionRef, {
           SurveyID: SurveyID,
           QuestionText: QuestionText,
           QuestionType: QuestionType,
@@ -63,7 +65,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
         });
         console.log("Question added with ID:", docRef.id);
       } else {
-        const docRef = await addDoc(questionRef, {
+        docRef = await addDoc(questionRef, {
           SurveyID: SurveyID,
           QuestionText: QuestionText,
           QuestionType: QuestionType,
@@ -77,25 +79,28 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
       // Update the list of questions
       const updatedQuestions = await getQuestions(
         params.accessKey,
-        params.surveyID
+        params.surveyID,
+        survey?.data.QuestionOrder
       );
       setQuestionsList(updatedQuestions);
 
       // add 1 to total questions of survey
       const surveyRef = doc(db, "/Survey", params.surveyID);
       await updateDoc(surveyRef, {
-        TotalQuestions: increment(1)
+        TotalQuestions: increment(1),
+        QuestionOrder: arrayUnion(docRef.id),
       });
 
       // Clear form
       e.target.elements.QuestionText.value = "";
-      e.target.elements.QuestionType.value = "";
+      e.target.elements.QuestionType.value = "1";
       setNumFields(0);
       e.target.elements.NumOptions.value = 0;
       e.target.elements.MinValue.value = "";
       e.target.elements.MaxValue.value = "";
       e.target.elements.Step.value = "";
       setFields([]);
+      setQuestionType("1");
     } catch (error) {
       console.error("Error adding  Question:", error);
     }
@@ -104,19 +109,20 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   // Fetching
   useEffect(() => {
     const fetchData = () => {
-      getQuestions(params.accessKey, params.surveyID).then((Questions: any) => {
+      getQuestions(params.accessKey, params.surveyID, survey?.data.QuestionOrder).then((Questions: any) => {
         setQuestionsList(Questions);
       });
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Deletion
   const handleDeleteQuestion = async (QuestionID: string) => {
     try {
       await deleteQuestion(params.accessKey, params.surveyID, QuestionID);
-      const updatedQuestions = await getQuestions(params.accessKey,params.surveyID);
+      const updatedQuestions = await getQuestions(params.accessKey,params.surveyID,survey?.data.QuestionOrder);
       setQuestionsList(updatedQuestions);
     } catch (error: any) {
       console.error("Error deleting survey Question:", error.message);
@@ -128,8 +134,9 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
 
   const handleQuestionTypeChange = (e) => {
     setQuestionType(e.target.value);
-    if (questionType === "5") {
-      setNumFields(3);
+    if (questionType === "5" || questionType === "4") {
+      // setNumFields(3);
+      setFields([]);
     }
   };
 
@@ -210,7 +217,8 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                   <label className={styles.sidebarLabel}>Type</label>
                   <select name="QuestionType" className={styles.sidebarTextField} 
                     value={questionType}
-                    onChange={handleQuestionTypeChange}>
+                    onChange={handleQuestionTypeChange}
+                    defaultValue={"1"}>
                     <option value="1">Text</option>
                     <option value="2">Multiple Choice</option>
                     <option value="3">Checkbox</option>
@@ -223,6 +231,18 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                     <div className={styles.sidebarFormBit}>
                       <label className={styles.sidebarLabel}>Number of Choices</label>
                       <input value={numFields} type="number" required onChange={handleNumFieldsChange} min="1" name="NumOptions" className={styles.sidebarTextField} />
+                      {fields.map((field, index) => (
+                        <label key={index} className={styles.sidebarLabel}>
+                          Option {index + 1}:
+                          <input
+                          className={styles.sidebarOptionField}
+                          type="text"
+                          required
+                          value={field}
+                          onChange={(e) => handleFieldChange(e, index)}
+                          />
+                        </label>
+                      ))}
                     </div>
                   ) : 
                   (questionType === "5") ? (
@@ -236,7 +256,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                     </div>
                   ) : null
                 }
-                {fields.map((field, index) => (
+                {/* {fields.map((field, index) => (
                   <div key={index} className={styles.sidebarFormBit}>
                     <label className={styles.sidebarLabel}>
                       Option {index + 1}:
@@ -249,7 +269,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                       />
                     </label>
                   </div>
-                ))}
+                ))} */}
                 <button className={styles.sidebarButton} type="submit">C R E A T E</button>
               </form>
             </div>

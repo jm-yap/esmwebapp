@@ -77,6 +77,8 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
     };
     fetchData();
     localStorage.removeItem("survey");
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Deletion

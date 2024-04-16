@@ -24,20 +24,22 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
 
   useEffect(() => {
     const fetchData = () => {
-      getQuestions(params.accessKey, params.surveyID).then((questions: any) => {
-        setHeaderQuestions(questions);
-        getResponses(params.accessKey, params.surveyID, questions).then((responses: any) => {
-          setResponses(responses); 
-        });
-      });
       getSurveyDetails(params.surveyID).then((info: any) => {
         setSurveyInfo(info);
         console.log(surveyInfo)
 
       
-      })
+      });
+      getQuestions(params.accessKey, params.surveyID, surveyInfo?.QuestionOrder).then((questions: any) => {
+        setHeaderQuestions(questions);
+        getResponses(params.accessKey, params.surveyID, questions).then((responses: any) => {
+          setResponses(responses); 
+        });
+      });
+      
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   console.log(surveyInfo)

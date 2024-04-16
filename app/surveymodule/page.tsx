@@ -42,6 +42,7 @@ export default function SurveyModule() {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,6 +51,7 @@ export default function SurveyModule() {
         try {
           const modules = await getSurveyModules();
           setSurveyModules(modules);
+          
           const userdata = await getClientAccountByEmail(builderEmail);
           if (userdata) {
             sessionStorage.setItem("firstName", userdata.FirstName);
@@ -70,6 +72,7 @@ export default function SurveyModule() {
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
 

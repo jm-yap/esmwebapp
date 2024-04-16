@@ -8,15 +8,16 @@ import Link from "next/link";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSession } from "next-auth/react";
 import CsvDownloader from 'react-csv-downloader';
+
+
+
+
 interface ResponsePageProps {
   params: {
     accessKey: string;
     surveyID: string;
   };
 }
-
-
-
 
 
 export default function ResponsesPage({ params }: ResponsePageProps) {
@@ -38,9 +39,11 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
       });
       getSurveyDetails(params.surveyID).then((info: any) => {
         setSurveyInfo(info);
-   
-        getModuleAnon(info.AccessCode).then((moduleAnonInfo)=>{
-          setModuleAnon(moduleAnonInfo)
+        // console.log(info?.AccessCode, params.accessKey, "let us compare these valss")
+        // console.log(info, "another info")
+        getModuleAnon(params.accessKey).then((moduleAnonInfo)=>{
+          // console.log("this is the module info:", moduleAnonInfo)
+          setModuleAnon(moduleAnonInfo.anon)
         })
       
       })
@@ -48,8 +51,8 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
     fetchData();
   }, []);
 
-  console.log(headerQuestions)
-  console.log(moduleAnon)
+  // console.log(info, '')
+  console.log(moduleAnon, 'this is the anonymity of the module')
   // console.log(surveyInfo)
   // console.log(session)
   const newStart = new Date(surveyInfo?.StartDate.seconds * 1000)
@@ -60,14 +63,14 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
   const builderFirstName = sessionStorage.getItem("firstName");
   const builderLastName = sessionStorage.getItem("lastName");
 
-  console.log(surveyInfo)
+  // console.log(surveyInfo)
   // console.log(builderFirstName, builderLastName)
-  console.log(responses)
+  // console.log(responses)
 
   const downloadCSVHandler = () => {
     // alert("Downloading CSV file");
-    console.log("MARKER OF THIS EVENT",headerQuestions)
-    console.log("MARKER OF THIS EVENT",responses)
+    // console.log("MARKER OF THIS EVENT",headerQuestions)
+    // console.log("MARKER OF THIS EVENT",responses)
     
     // downloadCSV(headerQuestions, responses);
 
@@ -76,18 +79,17 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
 
   // must take into account the anonymity of the survey module
 
+  if (moduleAnon == false) {
+    questionIDToText.push({
+      id: "Name",
+      displayName: "Name"
+    })
+  }
+
   questionIDToText.push({
     id: "Timestamp",
     displayName: "Timestamp"
   })
-
-
-  // questionIDToText = headerQuestions?.map((object, index)=>{
-  //   return {
-  //     id: object.id,
-  //     displayName: object.data.QuestionText
-  //   };
-  // })
 
   headerQuestions?.forEach((object, index)=>{
     questionIDToText.push({
@@ -97,16 +99,14 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
   })
 
   // Required: Timestamp column
-  // if anon: response ID, if not anon: name
+  // if anon: wala, if not anon: name
 
   questionIDToResponseInst = responses.map((responseObj, responseIdx) => {
-    // questionIDToResponseInst[responseObj.QuestionID] = responseObj.Response;
-
-    // responseObj.map()
     let perRow = {}; //Assuming anonymous pa to ah
 
+    if (moduleAnon == false) perRow["Name"] =  responseObj.clientName
     perRow["Timestamp"] = responseObj.time;
-
+    // console.log(responseObj.clientName)
     responseObj.list.forEach((value: any)=>{
       // perRow[value.QuestionID] 
       if (Array.isArray(value.Response)) {
@@ -134,7 +134,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
   
   let csvData: any = downloadCSVHandler()
   let csvFileName: string = `${surveyInfo?.Title} Response Data`
-  console.log(csvData, 'AALALALALALLALALA')
+  // console.log(csvData, 'AALALALALALLALALA')
 
   if (responses.length === 0) {
     return (
@@ -149,11 +149,13 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                 </div>   
                 </Link> 
     
-                <div className="builderName">
-                  <h1>
-                    First Name Last Name  
-                  </h1> 
-                </div>
+                <Link href={``}>
+                  <div className="builderName">
+                    <h1>
+                      {builderFirstName} {builderLastName}
+                    </h1> 
+                  </div>
+                </Link>
     
     
               </div>
@@ -170,6 +172,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                     <h1 className="surveyInfoText">Survey Description: {surveyInfo?.Description}</h1>
                     <h1 className="surveyInfoText">Required No. of Sessions: {surveyInfo?.Sessions}</h1>
                     <h1 className="surveyInfoText">Minimum Interval (in hours): {surveyInfo?.Interval}</h1>
+                    <h1 className="surveyInfoText">Module Anonymity: {`${moduleAnon}`}</h1>
                   </div>
                   
                 </div>
@@ -228,6 +231,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                 <h1 className="surveyInfoText">Survey Description: {surveyInfo?.Description}</h1>
                 <h1 className="surveyInfoText">Required No. of Sessions: {surveyInfo?.Sessions}</h1>
                 <h1 className="surveyInfoText">Minimum Interval (in hours): {surveyInfo?.Interval}</h1>
+                <h1 className="surveyInfoText">Module Anonymity: {`${moduleAnon}`}</h1>
               </div>
               
             </div>
@@ -245,8 +249,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                 meta= {true}
                 title = {csvFileName}
                 columns = {csvData[0]}
-                datas = {csvData[1]}
-                
+                datas = {csvData[1]}                
               />
               <h1 className="surveyInfoText">Opens on: {startDate}</h1>
               <h1 className="surveyInfoText">Closes on: {endDate}</h1>
@@ -258,8 +261,15 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
             <table className="table">
               <thead className="">
                 <tr key = {surveyInfo?.id}>
-                  <th scope="col" className="tableHeader">ResponseID</th>
-                  <th scope="col" className="tableHeader">Name</th>
+
+                  {(moduleAnon == false) &&
+                    <th scope="col" className="tableHeader">ResponseID</th>            
+                  }
+                  {(moduleAnon == false) &&                    
+                    <th scope="col" className="tableHeader">Name</th>
+                  }     
+                  {/* <th scope="col" className="tableHeader">ResponseID</th> */}
+                  {/* <th scope="col" className="tableHeader">Name</th> */}
                   <th scope="col" className="tableHeader">Timestamp</th>
                   {
                     headerQuestions.map((questionJSON: any) => {
@@ -277,20 +287,24 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                   responses.map((response: any) => {
                     return (
                       <tr key={response?.respID}>
-                        <td className="tableCell tr:hover">
-                          {response.respID}
-                        </td>
 
-                        <td className="tableCell tr:hover">
-                          {response.clientName}
-                        </td>
+                        {(moduleAnon == false) &&
+                          <td className="tableCell tr:hover">
+                            {response.respID}
+                          </td>                      
+                        }
+
+                        {(moduleAnon == false) &&                  
+                          <td className="tableCell tr:hover">
+                            {response.clientName}
+                          </td>                        
+                        }
+
 
                         <td className="tableCell tr:hover">
                           {response.time}
                         </td>
 
-                
-                        
                         {
                           response.list.map((perResponse: any) => {
                             if (perResponse.Response === "") {

@@ -33,7 +33,6 @@ export async function getResponses(
       data: doc.data(), 
     };
   });
-  // console.log(respArr, 'disaster')
 
   // Retrieve the client associated with a response
   // Data used when the survey module is not set to anonymous.
@@ -46,11 +45,7 @@ export async function getResponses(
   getRelevantClients?.docs.forEach((doc)=> {
     associateEmailToClient[doc.id] = doc.data().FullName
   })
-  console.log(associateEmailToClient, "THIS ISISISISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
-
-  // respArr.forEach((responseObj)=>{
-
-  // })
+  // console.log(associateEmailToClient, "THIS ISISISISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
 
   // Retrieve all responseInstances given a responseID, for all responseIDs
   const responseInstanceColl = collection(db, `ResponseInstance`);    
@@ -91,13 +86,13 @@ export async function getResponses(
 
       const date = new Date(response.data.Timestamp.seconds * 1000);
       const dateString = date.toLocaleString();
-      let out = {respID: response.id, clientName: associateEmailToClient[response.data.ClientEmail],time: dateString, list: arrangedResponseInstances};
+      let processedResponse = {respID: response.id, clientName: associateEmailToClient[response.data.ClientEmail], time: dateString, list: arrangedResponseInstances};
       // console.log(out)
-      return out;
+      return processedResponse;
     })
   );
   
-  console.log(relevantResponseInstances)
+  // console.log(relevantResponseInstances)
   return relevantResponseInstances;  
 }
 

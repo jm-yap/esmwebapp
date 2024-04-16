@@ -251,7 +251,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                   value = {filterName}                
                   onChange = {handleNameFilter}>
                   <option value='None'>No filter</option>
-                  {clientNames.map((data)=>{return <option value={data}>{data}</option>})}
+                  {clientNames.map((data)=>{return <option key={data} value={data}>{data}</option>})}
                 </select>
               </div>
               

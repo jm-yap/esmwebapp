@@ -43,7 +43,8 @@ export async function addSurvey({survey}:NewSurveyProps){
         EndDate: survey.EndDate,
         Sessions: survey.Sessions,
         Interval: survey.Interval,
-        TotalQuestions: survey.TotalQuestions
+        TotalQuestions: survey.TotalQuestions,
+        QuestionOrder: []
       });
 
       console.log("Survey added with ID:", docRef.id);

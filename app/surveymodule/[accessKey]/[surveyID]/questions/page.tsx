@@ -40,12 +40,6 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     setSurvey(parsedSurvey);
     // if (survey) setQuestionOrder(survey.data.QuestionOrder);
   }, [params.surveyID]);
-
-  useEffect(() => {
-    if (survey && survey.data && survey.data.QuestionOrder)
-      setQuestionOrder(survey.data.QuestionOrder);
-    console.log("Question Order:", questionOrder);
-  }, [survey]);
   
 
   // Adding

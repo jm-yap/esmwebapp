@@ -15,17 +15,24 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { getClientAccountByEmail } from "@/actions/clients";
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { red } from "@mui/material/colors";
 
 
 export default function SurveyModule() {
-  try {
-    const isMasterKeyPresent = sessionStorage.getItem("masterKey");
-    if (isMasterKeyPresent !== "true") {
-      redirect("/");
-    }
-  } catch (error) {
-    redirect("/");
-  }
+  useEffect(() => {
+    const fetchMasterKey = async () => {
+      try {
+        const isMasterKeyPresent = sessionStorage.getItem("masterKey");
+        if (isMasterKeyPresent !== "true") {
+          redirect("/");
+        }
+      } catch (error: any) {
+        redirect("/");
+      }
+    };
+
+    fetchMasterKey();
+  }, []);
 
   const session = useSession({
     required: true,

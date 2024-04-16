@@ -53,13 +53,14 @@ export default function SurveyModule() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const builderEmail = sessionStorage.getItem("userEmail");
-      if (builderEmail) {
+      const email = sessionStorage.getItem("userEmail");
+      if (email) {
         try {
           const modules = await getSurveyModules();
           setSurveyModules(modules);
+          setBuilderEmail(email);
           
-          const userdata = await getClientAccountByEmail(builderEmail);
+          const userdata = await getClientAccountByEmail(email);
           if (userdata) {
             sessionStorage.setItem("firstName", userdata.FirstName);
             sessionStorage.setItem("lastName", userdata.LastName);
@@ -112,8 +113,8 @@ export default function SurveyModule() {
     try {
       const title = e.target.elements.title.value;
       const description = e.target.elements.description.value;
-      
-      await addSurveyModule(`${firstName} ${lastName}`, title, description, 0, isAnonymous);
+
+      await addSurveyModule(`${firstName} ${lastName} (${builderEmail})`, title, description, 0, isAnonymous);
       const updatedModules = await getSurveyModules();
       setSurveyModules(updatedModules);
     } catch (error: any) {

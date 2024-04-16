@@ -132,14 +132,6 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
                 <label className={styles.sidebarLabel}>Description</label>
                 <textarea required rows={2}  name="Description" className={styles.sidebarTextField} />
               </div>
-              <div className={styles.sidebarFormBit}>
-                <label className={styles.sidebarLabel}>Required No. of Sessions</label>
-                <input type="number" required min="1" name="Sessions" className={styles.sidebarTextField} />
-              </div>
-              <div className={styles.sidebarFormBit}>
-                <label className={styles.sidebarLabel}>Minimum Interval (in hours)</label>
-                <input type="number" required min="0" step="0.5" name="Interval" className={styles.sidebarTextField} />
-              </div>
               <div className={styles.sidebarRow}>
                 <div className={styles.sidebarFormBit}>
                   <label className={styles.sidebarLabel}>Opens on</label>
@@ -149,6 +141,14 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
                   <label className={styles.sidebarLabel}>Closes on</label>
                   <input type="datetime-local" required name="EndDate" className={styles.sidebarDateField}/>
                 </div>
+              </div>
+              <div className={styles.sidebarFormBit}>
+                <label className={styles.sidebarLabel}>Required No. of Sessions</label>
+                <input type="number" required min="1" name="Sessions" className={styles.sidebarTextField} />
+              </div>
+              <div className={styles.sidebarFormBit}>
+                <label className={styles.sidebarLabel}>Minimum Interval (in hours)</label>
+                <input type="number" required min="0" step="0.5" name="Interval" className={styles.sidebarTextField} />
               </div>
               <button className={styles.sidebarButton} type="submit">C R E A T E</button>
             </form>

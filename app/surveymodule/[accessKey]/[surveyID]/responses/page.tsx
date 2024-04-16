@@ -41,7 +41,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
         })
       
       });
-      getQuestions(params.accessKey, params.surveyID, surveyInfo?.QuestionOrder).then((questions: any) => {
+      getQuestions(params.accessKey, params.surveyID).then((questions: any) => {
         setHeaderQuestions(questions);
         getResponses(params.accessKey, params.surveyID, questions).then((responses: any) => {
           setResponses(responses); 

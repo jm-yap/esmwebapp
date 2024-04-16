@@ -15,18 +15,15 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import { db } from "../firebase";
+import { getSurveyDetails } from "./surveyresponse";
 
 export async function getQuestions(
   AccessCode: string,
   surveyID: string,
-  oder: string[]
 ): Promise<any> {
   const Ref = collection(db, `SurveyQuestion`);
+  const survey = await getSurveyDetails(surveyID);
   const surveyRef = query(Ref, where("SurveyID", "==", surveyID));
-
-  // const surveyStr = localStorage.getItem("survey");
-  // const parsedSurvey = surveyStr ? JSON.parse(surveyStr) : null;
-  const desiredOrder = ['bsoW3zuXxg7sUbBEEVM0','fmIIDoeCcw4jHUikK8th']
 
   const querySnapshot = await getDocs(surveyRef);
   const itemsArr = querySnapshot.docs.map((doc) => {
@@ -37,26 +34,11 @@ export async function getQuestions(
     };
   });
 
-  itemsArr.sort((a, b) => {
-  const aIndex = desiredOrder.indexOf(a.id);
-  const bIndex = desiredOrder.indexOf(b.id);
+  const sortedItemsArr = survey.QuestionOrder
+  .map((id) => itemsArr.find((item) => item.id === id))
+  .filter((item) => item !== undefined);
 
-  if (aIndex === -1 && bIndex === -1) {
-    // If both IDs are not present in the desiredOrder array, maintain their original order
-    return 0;
-  } else if (aIndex === -1) {
-    // If 'a' is not present in the desiredOrder array, place it after 'b'
-    return 1;
-  } else if (bIndex === -1) {
-    // If 'b' is not present in the desiredOrder array, place it after 'a'
-    return -1;
-  } else {
-    // Sort based on the order in the desiredOrder array
-    return aIndex - bIndex;
-  }
-  });
-
-  return itemsArr;
+  return sortedItemsArr;
 }
 
 export async function deleteQuestion(

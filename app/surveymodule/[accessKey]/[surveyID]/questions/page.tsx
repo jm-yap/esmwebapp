@@ -32,12 +32,21 @@ interface QuestionPageProps {
 export default function QuestionsPage({ params }: QuestionPageProps) {
   const [QuestionsList, setQuestionsList] = useState([]);
   const [survey, setSurvey] = useState(null);
+  const [questionOrder, setQuestionOrder] = useState(null);
 
   useEffect(() => {
     const surveyStr = localStorage.getItem("survey");
     const parsedSurvey = surveyStr ? JSON.parse(surveyStr) : null;
     setSurvey(parsedSurvey);
+    // if (survey) setQuestionOrder(survey.data.QuestionOrder);
   }, [params.surveyID]);
+
+  useEffect(() => {
+    if (survey && survey.data && survey.data.QuestionOrder)
+      setQuestionOrder(survey.data.QuestionOrder);
+    console.log("Question Order:", questionOrder);
+  }, [survey]);
+  
 
   // Adding
   const handleAddQuestion = async (e: any) => {
@@ -80,7 +89,6 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
       const updatedQuestions = await getQuestions(
         params.accessKey,
         params.surveyID,
-        survey?.data.QuestionOrder
       );
       setQuestionsList(updatedQuestions);
 
@@ -88,6 +96,11 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
       const surveyRef = doc(db, "/Survey", params.surveyID);
       await updateDoc(surveyRef, {
         TotalQuestions: increment(1),
+        // QuestionOrder: arrayUnion(docRef.id),
+      });
+
+      await updateDoc(surveyRef, {
+        // TotalQuestions: increment(1),
         QuestionOrder: arrayUnion(docRef.id),
       });
 
@@ -109,7 +122,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   // Fetching
   useEffect(() => {
     const fetchData = () => {
-      getQuestions(params.accessKey, params.surveyID, survey?.data.QuestionOrder).then((Questions: any) => {
+      getQuestions(params.accessKey, params.surveyID).then((Questions: any) => {
         setQuestionsList(Questions);
       });
     };
@@ -122,7 +135,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   const handleDeleteQuestion = async (QuestionID: string) => {
     try {
       await deleteQuestion(params.accessKey, params.surveyID, QuestionID);
-      const updatedQuestions = await getQuestions(params.accessKey,params.surveyID,survey?.data.QuestionOrder);
+      const updatedQuestions = await getQuestions(params.accessKey,params.surveyID);
       setQuestionsList(updatedQuestions);
     } catch (error: any) {
       console.error("Error deleting survey Question:", error.message);

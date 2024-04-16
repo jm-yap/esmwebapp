@@ -112,8 +112,8 @@ export default function SurveyModule() {
     try {
       const title = e.target.elements.title.value;
       const description = e.target.elements.description.value;
-
-      await addSurveyModule(builderEmail, title, description, 0, isAnonymous);
+      
+      await addSurveyModule(`${firstName} ${lastName}`, title, description, 0, isAnonymous);
       const updatedModules = await getSurveyModules();
       setSurveyModules(updatedModules);
     } catch (error: any) {

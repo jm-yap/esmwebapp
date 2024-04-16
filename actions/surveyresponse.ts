@@ -15,6 +15,7 @@ import {
 import { db } from "../firebase";
 import {Timestamp} from "firebase/firestore";
 import { getClientAccountByEmail } from "@/actions/clients";
+import { access } from "fs";
 
 // For every Response to a Survey, fetches all the 
 export async function getResponses(
@@ -22,7 +23,7 @@ export async function getResponses(
   surveyID: string,
   surveyQuestions: any[],
 ): Promise<any[]> {
-
+  console.log(accessKey, surveyID, surveyQuestions)
   // Retrieve all relevant response docs given a surveyID
   const responseDocumentColl = collection(db, `Response`)  
   const relevantResponsesQuery = query(responseDocumentColl, where("SurveyID", "==", `${surveyID}`));
@@ -92,7 +93,7 @@ export async function getResponses(
     })
   );
   
-  // console.log(relevantResponseInstances)
+  console.log(relevantResponseInstances, 'huhh')
   return relevantResponseInstances;  
 }
 

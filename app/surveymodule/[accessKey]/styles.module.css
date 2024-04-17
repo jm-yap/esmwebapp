@@ -422,3 +422,10 @@
 .BuilderInfo {
     margin-bottom: 0.2em;
 }
+
+.errorMessage {
+  margin: 5px;
+  padding: 10px;
+  margin-bottom: 5px;
+  color: red;
+}

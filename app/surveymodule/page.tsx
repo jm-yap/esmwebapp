@@ -24,6 +24,7 @@ export default function SurveyModule() {
       try {
         const isMasterKeyPresent = sessionStorage.getItem("masterKey");
         if (isMasterKeyPresent !== "true") {
+          console.log("Redirecting to masterkey")
           redirect("/");
         }
       } catch (error: any) {

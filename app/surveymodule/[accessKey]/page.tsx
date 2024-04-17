@@ -31,6 +31,7 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
     },
   });
   const [SurveyList, setSurveyList] = useState([]);
+  const [error, SetError] = useState(null);
 
   // Adding
   const handleAddSurvey = async (e: any) => {
@@ -48,6 +49,25 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
         TotalQuestions : 0
       };
 
+      const hourGap = ((survey_details.EndDate.getTime() - survey_details.StartDate.getTime()) / (1000 * 3600)) - ((survey_details.EndDate.getDate() - survey_details.StartDate.getDate()) * 9);
+
+      if (survey_details.StartDate > survey_details.EndDate) {
+        SetError("Start Date must be before End Date");
+        return;
+      } else if (hourGap < 0) {
+        SetError("End Date must be at least 9 hours after Start Date");
+        return;
+      } else if (survey_details.Interval <= 0) {
+        SetError("Interval must be greater than 0");
+        return;
+      } else if (survey_details.Sessions <= 0) {
+        SetError("Number of required sessions must be greater than 0");
+        return;
+      } else if (hourGap / survey_details.Sessions < survey_details.Interval) {
+        SetError("Minimum interval must be less than the time gap between sessions");
+        return;
+      }
+
       await addSurvey({survey: survey_details});
       const updatedSurveys = await getSurveys(params.accessKey);
       setSurveyList(updatedSurveys);
@@ -56,6 +76,9 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
       await updateDoc(surveyModuleRef, {
         TotalSurveys: increment(1),
       });
+
+
+      SetError(null);
     } catch (error) {
       console.error("Error adding  survey:", error);
     }
@@ -150,6 +173,7 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
                 <label className={styles.sidebarLabel}>Minimum Interval (in hours)</label>
                 <input type="number" required min="0" step="0.5" name="Interval" className={styles.sidebarTextField} />
               </div>
+              {error && <p className={styles.errorMessage}>{error}</p>}
               <button className={styles.sidebarButton} type="submit">C R E A T E</button>
             </form>
           </div>

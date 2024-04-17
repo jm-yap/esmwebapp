@@ -46,7 +46,8 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
         EndDate : new Date(e.target.elements.EndDate.value),
         Sessions : e.target.elements.Sessions.value,
         Interval : e.target.elements.Interval.value,
-        TotalQuestions : 0
+        TotalQuestions : 0,
+        QuestionOrder: []
       };
 
       const hourGap = ((survey_details.EndDate.getTime() - survey_details.StartDate.getTime()) / (1000 * 3600)) - ((survey_details.EndDate.getDate() - survey_details.StartDate.getDate()) * 9);

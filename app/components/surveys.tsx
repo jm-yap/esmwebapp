@@ -13,6 +13,7 @@ export interface NewSurveyProps {
     Sessions: number;
     Interval: number;
     TotalQuestions: number;
+    QuestionOrder: string[];
   };
 }
 

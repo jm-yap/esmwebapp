@@ -1,0 +1,146 @@
+.pageProperty {
+  display: flex;
+  height: 100vh;
+  /* overflow: hidden; */
+  /* height: 100%; */
+  /* overflow-y: auto; */
+}
+
+.main {
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
+  background-color: #F1F1F1;
+}
+
+.surveyInformation{
+    display: flex;
+    background-color: #F1F1F1;
+    padding-left: 70px;
+    padding-right: 70px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    justify-content: space-between;
+    
+}
+
+.surveyInfoLeft{
+
+    vertical-align:middle;
+    align-items: center;
+}
+
+.surveyInfoRight {
+    margin-top: 75px;
+}
+
+.surveyTitle{
+    font-weight: 625;
+    font-size:  45px;
+    margin: 7px;
+}
+.surveyInfoText {
+    font-weight: 625;
+    font-size: 25px;
+    margin: 5px;
+}
+
+.downloadCSVText {
+    font-weight: 625;
+    font-size: 25px;
+    margin: 5px;
+    color:#E07961;
+}
+
+
+.surveyTitleBack{
+    display:flex;
+    align-items: center;
+}
+
+.banner {
+    background-color: #E07961;
+    height:100px;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.bannerTitle {
+    margin-left: 35px;
+}
+.bannerTitleChild {
+    font-size: xx-large;
+    font-weight: bold;    
+    display: inline-block;    
+}
+
+.bannerKita {
+    color: white;
+}
+
+.builderName {
+    margin-right: 90px;
+    color: white;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.tableDiv {
+  background-color: #F1F1F1;
+  /* background-color: black; */
+  justify-content: center;
+  display: flex;
+  flex-flow: column;
+  /* height: 100%; */
+  /* padding: 70px; */
+  overflow-x: auto;
+  overflow-y: auto;
+  /* width: 100%; */
+  margin: 0px 70px 70px 70px;
+}
+
+.table {
+  /* overflow-y: auto; overflow-x: auto; */
+  width: 100%;
+  border-collapse: collapse;
+  /* table-layout: fixed; (removed) */
+}
+
+.tableHeader {
+  background-color: #F1F1F1;
+  font-size: 130%;
+  font-weight: bold;
+  text-align: left;
+  padding: 10px;
+  
+}
+
+.tableCell {
+  background-color: #FFFFFF;
+  border-bottom: 3px solid #F1F1F1;
+  font-size: 100%;
+  font-weight: 400;
+  white-space: nowrap; /* Added */
+  padding: 10px; /* Increased padding */
+  overflow-x: auto; /* Added */
+}
+
+.tr:hover {
+  background-color: pink;
+}
+
+.nothingDiv {
+    justify-content: center;
+    /* background-color: pink; */
+    display:flex;
+}
+.nothingH2{
+    font-size: 80px;
+    align-self: center;
+    font-weight: bold;
+    margin-top: 10%;
+
+}

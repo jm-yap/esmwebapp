@@ -4,7 +4,7 @@ import { db } from "../firebase";
 
 export async function getClientAccountByEmail(email: string): Promise<any> {
   try {
-    const clientAccountSnapshot = await getDoc(doc(db, "Client", email));
+    const clientAccountSnapshot = await getDoc(doc(db, "Builder", email));
 
     return clientAccountSnapshot.data();
   } catch (error) {

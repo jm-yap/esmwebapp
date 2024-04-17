@@ -9,17 +9,21 @@ import {
   onSnapshot,
   deleteDoc,
   doc,
+  where,
+  updateDoc,
+  increment,
+  arrayRemove,
 } from "firebase/firestore";
 import { db } from "../firebase";
+import { getSurveyDetails } from "./surveyresponse";
 
 export async function getQuestions(
   AccessCode: string,
-  surveyID: string
+  surveyID: string,
 ): Promise<any> {
-  const surveyRef = collection(
-    db,
-    `ResearchModule/${AccessCode}/Survey/${surveyID}/SurveyQuestion`
-  );
+  const Ref = collection(db, `SurveyQuestion`);
+  const survey = await getSurveyDetails(surveyID);
+  const surveyRef = query(Ref, where("SurveyID", "==", surveyID));
 
   const querySnapshot = await getDocs(surveyRef);
   const itemsArr = querySnapshot.docs.map((doc) => {
@@ -29,7 +33,12 @@ export async function getQuestions(
       data: doc.data(),
     };
   });
-  return itemsArr;
+
+  const sortedItemsArr = survey.QuestionOrder
+  .map((id) => itemsArr.find((item) => item.id === id))
+  .filter((item) => item !== undefined);
+
+  return sortedItemsArr;
 }
 
 export async function deleteQuestion(
@@ -40,9 +49,15 @@ export async function deleteQuestion(
   try {
     const questionCollection = collection(
       db,
-      `/ResearchModule/${AccessCode}/Survey/${surveyID}/SurveyQuestion`
+      `/SurveyQuestion`
     );
     await deleteDoc(doc(questionCollection, questionID));
+    const surveyRef = doc(db, "/Survey", surveyID);
+      await updateDoc(surveyRef, {
+      TotalQuestions: increment(-1),
+      // remove id from question order array
+      QuestionOrder: arrayRemove(questionID)
+      });
     console.log("Question deleted with ID: ", questionID);
     return true;
   } catch (error) {

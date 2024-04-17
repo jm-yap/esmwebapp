@@ -131,10 +131,10 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
               // empty array
               perRow[value.QuestionID] = ""
             } else {
-              perRow[value.QuestionID] = `"${value.Response.join(", ")}"`
+              perRow[value.QuestionID] = `"${value.Response.join(", ").replace(/\n/g, ' ')}"`;
             }
           } else {
-            perRow[value.QuestionID] = value.Response
+            perRow[value.QuestionID] = value.Response ? value.Response.replace(/\n/g, ' ') : "";
           }
 
         })
@@ -142,6 +142,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
       }      
     })
     console.log([questionIDToText, questionIDToResponseInst], 'PHUM VIPHURIT')
+    console.log(questionIDToResponseInst, 'PHUM VIPHURIT');
     return [questionIDToText, questionIDToResponseInst]
         
   }  

@@ -1,17 +1,18 @@
-.pageProperty{
-    display: flex;
-    height: 100vh;
-    /* overflow: hidden; */
-    /* height: 100%; */
-    /* overflow-y: auto; */
-    
+.pageProperty {
+  display: flex;
+  height: 100vh;
+  /* overflow: hidden; */
+  /* height: 100%; */
+  /* overflow-y: auto; */
 }
-.main{
-    width: 100%;
-    box-sizing: border-box;
-    overflow-x: hidden;
-    overflow-y:auto;
-    height: 100%
+
+.main {
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
+  background-color: #F1F1F1;
 }
 
 .surveyInformation{
@@ -88,41 +89,49 @@
 }
 
 .tableDiv {
-    background-color: #F1F1F1;
-    /* background-color: black; */
-    justify-content: center;
-    display: flex;
-    flex-flow: column;
-    /* height: 100%; */
-    /* padding: 70px; */
-    overflow-x: auto;
-    overflow-y: auto;
-    /* width: 100%; */
-
+  background-color: #F1F1F1;
+  /* background-color: black; */
+  justify-content: center;
+  display: flex;
+  flex-flow: column;
+  /* height: 100%; */
+  /* padding: 70px; */
+  overflow-x: auto;
+  overflow-y: auto;
+  /* width: 100%; */
+  margin: 0px 70px 70px 70px;
 }
+
 .table {
-    overflow-y: auto;
-    overflow-x: auto;
+  /* overflow-y: auto; overflow-x: auto; */
+  width: 100%;
+  border-collapse: collapse;
+  /* table-layout: fixed; (removed) */
 }
 
 .tableHeader {
-    background-color: #F1F1F1;
-    font-size: 150%;
-    font-weight: bold;
-    padding: 20px;
+  background-color: #F1F1F1;
+  font-size: 130%;
+  font-weight: bold;
+  text-align: left;
+  padding: 10px;
+  
 }
 
 .tableCell {
-    background-color: #F1F1F1;
-    border-bottom: 5px solid white;
-    font-size: 130%;
-    font-weight: 550;
-    white-space:pre;
-    padding: 6px;
+  background-color: #FFFFFF;
+  border-bottom: 3px solid #F1F1F1;
+  font-size: 100%;
+  font-weight: 400;
+  white-space: nowrap; /* Added */
+  padding: 10px; /* Increased padding */
+  overflow-x: auto; /* Added */
 }
-.tr:hover{
-    background-color: pink;
+
+.tr:hover {
+  background-color: pink;
 }
+
 .nothingDiv {
     justify-content: center;
     /* background-color: pink; */

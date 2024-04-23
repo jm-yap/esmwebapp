@@ -20,8 +20,16 @@ function HomePage() {
       if (masterKey === databaseMasterkey?.MasterKey) {
         // If master key is correct, navigate to the login/signup page
         sessionStorage.setItem("masterKey", "true");
-        console.log("Master key is correct")
-        router.push(session.status === "unauthenticated" ? "/login" : "/surveymodule"); // Replace with the actual path of your login/signup page
+        console.log("Master key is correct");
+        if (session.status === "authenticated") {
+          sessionStorage.setItem("userEmail", session.data.user?.email);
+          sessionStorage.setItem("validInfo", "true");
+          router.push("/surveymodule");
+        } else {
+          router.push("/login"); // Replace with the actual path of your login/signup page
+        }
+        
+        // router.push(session.status === "unauthenticated" ? "/login" : "/surveymodule"); // Replace with the actual path of your login/signup page
         
       } else {
         setError("Invalid master key");

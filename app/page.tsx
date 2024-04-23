@@ -3,11 +3,13 @@ import React, { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { fetchMasterKey } from "@/actions/masterkey";
 import styles from "./styles.module.css";
+import { useSession } from "next-auth/react";
 
 function HomePage() {
   const router = useRouter();
   const [masterKey, setMasterKey] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const session = useSession();
 
   const handleMasterKeySubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -19,7 +21,7 @@ function HomePage() {
         // If master key is correct, navigate to the login/signup page
         sessionStorage.setItem("masterKey", "true");
         console.log("Master key is correct")
-        router.push("/surveymodule"); // Replace with the actual path of your login/signup page
+        router.push(session.status === "unauthenticated" ? "/login" : "/surveymodule"); // Replace with the actual path of your login/signup page
         
       } else {
         setError("Invalid master key");

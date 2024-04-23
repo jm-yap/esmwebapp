@@ -362,7 +362,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                 ) : 
                 // Type 5 - Slider
                 (Question.data.QuestionType === "5") ? (
-                  <Box sx={{ width: 300}}>
+                  <Box sx={{ width: '100%'}}>
                     {
 
                     }
@@ -382,6 +382,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                       }
                       sx={{
                         color: '#E07961',
+                        width: '100%',
                         }}
                     />
                   </Box>

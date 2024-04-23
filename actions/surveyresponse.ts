@@ -23,7 +23,7 @@ export async function getResponses(
   surveyID: string,
   surveyQuestions: any[],
 ): Promise<any[]> {
-  console.log(accessKey, surveyID, surveyQuestions)
+  // console.log(accessKey, surveyID, surveyQuestions)
   // Retrieve all relevant response docs given a surveyID
   const responseDocumentColl = collection(db, `Response`)  
   const relevantResponsesQuery = query(responseDocumentColl, where("SurveyID", "==", `${surveyID}`));
@@ -93,7 +93,7 @@ export async function getResponses(
     })
   );
   
-  console.log(relevantResponseInstances, 'huhh')
+  // console.log(relevantResponseInstances, 'huhh')
   return relevantResponseInstances;  
 }
 

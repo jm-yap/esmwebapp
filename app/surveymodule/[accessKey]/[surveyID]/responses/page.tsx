@@ -83,7 +83,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
     setFilterName(e.target.value)
   }
 
-  console.log(filterName, "Marker of this locaion")
+  // console.log(filterName, "Marker of this locaion")
 
   const downloadCSVHandler = () => {
 
@@ -141,8 +141,8 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
         questionIDToResponseInst.push(perRow);
       }      
     })
-    console.log([questionIDToText, questionIDToResponseInst], 'PHUM VIPHURIT')
-    console.log(questionIDToResponseInst, 'PHUM VIPHURIT');
+    // console.log([questionIDToText, questionIDToResponseInst], 'PHUM VIPHURIT')
+    // console.log(questionIDToResponseInst, 'PHUM VIPHURIT');
     return [questionIDToText, questionIDToResponseInst]
         
   }  
@@ -247,13 +247,15 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                 <h1 className="surveyInfoText">Required No. of Sessions: {surveyInfo?.Sessions}</h1>
                 <h1 className="surveyInfoText">Minimum Interval (in hours): {surveyInfo?.Interval}</h1>
                 {/* filter shit */}
-                <select 
-                  className={styles.sidebarTextField}
-                  value = {filterName}                
-                  onChange = {handleNameFilter}>
-                  <option value='None'>No filter</option>
-                  {clientNames.map((data)=>{return <option key={data} value={data}>{data}</option>})}
-                </select>
+                {(moduleAnon === false) &&
+                    <select 
+                    className={styles.sidebarTextField}
+                    value = {filterName}                
+                    onChange = {handleNameFilter}>
+                    <option value='None'>No filter</option>
+                    {clientNames.map((data)=>{return <option key={data} value={data}>{data}</option>})}
+                  </select>           
+                }
               </div>
               
             </div>
@@ -291,8 +293,6 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                   {(moduleAnon === false) &&                    
                     <th scope="col" className="tableHeader">Name</th>
                   }     
-                  {/* <th scope="col" className="tableHeader">ResponseID</th> */}
-                  {/* <th scope="col" className="tableHeader">Name</th> */}
                   <th scope="col" className="tableHeader">Timestamp</th>
                   {
                     headerQuestions.map((questionJSON: any) => {
@@ -340,10 +340,17 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                                     (typeof perResponse?.Response === 'string' || perResponse?.Response instanceof String) && perResponse?.Response
                                   }
                                   {
-                                    Array.isArray(perResponse?.Response) && perResponse?.Response.map((option: any) => {
-                                      return (
-                                        `${option}, `
-                                      )
+                                    Array.isArray(perResponse?.Response) && perResponse?.Response.map((option: any, perResponseIdx: number) => {
+
+                                      if (perResponseIdx === perResponse.Response.length - 1) {
+                                        return (
+                                          `${option} `
+                                        )
+                                      } else {
+                                        return (
+                                          `${option}, `
+                                        )
+                                      }
                                     })
                                   }
                                 </td>
@@ -360,6 +367,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
               </tbody>
             </table>  
           </div>
+          
         </main>
       </div>
     )

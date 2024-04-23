@@ -83,7 +83,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
     setFilterName(e.target.value)
   }
 
-  console.log(filterName, "Marker of this locaion")
+  // console.log(filterName, "Marker of this locaion")
 
   const downloadCSVHandler = () => {
 
@@ -141,8 +141,8 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
         questionIDToResponseInst.push(perRow);
       }      
     })
-    console.log([questionIDToText, questionIDToResponseInst], 'PHUM VIPHURIT')
-    console.log(questionIDToResponseInst, 'PHUM VIPHURIT');
+    // console.log([questionIDToText, questionIDToResponseInst], 'PHUM VIPHURIT')
+    // console.log(questionIDToResponseInst, 'PHUM VIPHURIT');
     return [questionIDToText, questionIDToResponseInst]
         
   }  
@@ -340,10 +340,17 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                                     (typeof perResponse?.Response === 'string' || perResponse?.Response instanceof String) && perResponse?.Response
                                   }
                                   {
-                                    Array.isArray(perResponse?.Response) && perResponse?.Response.map((option: any) => {
-                                      return (
-                                        `${option}, `
-                                      )
+                                    Array.isArray(perResponse?.Response) && perResponse?.Response.map((option: any, perResponseIdx: number) => {
+
+                                      if (perResponseIdx === perResponse.Response.length - 1) {
+                                        return (
+                                          `${option} `
+                                        )
+                                      } else {
+                                        return (
+                                          `${option}, `
+                                        )
+                                      }
                                     })
                                   }
                                 </td>

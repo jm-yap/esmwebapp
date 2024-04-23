@@ -32,7 +32,6 @@ interface QuestionPageProps {
 export default function QuestionsPage({ params }: QuestionPageProps) {
   const [QuestionsList, setQuestionsList] = useState([]);
   const [survey, setSurvey] = useState(null);
-  const [questionOrder, setQuestionOrder] = useState(null);
 
   useEffect(() => {
     const surveyStr = localStorage.getItem("survey");
@@ -77,14 +76,6 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
         console.log("Question added with ID:", docRef.id);
       }
 
-  
-
-      // Update the list of questions
-      const updatedQuestions = await getQuestions(
-        params.accessKey,
-        params.surveyID,
-      );
-      setQuestionsList(updatedQuestions);
 
       // add 1 to total questions of survey
       const surveyRef = doc(db, "/Survey", params.surveyID);
@@ -98,15 +89,26 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
         QuestionOrder: arrayUnion(docRef.id),
       });
 
+      // Update the list of questions
+      const updatedQuestions = await getQuestions(
+        params.accessKey,
+        params.surveyID,
+      );
+      setQuestionsList(updatedQuestions);
+
       // Clear form
+      if (questionType == "5") {
+        e.target.elements.MinValue.value = "";
+        e.target.elements.MaxValue.value = "";
+        e.target.elements.Step.value = "";
+      }
+      if (questionType == "2" || questionType == "3") {
+        e.target.elements.NumOptions.value = 0;
+        setFields([]);
+      }
       e.target.elements.QuestionText.value = "";
       e.target.elements.QuestionType.value = "1";
       setNumFields(0);
-      e.target.elements.NumOptions.value = 0;
-      e.target.elements.MinValue.value = "";
-      e.target.elements.MaxValue.value = "";
-      e.target.elements.Step.value = "";
-      setFields([]);
       setQuestionType("1");
     } catch (error) {
       console.error("Error adding  Question:", error);

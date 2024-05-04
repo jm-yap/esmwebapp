@@ -162,8 +162,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
               <div className="surveyInfoLeftBottom"> # unused css
                 <h1 className="surveyInfoText">Survey Description: {surveyInfo?.Description}</h1>
                 <h1 className="surveyInfoText">Required No. of Sessions: {surveyInfo?.Sessions}</h1>
-                <h1 className="surveyInfoText">Minimum Interval (in hours): {surveyInfo?.Interval}</h1>
-                {/* filter shit */}
+                <h1 className="surveyInfoText">Minimum Interval (in hours): {surveyInfo?.Interval}</h1> 
                 {((responses.length !== 0) && (moduleAnon === false)) &&
                     <select 
                     className={styles.sidebarTextField}

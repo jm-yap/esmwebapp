@@ -30,6 +30,7 @@
 
     vertical-align:middle;
     align-items: center;
+    max-width: 60%;
 }
 
 .surveyInfoRight {
@@ -45,6 +46,7 @@
     font-weight: 625;
     font-size: 25px;
     margin: 5px;
+  
 }
 
 .downloadCSVText {

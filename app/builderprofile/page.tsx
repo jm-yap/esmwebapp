@@ -137,6 +137,7 @@ export default function ClientAccount() {
           <button className={styles.button} onClick={() => {
             sessionStorage.setItem("validInfo", "false");
             sessionStorage.removeItem("masterKey");
+            localStorage.removeItem("userEmail");
             signOut();
           }}>L O G O U T</button>
         </div>

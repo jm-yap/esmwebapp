@@ -21,6 +21,7 @@ import Slider from '@mui/material/Slider';
 import { set } from "firebase/database";
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 interface QuestionPageProps {
   params: {
@@ -330,7 +331,12 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
             <h2 className={styles.SurveyInfo}>Closes on: {endDate}</h2>
           </div>
 
-          
+          {(QuestionsList.length === 0) && isLoading === false &&
+            <div className={styles.empty}>
+              <AutoAwesomeIcon sx={{ fontSize: 100, color: '#ddd' }} style={{marginBottom: '20px'}}/>
+              <h1>So clean! There are no questions yet.</h1>
+            </div>
+          }
           
           {QuestionsList.map((Question: any) => (
           <div key={Question.id}> 

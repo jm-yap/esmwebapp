@@ -156,6 +156,16 @@
   margin-bottom: 0.5em;
 }
 
+.empty {
+  margin-top: 10%;
+  text-align: center;
+  height: 100px;
+  justify-content: center;
+  color: #bbb;
+  font-weight: bold;
+  font-size: 20px;
+}
+
 .clearButton:hover {
   text-decoration: underline;
 }

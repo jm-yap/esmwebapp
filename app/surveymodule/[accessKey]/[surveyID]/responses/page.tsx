@@ -174,7 +174,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                 </Link> 
                 <h1 className="surveyTitle">{surveyInfo?.Title}</h1>
               </div>
-              <div className="surveyInfoLeftBottom"> # unused css
+              <div className="surveyInfoLeftBottom">
                 <h1 className="surveyInfoText">Survey Description: {surveyInfo?.Description}</h1>
                 <h1 className="surveyInfoText">Required No. of Sessions: {surveyInfo?.Sessions}</h1>
                 <h1 className="surveyInfoText">Minimum Interval (in hours): {surveyInfo?.Interval}</h1> 

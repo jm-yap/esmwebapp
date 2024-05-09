@@ -19,6 +19,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { red } from "@mui/material/colors";
 import { set } from "firebase/database";
 import Stack from '@mui/material/Stack';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 
 export default function SurveyModule() {
@@ -215,6 +216,12 @@ export default function SurveyModule() {
             </div>
           )}
         </div>
+        {surveyModules.length === 0 && !isLoading &&
+          <div className={styles.empty}>
+            <AutoAwesomeIcon sx={{ fontSize: 100, color: '#ddd' }} style={{marginBottom: '20px'}}/>
+            <h1>No modules yet. Create one on the left!</h1>
+          </div>
+        }
         {surveyModules.map((surveyModule: any) => (
           <div key={surveyModule.id}>
             

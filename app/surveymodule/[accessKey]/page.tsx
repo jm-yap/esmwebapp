@@ -18,6 +18,7 @@ import { clear } from "console";
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import { set } from "firebase/database";
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 interface SurveyPageProps {
   params: {
@@ -213,6 +214,13 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
         </div>
         <h2 className={styles.SurveyModuleDescription}>{surveyModule.data.Description}</h2>
         <h3 className={styles.SurveyModuleAccessCode}>Access Code: {surveyModule.id}</h3>
+
+        {SurveyList.length === 0 && !isLoading &&
+          <div className={styles.empty}>
+            <AutoAwesomeIcon sx={{ fontSize: 100, color: '#ddd' }} style={{marginBottom: '20px'}}/>
+            <h1>No surveys here, try making one :D</h1>
+          </div>
+        }
         {SurveyList.map((survey: any) => (
           <div key={survey.id}>
             <div className={styles.SurveyContainer}>

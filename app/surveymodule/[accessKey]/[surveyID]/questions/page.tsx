@@ -19,6 +19,8 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import { set } from "firebase/database";
+import LinearProgress from '@mui/material/LinearProgress';
+import Stack from '@mui/material/Stack';
 
 interface QuestionPageProps {
   params: {
@@ -32,6 +34,7 @@ interface QuestionPageProps {
 export default function QuestionsPage({ params }: QuestionPageProps) {
   const [QuestionsList, setQuestionsList] = useState([]);
   const [survey, setSurvey] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const surveyStr = localStorage.getItem("survey");
@@ -53,6 +56,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
 
     try {
       let docRef;
+      setIsLoading(true);
       // Add a new document with a generated id
       if (QuestionType === "5") {
         const MinValue = parseInt(e.target.elements.MinValue.value);
@@ -65,14 +69,17 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
           QuestionType: QuestionType,
           Choices: slider,
         });
+        setIsLoading(false);
         console.log("Question added with ID:", docRef.id);
       } else {
+        setIsLoading(true);
         docRef = await addDoc(questionRef, {
           SurveyID: SurveyID,
           QuestionText: QuestionText,
           QuestionType: QuestionType,
           Choices: fields,
         });
+        setIsLoading(false);
         console.log("Question added with ID:", docRef.id);
       }
 
@@ -120,6 +127,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     const fetchData = () => {
       getQuestions(params.accessKey, params.surveyID).then((Questions: any) => {
         setQuestionsList(Questions);
+        setIsLoading(false);
       });
     };
 
@@ -130,9 +138,11 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   // Deletion
   const handleDeleteQuestion = async (QuestionID: string) => {
     try {
+      setIsLoading(true);
       await deleteQuestion(params.accessKey, params.surveyID, QuestionID);
       const updatedQuestions = await getQuestions(params.accessKey,params.surveyID);
       setQuestionsList(updatedQuestions);
+      setIsLoading(false);
     } catch (error: any) {
       console.error("Error deleting survey Question:", error.message);
     }
@@ -286,6 +296,15 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
         </div>
 
         <main className={styles.main}>
+          <div style={{position: 'fixed', width: '100%'}}>
+            {isLoading && (
+              <div style={{ marginTop: '-20px', marginLeft: '-20px' }}>
+                <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
+                  <LinearProgress color="inherit" sx={{ width: '100%', height: '7px' }} />
+                </Stack>
+              </div>
+            )}
+          </div>
           <div className={styles.mainRow}>
             <Link href={`/surveymodule/${params.accessKey}`}>
               <ArrowBackIcon sx={{ fontSize: 40 }}/>

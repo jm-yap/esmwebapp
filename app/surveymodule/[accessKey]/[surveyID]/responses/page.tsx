@@ -8,8 +8,10 @@ import Link from "next/link";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSession } from "next-auth/react";
 import CsvDownloader from 'react-csv-downloader';
+import { LinearProgress, Stack } from "@mui/material";
 
 import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
+import { set } from "firebase/database";
 
 
 interface ResponsePageProps {
@@ -26,6 +28,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
   const [surveyInfo, setSurveyInfo] = useState(null);
   const [moduleAnon, setModuleAnon] = useState(null);
   const [filterName, setFilterName] = useState('None')
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetching: Fetch the responses once the questions have been fetched
 
@@ -34,6 +37,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
   useEffect(() => {
     const fetchData = () => {
       getSurveyDetails(params.surveyID).then((info: any) => {
+        setIsLoading(true);
         setSurveyInfo(info);
         getModuleAnon(params.accessKey).then((moduleAnonInfo)=>{
           setModuleAnon(moduleAnonInfo.anon)
@@ -44,8 +48,10 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
         setHeaderQuestions(questions);
         getResponses(params.accessKey, params.surveyID, questions).then((responses: any) => {
           setResponses(responses); 
+          setIsLoading(false);
         });
       });
+
       
     };
     fetchData();
@@ -150,6 +156,15 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
 
 
           </div>
+          <div style={{position: 'fixed', width: '100%'}}>
+            {isLoading && (
+              <div>
+                <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
+                  <LinearProgress color="inherit" sx={{ width: '100%', height: '7px' }} />
+                </Stack>
+              </div>
+            )}
+          </div>
           <div className="surveyInformation">
             <div className="surveyInfoLeft">
               {/* left */}
@@ -198,7 +213,6 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
             </div>
           </div>
 
-    
           {
             (responses.length !== 0) && 
             <div className = "tableDiv">
@@ -290,7 +304,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
     
        
           {
-            (responses.length === 0) &&
+            (responses.length === 0) && (isLoading === false) &&
             <div className="nothingDiv">
               <h2 className="nothingH2">
                 No responses for this survey yet!

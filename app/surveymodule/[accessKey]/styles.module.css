@@ -382,7 +382,7 @@
     }
 
 .main {
-    flex: 1;
+    /* flex: 1; */
     padding: 20px;
     margin-left: 480px; /* same as the sidebar width */
     overflow-y: auto;

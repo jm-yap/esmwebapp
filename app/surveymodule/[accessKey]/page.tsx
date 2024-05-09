@@ -15,6 +15,9 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { clear } from "console";
+import LinearProgress from '@mui/material/LinearProgress';
+import Stack from '@mui/material/Stack';
+import { set } from "firebase/database";
 
 interface SurveyPageProps {
   params: {
@@ -32,11 +35,13 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   });
   const [SurveyList, setSurveyList] = useState([]);
   const [error, SetError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Adding
   const handleAddSurvey = async (e: any) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       const survey_details = {
         AccessCode : params.accessKey,
         BuilderID : session.data.user?.email,
@@ -68,10 +73,11 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
         SetError("Minimum interval must be less than the time gap between sessions");
         return;
       }
-
+      
       await addSurvey({survey: survey_details});
       const updatedSurveys = await getSurveys(params.accessKey);
       setSurveyList(updatedSurveys);
+      setIsLoading(false);
 
       const surveyModuleRef = doc(db, "ResearchModules", params.accessKey);
       await updateDoc(surveyModuleRef, {
@@ -95,8 +101,10 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   // Fetching
   useEffect(() => {
     const fetchData = () => {
+      setIsLoading(true);
       getSurveys(params.accessKey).then((surveys: any) => {
         setSurveyList(surveys);
+        setIsLoading(false);
       });
     };
     fetchData();
@@ -108,9 +116,11 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   // Deletion
   const handleDeleteSurvey = async (SurveyID: string) => {
     try {
+      setIsLoading(true);
       await deleteSurvey(params.accessKey, SurveyID);
       const updatedSurveys = await getSurveys(params.accessKey);
       setSurveyList(updatedSurveys);
+      setIsLoading(false);
     } catch (error: any) {
       console.error("Error deleting survey question:", error.message);
     }
@@ -182,6 +192,15 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
       </div>
 
       <main className={styles.main}>
+        <div style={{position: 'fixed', width: '100%'}}>
+          {isLoading && (
+            <div style={{ marginTop: '-20px', marginLeft: '-20px' }}>
+              <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
+                <LinearProgress color="inherit" sx={{ width: '100%', height: '7px' }} />
+              </Stack>
+            </div>
+          )}
+        </div>
         <div className={styles.mainRow}>
           <Link href={`/surveymodule/`}>
             <ArrowBackIcon sx={{ fontSize: 40 }}/>

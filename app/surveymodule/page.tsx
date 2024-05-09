@@ -15,7 +15,10 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { getClientAccountByEmail } from "@/actions/clients";
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import LinearProgress from '@mui/material/LinearProgress';
 import { red } from "@mui/material/colors";
+import { set } from "firebase/database";
+import Stack from '@mui/material/Stack';
 
 
 export default function SurveyModule() {
@@ -59,6 +62,7 @@ export default function SurveyModule() {
         try {
           const modules = await getSurveyModules();
           setSurveyModules(modules);
+          setIsLoading(false);
           setBuilderEmail(email);
           
           const userdata = await getClientAccountByEmail(email);
@@ -113,23 +117,28 @@ export default function SurveyModule() {
   const handleAddSurveyModule = async (e: any) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       const title = e.target.elements.title.value;
       const description = e.target.elements.description.value;
 
       await addSurveyModule(`${firstName} ${lastName} (${builderEmail})`, title, description, 0, isAnonymous);
       const updatedModules = await getSurveyModules();
       setSurveyModules(updatedModules);
+      setIsLoading(false);
     } catch (error: any) {
       console.error("Error adding survey module:", error.message);
     }
     e.target.elements.title.value = "";
+    e.target.elements.description.value = "";
   };
 
   const handleDeleteSurveyModule = async (surveyModuleID: string) => {
     try {
+      setIsLoading(true);
       await deleteSurveyModule(surveyModuleID);
       const updatedModules = await getSurveyModules();
       setSurveyModules(updatedModules);
+      setIsLoading(false);
     } catch (error: any) {
       console.error("Error deleting survey module:", error.message);
     }
@@ -137,17 +146,26 @@ export default function SurveyModule() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.navbar}>
-        <Link href="/surveymodule" className={styles.navtext}>
-          <h1 className={styles.navblack}>Sagot</h1>
-          <h1 className={styles.navwhite}>Kita</h1>
-          <h1 className={styles.navblack}>.</h1>
-        </Link>
-        <Link href="/builderprofile" className={styles.navprofilecontainer}>
-          <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
-          <AccountCircleIcon fontSize="large" />
-        </Link>
-      </div>
+      {/* <div> */}
+        <div className={styles.navbar}>
+          <Link href="/surveymodule" className={styles.navtext}>
+            <h1 className={styles.navblack}>Sagot</h1>
+            <h1 className={styles.navwhite}>Kita</h1>
+            <h1 className={styles.navblack}>.</h1>
+          </Link>
+          <Link href="/builderprofile" className={styles.navprofilecontainer}>
+            <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
+            <AccountCircleIcon fontSize="large" />
+          </Link>
+        </div>
+        {/* {isLoading &&
+          <div className={styles.loading}>
+            <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
+              <LinearProgress color="inherit"  sx={{ width: '100%', height: '7px' }}/> 
+            </Stack>
+          </div>
+        } */}
+      {/* </div> */}
 
       <div className={styles.sidebar}>
         <div className={styles.sidebarContent}>
@@ -182,8 +200,17 @@ export default function SurveyModule() {
           </div>
         </div>
       </div>
-
+      
       <main className={styles.main}>
+        <div style={{position: 'fixed', width: '100%'}}>
+          {isLoading && (
+            <div style={{ marginTop: '-20px', marginLeft: '-20px' }}>
+              <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
+                <LinearProgress color="inherit" sx={{ width: '100%', height: '7px' }} />
+              </Stack>
+            </div>
+          )}
+        </div>
         {surveyModules.map((surveyModule: any) => (
           <div key={surveyModule.id}>
             
@@ -207,6 +234,7 @@ export default function SurveyModule() {
           </div>
         ))}
       </main>
+      {/* } */}
       
     </div>
   );

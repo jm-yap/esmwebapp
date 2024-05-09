@@ -11,19 +11,10 @@ export default function Form() {
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
-  const { data: session } = useSession();
-  if (session) {
+  const { data: session, status } = useSession();
+  if (status === "authenticated") {
     sessionStorage.setItem("userEmail", email);
     sessionStorage.setItem("validInfo", "true");
-    redirect("/surveymodule");
-  }
-
-  try {
-    const isMasterKeyPresent = sessionStorage.getItem("masterKey");
-    if (isMasterKeyPresent !== "true") {
-      redirect("/");
-    }
-  } catch (error) {
     redirect("/");
   }
 

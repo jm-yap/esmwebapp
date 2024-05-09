@@ -6,7 +6,7 @@ import { addDoc, collection, doc, updateDoc, increment } from "firebase/firestor
 import { db, auth } from "@/firebase";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { SurveyCardProps } from "@/app/components/surveys";
 import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
 import TextField from "@mui/material/TextField";
@@ -15,6 +15,10 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { clear } from "console";
+import LinearProgress from '@mui/material/LinearProgress';
+import Stack from '@mui/material/Stack';
+import { set } from "firebase/database";
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 interface SurveyPageProps {
   params: {
@@ -24,19 +28,45 @@ interface SurveyPageProps {
 
 
 export default function QuestionsPage({ params }: SurveyPageProps) {
+  const router = useRouter();
+
   const session = useSession({
     required: true,
     onUnauthenticated() {
       redirect("/login");
     },
   });
+
+  useEffect(() => {
+    const fetchMasterKey = async () => {
+      try {
+        const isMasterKeyPresent = sessionStorage.getItem("masterKey");
+        if (isMasterKeyPresent !== "true") {
+          console.log("Redirecting to masterkey");
+          redirect("/");
+        }
+      } catch (error: any) {
+        router.push("/");
+      }
+    };
+
+    fetchMasterKey();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [SurveyList, setSurveyList] = useState([]);
   const [error, SetError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleClick = (e) => {
+    setIsLoading(true);
+  };
 
   // Adding
   const handleAddSurvey = async (e: any) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       const survey_details = {
         AccessCode : params.accessKey,
         BuilderID : session.data.user?.email,
@@ -68,10 +98,11 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
         SetError("Minimum interval must be less than the time gap between sessions");
         return;
       }
-
+      
       await addSurvey({survey: survey_details});
       const updatedSurveys = await getSurveys(params.accessKey);
       setSurveyList(updatedSurveys);
+      setIsLoading(false);
 
       const surveyModuleRef = doc(db, "ResearchModules", params.accessKey);
       await updateDoc(surveyModuleRef, {
@@ -95,8 +126,10 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   // Fetching
   useEffect(() => {
     const fetchData = () => {
+      setIsLoading(true);
       getSurveys(params.accessKey).then((surveys: any) => {
         setSurveyList(surveys);
+        setIsLoading(false);
       });
     };
     fetchData();
@@ -108,9 +141,11 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   // Deletion
   const handleDeleteSurvey = async (SurveyID: string) => {
     try {
+      setIsLoading(true);
       await deleteSurvey(params.accessKey, SurveyID);
       const updatedSurveys = await getSurveys(params.accessKey);
       setSurveyList(updatedSurveys);
+      setIsLoading(false);
     } catch (error: any) {
       console.error("Error deleting survey question:", error.message);
     }
@@ -130,12 +165,12 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   return (
     <div className={styles.container}>
       <div className={styles.navbar}>
-        <Link href="/surveymodule" className={styles.navtext}>
+        <Link href="/surveymodule" className={styles.navtext} onClick={handleClick}>
           <h1 className={styles.navblack}>Sagot</h1>
           <h1 className={styles.navwhite}>Kita</h1>
           <h1 className={styles.navblack}>.</h1>
         </Link>
-        <Link href="/builderprofile" className={styles.navprofilecontainer}>
+        <Link href="/builderprofile" className={styles.navprofilecontainer} onClick={handleClick}>
           <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
           <AccountCircleIcon fontSize="large" />
         </Link>
@@ -182,25 +217,41 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
       </div>
 
       <main className={styles.main}>
+        <div style={{position: 'fixed', width: '100%'}}>
+          {isLoading && (
+            <div style={{ marginTop: '-20px', marginLeft: '-20px' }}>
+              <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
+                <LinearProgress color="inherit" sx={{ width: '100%', height: '7px' }} />
+              </Stack>
+            </div>
+          )}
+        </div>
         <div className={styles.mainRow}>
-          <Link href={`/surveymodule/`}>
+          <Link href={`/surveymodule/`} onClick={handleClick}>
             <ArrowBackIcon sx={{ fontSize: 40 }}/>
           </Link>
           <h1 className={styles.SurveyModuleTitle}>{surveyModule.data.Title}</h1>
         </div>
         <h2 className={styles.SurveyModuleDescription}>{surveyModule.data.Description}</h2>
         <h3 className={styles.SurveyModuleAccessCode}>Access Code: {surveyModule.id}</h3>
+
+        {SurveyList.length === 0 && !isLoading &&
+          <div className={styles.empty}>
+            <AutoAwesomeIcon sx={{ fontSize: 100, color: '#ddd' }} style={{marginBottom: '20px'}}/>
+            <h1>No surveys here, try making one :D</h1>
+          </div>
+        }
         {SurveyList.map((survey: any) => (
           <div key={survey.id}>
             <div className={styles.SurveyContainer}>
               <div className={styles.cardRow}>
-                <Link href={`/surveymodule/${params.accessKey}/${survey.id}/questions`}>
+                <Link href={`/surveymodule/${params.accessKey}/${survey.id}/questions`} onClick={handleClick}>
                   <button className={styles.SurveyTitle} onClick={() => localStorage.setItem("survey", JSON.stringify(survey))}>
                     {survey.data.Title}
                   </button>
                 </Link>
                 <div className={styles.cardRow}>
-                <Link href={`/surveymodule/${params.accessKey}/${survey.id}/responses`}>
+                <Link href={`/surveymodule/${params.accessKey}/${survey.id}/responses`} onClick={handleClick}>
                   <ListAltOutlinedIcon sx={{ fontSize: 30, color: '#E07961' }}/>
                 </Link>
                 <button onClick={() => handleDeleteSurvey(survey.id)}>

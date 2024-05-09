@@ -8,8 +8,10 @@ import Link from "next/link";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSession } from "next-auth/react";
 import CsvDownloader from 'react-csv-downloader';
+import { LinearProgress, Stack } from "@mui/material";
 
 import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
+import { set } from "firebase/database";
 
 
 interface ResponsePageProps {
@@ -26,8 +28,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
   const [surveyInfo, setSurveyInfo] = useState(null);
   const [moduleAnon, setModuleAnon] = useState(null);
   const [filterName, setFilterName] = useState('None')
-  // I must store the statte of being filterd or not ? ? 
-
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetching: Fetch the responses once the questions have been fetched
 
@@ -36,11 +37,9 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
   useEffect(() => {
     const fetchData = () => {
       getSurveyDetails(params.surveyID).then((info: any) => {
+        setIsLoading(true);
         setSurveyInfo(info);
-        // console.log(info?.AccessCode, params.accessKey, "let us compare these valss")
-        // console.log(info, "another info")
         getModuleAnon(params.accessKey).then((moduleAnonInfo)=>{
-          // console.log("this is the module info:", moduleAnonInfo)
           setModuleAnon(moduleAnonInfo.anon)
         })
       
@@ -49,8 +48,10 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
         setHeaderQuestions(questions);
         getResponses(params.accessKey, params.surveyID, questions).then((responses: any) => {
           setResponses(responses); 
+          setIsLoading(false);
         });
       });
+
       
     };
     fetchData();
@@ -66,10 +67,6 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
   const builderFirstName = sessionStorage.getItem("firstName");
   const builderLastName = sessionStorage.getItem("lastName");
 
-  // console.log(surveyInfo, 'Troubleshoot -1 Total Questions')
-  // console.log(builderFirstName, builderLastName)
-  // console.log(responses)
-
   type clientNameType = string | null
   let clientNames: clientNameType[] = responses.map((responseObj) => {return responseObj.clientName})
   const noDuplicates = (arr: clientNameType[]): clientNameType[] => {
@@ -77,20 +74,16 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
         index) => arr.indexOf(item) === index);
 }
   clientNames = noDuplicates(clientNames).sort()
-  // console.log(clientNames)
+
 
   const handleNameFilter = (e) => {
     setFilterName(e.target.value)
   }
 
-  // console.log(filterName, "Marker of this locaion")
-
   const downloadCSVHandler = () => {
 
     let questionIDToText: object[] = [];
     let questionIDToResponseInst: object[] = [];
-
-    // must take into account the anonymity of the survey module
 
     if (moduleAnon === false) {
       questionIDToText.push({
@@ -111,21 +104,15 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
       });
     })
 
-    // Required: Timestamp column
-    // if anon: wala, if not anon: name
-
     responses.forEach((responseObj, responseIdx) => {
-      // let perRow = {}; //Assuming anonymous pa to ah
-      // (filterName === 'None' || response.clientName === filterName)      
-      // filterName is None when the survey is Anonymous
       if (filterName === 'None' || responseObj.clientName === filterName) {
         let perRow = {};
         if (moduleAnon === false) perRow["Name"] =  responseObj.clientName
       
         perRow["Timestamp"] = responseObj.time;
-        // console.log(responseObj.clientName)
+
         responseObj.list.forEach((value: any)=>{
-          // perRow[value.QuestionID] 
+ 
           if (Array.isArray(value.Response)) {
             if (!value.Response.length) {
               // empty array
@@ -141,78 +128,14 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
         questionIDToResponseInst.push(perRow);
       }      
     })
-    // console.log([questionIDToText, questionIDToResponseInst], 'PHUM VIPHURIT')
-    // console.log(questionIDToResponseInst, 'PHUM VIPHURIT');
     return [questionIDToText, questionIDToResponseInst]
         
   }  
   let csvData: any = downloadCSVHandler()
   let csvFileName: string = `${surveyInfo?.Title} Response Data`
 
-
-  if (responses.length === 0) {
-    return (
-          <div className="pageProperty">         
-            <main className="main">
-              <div className = "banner">
-                <Link href={`/surveymodule/`}>
-                <div className = "bannerTitle">
-                  <h1 className="bannerTitleChild">Sagot</h1>
-                  <h1 className="bannerTitleChild bannerKita">Kita</h1>
-                  <h1 className="bannerTitleChild">.</h1>
-                </div>   
-                </Link> 
-    
-                <Link href={``}>
-                  <div className="builderName">
-                    <h1>
-                      {builderFirstName} {builderLastName}
-                    </h1> 
-                  </div>
-                </Link>
-    
-    
-              </div>
-              <div className="surveyInformation">
-                <div className="surveyInfoLeft">
-                  {/* left */}
-                  <div className="surveyTitleBack">
-                    <Link href={`/surveymodule/${params.accessKey}`}>
-                      <ArrowBackIcon sx={{ fontSize: 60 }}/>
-                    </Link> 
-                    <h1 className="surveyTitle">{surveyInfo?.Title}</h1>
-                  </div>
-                  <div>
-                    <h1 className="surveyInfoText">Survey Description: {surveyInfo?.Description}</h1>
-                    <h1 className="surveyInfoText">Required No. of Sessions: {surveyInfo?.Sessions}</h1>
-                    <h1 className="surveyInfoText">Minimum Interval (in hours): {surveyInfo?.Interval}</h1>
-          
-                  </div>
-                  
-                </div>
-    
-                <div className="surveyInfoRight">
-                  {/* right */}
-                  {/* <h1 className="surveyInfoText">convert cv here</h1> */}
-                  <h1 className="surveyInfoText">Module Anonymity: {`${moduleAnon ? 'Anonymous' : 'Not Anonymous'}`}</h1>
-                  <h1 className="surveyInfoText">Opens on: {startDate}</h1>
-                  <h1 className="surveyInfoText">Closes on: {endDate}</h1>
-                  <h1 className="surveyInfoText">Total Questions: {headerQuestions.length}</h1>
-                </div>
-              </div>
-              <div className="nothingDiv">
-                <h2 className="nothingH2">
-                  No responses for this survey yet!
-                </h2>
-              </div>              
-            </main>
-        </div>
-    );
-
-  }
-  else {
-    return (      
-      <div className="pageProperty">         
+  return(
+    <div className="pageProperty">         
         <main className="main">
           <div className = "banner">
             <Link href={`/surveymodule/`}>
@@ -233,6 +156,15 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
 
 
           </div>
+          <div style={{position: 'fixed', width: '100%'}}>
+            {isLoading && (
+              <div>
+                <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
+                  <LinearProgress color="inherit" sx={{ width: '100%', height: '7px' }} />
+                </Stack>
+              </div>
+            )}
+          </div>
           <div className="surveyInformation">
             <div className="surveyInfoLeft">
               {/* left */}
@@ -242,17 +174,16 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                 </Link> 
                 <h1 className="surveyTitle">{surveyInfo?.Title}</h1>
               </div>
-              <div>
+              <div className="surveyInfoLeftBottom">
                 <h1 className="surveyInfoText">Survey Description: {surveyInfo?.Description}</h1>
                 <h1 className="surveyInfoText">Required No. of Sessions: {surveyInfo?.Sessions}</h1>
-                <h1 className="surveyInfoText">Minimum Interval (in hours): {surveyInfo?.Interval}</h1>
-                {/* filter shit */}
-                {(moduleAnon === false) &&
+                <h1 className="surveyInfoText">Minimum Interval (in hours): {surveyInfo?.Interval}</h1> 
+                {((responses.length !== 0) && (moduleAnon === false)) &&
                     <select 
                     className={styles.sidebarTextField}
                     value = {filterName}                
                     onChange = {handleNameFilter}>
-                    <option value='None'>No filter</option>
+                    <option value='None'>Filter by Name</option>
                     {clientNames.map((data)=>{return <option key={data} value={data}>{data}</option>})}
                   </select>           
                 }
@@ -261,20 +192,20 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
             </div>
 
             <div className="surveyInfoRight">
-                  {/* right */}
-              {/* <h1 className="surveyInfoText">Cojjknvert cv here</h1> */}
-              {/* <button className="downloadCSVText" onClick={downloadCSVHandler}>DownloadMeHere</button> */}
-              <CsvDownloader 
-                className="downloadCSVText"
-                filename = {csvFileName}
-                extension = ".csv"
-                separator=";"
-                text="Download CSV file"
-                meta= {true}
-                title = {csvFileName}
-                columns = {csvData[0]}
-                datas = {csvData[1]}                
-              />
+              {/* right */}
+              {(responses.length !== 0) && 
+                <CsvDownloader 
+                  className="downloadCSVText"
+                  filename = {csvFileName}
+                  extension = ".csv"
+                  separator=";"
+                  text="Download CSV file"
+                  meta= {true}
+                  title = {csvFileName}
+                  columns = {csvData[0]}
+                  datas = {csvData[1]}                
+                />              
+              }
               <h1 className="surveyInfoText">Module Anonymity: {`${moduleAnon ? 'Anonymous' : 'Not Anonymous'}`}</h1>
               <h1 className="surveyInfoText">Opens on: {startDate}</h1>
               <h1 className="surveyInfoText">Closes on: {endDate}</h1>
@@ -282,94 +213,105 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
             </div>
           </div>
 
-          <div className = "tableDiv">
-            <table className="table">
-              <thead className="">
-                <tr key = {surveyInfo?.id}>
+          {
+            (responses.length !== 0) && 
+            <div className = "tableDiv">
+              <table className="table">
+                <thead className="">
+                  <tr key = {surveyInfo?.id}>
 
-                  {(moduleAnon === false) &&
-                    <th scope="col" className="tableHeader">ResponseID</th>            
-                  }
-                  {(moduleAnon === false) &&                    
-                    <th scope="col" className="tableHeader">Name</th>
-                  }     
-                  <th scope="col" className="tableHeader">Timestamp</th>
+                    {(moduleAnon === false) &&
+                      <th scope="col" className="tableHeader">ResponseID</th>            
+                    }
+                    {(moduleAnon === false) &&                    
+                      <th scope="col" className="tableHeader">Name</th>
+                    }     
+                    <th scope="col" className="tableHeader">Timestamp</th>
+                    {
+                      headerQuestions.map((questionJSON: any) => {
+                        return (
+                          <th key={questionJSON.id} scope="col" className="tableHeader">
+                            {questionJSON.data.QuestionText}
+                          </th>
+                        )
+                      })
+                    }
+                  </tr>
+                </thead>
+                <tbody>
                   {
-                    headerQuestions.map((questionJSON: any) => {
+                    responses.map((response: any) => {
                       return (
-                        <th key={questionJSON.id} scope="col" className="tableHeader">
-                          {questionJSON.data.QuestionText}
-                        </th>
+                        <tr key={response?.respID}>
+
+                          {(filterName === 'None' || response.clientName === filterName) && (moduleAnon === false) && (
+                            <>
+                              <td className="tableCell tr:hover">
+                                {response.respID}
+                              </td>  
+                              <td className="tableCell tr:hover">
+                                {response.clientName}
+                              </td>                         
+                            </>                      
+                            )                   
+                          }                   
+
+                          {(filterName === 'None' || response.clientName === filterName) && (
+                            <>
+                              <td className="tableCell tr:hover">{response.time}</td>
+                              {response.list.map((perResponse: any) => {
+                              if (perResponse.Response === "") {
+                                return (
+                                  <td key={perResponse.id} className="tableCell tr:hover">                              
+                                  </td>
+                                )
+                              }
+                              else {
+                                return (
+                                  <td key={perResponse.id} className="tableCell tr:hover">
+                                    {
+                                      (typeof perResponse?.Response === 'string' || perResponse?.Response instanceof String) && perResponse?.Response
+                                    }
+                                    {
+                                      Array.isArray(perResponse?.Response) && perResponse?.Response.map((option: any, perResponseIdx: number) => {
+
+                                        if (perResponseIdx === perResponse.Response.length - 1) {
+                                          return (
+                                            `${option} `
+                                          )
+                                        } else {
+                                          return (
+                                            `${option}, `
+                                          )
+                                        }
+                                      })
+                                    }
+                                  </td>
+                                )
+                              }
+                            })}
+                            </>
+                            
+                          )}
+                        </tr>
                       )
                     })
                   }
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  responses.map((response: any) => {
-                    return (
-                      <tr key={response?.respID}>
-
-                        {(filterName === 'None' || response.clientName === filterName) && (moduleAnon === false) && (
-                          <>
-                            <td className="tableCell tr:hover">
-                              {response.respID}
-                            </td>  
-                            <td className="tableCell tr:hover">
-                              {response.clientName}
-                            </td>                         
-                          </>                      
-                          )                   
-                        }                   
-
-                        {(filterName === 'None' || response.clientName === filterName) && (
-                          <>
-                            <td className="tableCell tr:hover">{response.time}</td>
-                            {response.list.map((perResponse: any) => {
-                            if (perResponse.Response === "") {
-                              return (
-                                <td key={perResponse.id} className="tableCell tr:hover">                              
-                                </td>
-                              )
-                            }
-                            else {
-                              return (
-                                <td key={perResponse.id} className="tableCell tr:hover">
-                                  {
-                                    (typeof perResponse?.Response === 'string' || perResponse?.Response instanceof String) && perResponse?.Response
-                                  }
-                                  {
-                                    Array.isArray(perResponse?.Response) && perResponse?.Response.map((option: any, perResponseIdx: number) => {
-
-                                      if (perResponseIdx === perResponse.Response.length - 1) {
-                                        return (
-                                          `${option} `
-                                        )
-                                      } else {
-                                        return (
-                                          `${option}, `
-                                        )
-                                      }
-                                    })
-                                  }
-                                </td>
-                              )
-                            }
-                          })}
-                          </>
-                          
-                        )}
-                      </tr>
-                    )
-                  })
-                }
-              </tbody>
-            </table>  
+                </tbody>
+              </table>  
           </div>
-          
+          }
+    
+       
+          {
+            (responses.length === 0) && (isLoading === false) &&
+            <div className="nothingDiv">
+              <h2 className="nothingH2">
+                No responses for this survey yet!
+              </h2>
+            </div>    
+          }
         </main>
       </div>
-    )
-  } 
+  )
 }

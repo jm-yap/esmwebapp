@@ -19,6 +19,9 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import { set } from "firebase/database";
+import LinearProgress from '@mui/material/LinearProgress';
+import Stack from '@mui/material/Stack';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 interface QuestionPageProps {
   params: {
@@ -32,6 +35,11 @@ interface QuestionPageProps {
 export default function QuestionsPage({ params }: QuestionPageProps) {
   const [QuestionsList, setQuestionsList] = useState([]);
   const [survey, setSurvey] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleClick = (e) => {
+    setIsLoading(true);
+  };
 
   useEffect(() => {
     const surveyStr = localStorage.getItem("survey");
@@ -53,6 +61,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
 
     try {
       let docRef;
+      setIsLoading(true);
       // Add a new document with a generated id
       if (QuestionType === "5") {
         const MinValue = parseInt(e.target.elements.MinValue.value);
@@ -65,14 +74,17 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
           QuestionType: QuestionType,
           Choices: slider,
         });
+        setIsLoading(false);
         console.log("Question added with ID:", docRef.id);
       } else {
+        setIsLoading(true);
         docRef = await addDoc(questionRef, {
           SurveyID: SurveyID,
           QuestionText: QuestionText,
           QuestionType: QuestionType,
           Choices: fields,
         });
+        setIsLoading(false);
         console.log("Question added with ID:", docRef.id);
       }
 
@@ -120,6 +132,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     const fetchData = () => {
       getQuestions(params.accessKey, params.surveyID).then((Questions: any) => {
         setQuestionsList(Questions);
+        setIsLoading(false);
       });
     };
 
@@ -130,9 +143,11 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   // Deletion
   const handleDeleteQuestion = async (QuestionID: string) => {
     try {
+      setIsLoading(true);
       await deleteQuestion(params.accessKey, params.surveyID, QuestionID);
       const updatedQuestions = await getQuestions(params.accessKey,params.surveyID);
       setQuestionsList(updatedQuestions);
+      setIsLoading(false);
     } catch (error: any) {
       console.error("Error deleting survey Question:", error.message);
     }
@@ -148,6 +163,10 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
       setFields([]);
     }
   };
+
+  const ClearChoices = () => {
+    setFields([...fields.fill('')]);
+  }
 
   const [numFields, setNumFields] = useState(0);
   const [fields, setFields] = useState([]);
@@ -199,12 +218,12 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
         <>
         {/* Navbar */}
         <div className={styles.navbar}>
-          <Link href="/surveymodule" className={styles.navtext}>
+          <Link href="/surveymodule" className={styles.navtext} onClick={handleClick}>
             <h1 className={styles.navblack}>Sagot</h1>
             <h1 className={styles.navwhite}>Kita</h1>
             <h1 className={styles.navblack}>.</h1>
           </Link>
-          <Link href="/builderprofile" className={styles.navprofilecontainer}>
+          <Link href="/builderprofile" className={styles.navprofilecontainer} onClick={handleClick}>
             <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
             <AccountCircleIcon fontSize="large" />
           </Link>
@@ -239,7 +258,8 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                   (questionType === "2" || questionType === "3") ? ( 
                     <div className={styles.sidebarFormBit}>
                       <label className={styles.sidebarLabel}>Number of Choices</label>
-                      <input value={numFields} type="number" required onChange={handleNumFieldsChange} min="1" name="NumOptions" className={styles.sidebarTextField} />
+                      <input value={numFields} type="number" required onChange={handleNumFieldsChange} min="1" max="20" name="NumOptions" className={styles.sidebarTextField} />
+                      <button className={styles.clearButton} onClick={ClearChoices}>Clear Choices</button>
                       {fields.map((field, index) => (
                         <label key={index} className={styles.sidebarLabel}>
                           Option {index + 1}:
@@ -286,8 +306,17 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
         </div>
 
         <main className={styles.main}>
+          <div style={{position: 'fixed', width: '100%'}}>
+            {isLoading && (
+              <div style={{ marginTop: '-20px', marginLeft: '-20px' }}>
+                <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
+                  <LinearProgress color="inherit" sx={{ width: '100%', height: '7px' }} />
+                </Stack>
+              </div>
+            )}
+          </div>
           <div className={styles.mainRow}>
-            <Link href={`/surveymodule/${params.accessKey}`}>
+            <Link href={`/surveymodule/${params.accessKey}`} onClick={handleClick}>
               <ArrowBackIcon sx={{ fontSize: 40 }}/>
             </Link>
             <h1 className={styles.SurveyModuleTitle}>{survey.data.Title}</h1>
@@ -302,13 +331,18 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
             <h2 className={styles.SurveyInfo}>Closes on: {endDate}</h2>
           </div>
 
-          
+          {(QuestionsList.length === 0) && isLoading === false &&
+            <div className={styles.empty}>
+              <AutoAwesomeIcon sx={{ fontSize: 100, color: '#ddd' }} style={{marginBottom: '20px'}}/>
+              <h1>So clean! There are no questions yet.</h1>
+            </div>
+          }
           
           {QuestionsList.map((Question: any) => (
           <div key={Question.id}> 
-            <div className={styles.SurveyContainer}>
+            <div className={styles.QuestionContainer}>
               <div className={styles.cardRow}>
-                <h1 className={styles.SurveyTitle}>{Question.data.QuestionText}</h1>
+                <h1 className={styles.QuestionTitle}>{Question.data.QuestionText}</h1>
                 <button onClick={() => handleDeleteQuestion(Question.id)}>
                   <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
                 </button>

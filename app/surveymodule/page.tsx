@@ -15,34 +15,44 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { getClientAccountByEmail } from "@/actions/clients";
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import LinearProgress from '@mui/material/LinearProgress';
+import Stack from '@mui/material/Stack';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import { sign } from "crypto";
 import { red } from "@mui/material/colors";
 
 
 export default function SurveyModule() {
+  const router = useRouter();
+  const [verified, setVerified] = useState(false);
+
+  const session = useSession({
+    required: true,
+    onUnauthenticated() {
+      console.log("Unauthenticated, redirecting to login")
+      sessionStorage.removeItem("userEmail");
+      redirect("/login");
+    },
+  });
+
   useEffect(() => {
     const fetchMasterKey = async () => {
       try {
         const isMasterKeyPresent = sessionStorage.getItem("masterKey");
         if (isMasterKeyPresent !== "true") {
-          console.log("Redirecting to masterkey")
+          console.log("Redirecting to masterkey");
           redirect("/");
+        } else {
+          setVerified(true);
         }
       } catch (error: any) {
-        redirect("/");
+        router.push("/");
       }
     };
 
     fetchMasterKey();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect("/login");
-    },
-  });
-
-  const router = useRouter();
 
   const [builderEmail, setBuilderEmail] = useState(""); 
   const [surveyModules, setSurveyModules] = useState([]); // Get the list of survey modules
@@ -52,6 +62,10 @@ export default function SurveyModule() {
   const [lastName, setLastName] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
+  const handleClick = (e) => {
+    setIsLoading(true);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const email = sessionStorage.getItem("userEmail");
@@ -59,6 +73,7 @@ export default function SurveyModule() {
         try {
           const modules = await getSurveyModules();
           setSurveyModules(modules);
+          setIsLoading(false);
           setBuilderEmail(email);
           
           const userdata = await getClientAccountByEmail(email);
@@ -70,13 +85,12 @@ export default function SurveyModule() {
             setFirstName(userdata.FirstName);
             setLastName(userdata.LastName);
           } else {
-            router.push("/editaccountinfo");
+            redirect("/editaccountinfo");
           }
         } catch (error: any) {
           console.error("Error fetching survey modules:", error.message);
         }
       } else {
-        signOut();
         router.push("/login");
       }
     };
@@ -113,23 +127,28 @@ export default function SurveyModule() {
   const handleAddSurveyModule = async (e: any) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       const title = e.target.elements.title.value;
       const description = e.target.elements.description.value;
 
       await addSurveyModule(`${firstName} ${lastName} (${builderEmail})`, title, description, 0, isAnonymous);
       const updatedModules = await getSurveyModules();
       setSurveyModules(updatedModules);
+      setIsLoading(false);
     } catch (error: any) {
       console.error("Error adding survey module:", error.message);
     }
     e.target.elements.title.value = "";
+    e.target.elements.description.value = "";
   };
 
   const handleDeleteSurveyModule = async (surveyModuleID: string) => {
     try {
+      setIsLoading(true);
       await deleteSurveyModule(surveyModuleID);
       const updatedModules = await getSurveyModules();
       setSurveyModules(updatedModules);
+      setIsLoading(false);
     } catch (error: any) {
       console.error("Error deleting survey module:", error.message);
     }
@@ -137,17 +156,26 @@ export default function SurveyModule() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.navbar}>
-        <Link href="/surveymodule" className={styles.navtext}>
-          <h1 className={styles.navblack}>Sagot</h1>
-          <h1 className={styles.navwhite}>Kita</h1>
-          <h1 className={styles.navblack}>.</h1>
-        </Link>
-        <Link href="/builderprofile" className={styles.navprofilecontainer}>
-          <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
-          <AccountCircleIcon fontSize="large" />
-        </Link>
-      </div>
+      {/* <div> */}
+        <div className={styles.navbar}>
+          <Link href="/surveymodule" className={styles.navtext} onClick={handleClick}>
+            <h1 className={styles.navblack}>Sagot</h1>
+            <h1 className={styles.navwhite}>Kita</h1>
+            <h1 className={styles.navblack}>.</h1>
+          </Link>
+          <Link href="/builderprofile" className={styles.navprofilecontainer} onClick={handleClick}>
+            <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
+            <AccountCircleIcon fontSize="large" />
+          </Link>
+        </div>
+        {/* {isLoading &&
+          <div className={styles.loading}>
+            <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
+              <LinearProgress color="inherit"  sx={{ width: '100%', height: '7px' }}/> 
+            </Stack>
+          </div>
+        } */}
+      {/* </div> */}
 
       <div className={styles.sidebar}>
         <div className={styles.sidebarContent}>
@@ -182,14 +210,29 @@ export default function SurveyModule() {
           </div>
         </div>
       </div>
-
+      
       <main className={styles.main}>
-        {surveyModules.map((surveyModule: any) => (
+        <div style={{position: 'fixed', width: '100%'}}>
+          {isLoading && (
+            <div style={{ marginTop: '-20px', marginLeft: '-20px' }}>
+              <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
+                <LinearProgress color="inherit" sx={{ width: '100%', height: '7px' }} />
+              </Stack>
+            </div>
+          )}
+        </div>
+        {surveyModules.length === 0 && !isLoading &&
+          <div className={styles.empty}>
+            <AutoAwesomeIcon sx={{ fontSize: 100, color: '#ddd' }} style={{marginBottom: '20px'}}/>
+            <h1>No modules yet. Create one on the left!</h1>
+          </div>
+        }
+        {verified && surveyModules.map((surveyModule: any) => (
           <div key={surveyModule.id}>
             
               <div className={styles.SurveyContainer}>
                 <div className={styles.sidebarRow}>
-                  <Link href={`/surveymodule/${surveyModule.id}`}>
+                  <Link href={`/surveymodule/${surveyModule.id}`} onClick={handleClick}>
                     <button onClick={() =>
                       localStorage.setItem("surveyModule", JSON.stringify(surveyModule))} // export survey module details
                       className={styles.SurveyTitle}>
@@ -207,6 +250,7 @@ export default function SurveyModule() {
           </div>
         ))}
       </main>
+      {/* } */}
       
     </div>
   );

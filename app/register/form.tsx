@@ -14,7 +14,7 @@ import styles from "./styles.module.css";
 export default function Form() {
   const { data: session } = useSession();
   if (session) {
-    redirect("/dashboard");
+    redirect("/surveymodule");
   }
 
   // try {
@@ -42,7 +42,7 @@ export default function Form() {
         .then((userCredential) => {
           console.log(userCredential);
           sessionStorage.setItem("userEmail", email);
-          router.push(`/editaccountinfo`);
+          router.push("/login");
         })
         .catch((error) => {
           if (error.code === "auth/email-already-in-use") {

@@ -1,15 +1,20 @@
 "use client";
 import React, { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, redirect } from "next/navigation";
 import { fetchMasterKey } from "@/actions/masterkey";
 import styles from "./styles.module.css";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 function HomePage() {
   const router = useRouter();
   const [masterKey, setMasterKey] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const session = useSession();
+  const session = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/login");
+    },
+  });
 
   const handleMasterKeySubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,16 +26,11 @@ function HomePage() {
         // If master key is correct, navigate to the login/signup page
         sessionStorage.setItem("masterKey", "true");
         console.log("Master key is correct");
-        if (session.status === "authenticated") {
-          sessionStorage.setItem("userEmail", session.data.user?.email);
-          sessionStorage.setItem("validInfo", "true");
-          router.push("/surveymodule");
-        } else {
-          router.push("/login"); // Replace with the actual path of your login/signup page
-        }
+        sessionStorage.setItem("userEmail", session.data.user?.email);
+        sessionStorage.setItem("validInfo", "true");
+        router.push("/surveymodule");
         
         // router.push(session.status === "unauthenticated" ? "/login" : "/surveymodule"); // Replace with the actual path of your login/signup page
-        
       } else {
         setError("Invalid master key");
       }   

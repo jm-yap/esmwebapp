@@ -9,6 +9,13 @@ import { set } from "firebase/database";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export default function ClientAccount() {
+  const session = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/login");
+    },
+  });
+
   try {
     const isMasterKeyPresent = sessionStorage.getItem("masterKey");
     if (isMasterKeyPresent !== "true") {
@@ -17,13 +24,6 @@ export default function ClientAccount() {
   } catch (error) {
     redirect("/");
   }
-
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect("/login");
-    },
-  });
   
   const router = useRouter();
 
@@ -136,6 +136,7 @@ export default function ClientAccount() {
           <button className={styles.button} onClick={() => editClientAccount()}>E D I T</button>
           <button className={styles.button} onClick={() => {
             sessionStorage.setItem("validInfo", "false");
+            sessionStorage.removeItem("masterKey");
             signOut();
           }}>L O G O U T</button>
         </div>

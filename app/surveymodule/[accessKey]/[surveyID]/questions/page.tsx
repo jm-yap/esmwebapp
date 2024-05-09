@@ -163,6 +163,10 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     }
   };
 
+  const ClearChoices = () => {
+    setFields([...fields.fill('')]);
+  }
+
   const [numFields, setNumFields] = useState(0);
   const [fields, setFields] = useState([]);
 
@@ -254,6 +258,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                     <div className={styles.sidebarFormBit}>
                       <label className={styles.sidebarLabel}>Number of Choices</label>
                       <input value={numFields} type="number" required onChange={handleNumFieldsChange} min="1" max="20" name="NumOptions" className={styles.sidebarTextField} />
+                      <button className={styles.clearButton} onClick={ClearChoices}>Clear Choices</button>
                       {fields.map((field, index) => (
                         <label key={index} className={styles.sidebarLabel}>
                           Option {index + 1}:

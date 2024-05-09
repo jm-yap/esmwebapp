@@ -178,6 +178,10 @@
     font-weight: bold;
 }
 
+.SurveyTitle:hover {
+    text-decoration: underline;
+}
+
 .SurveyDescription {
     font-size: 1.2em;
 }

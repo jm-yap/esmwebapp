@@ -147,6 +147,19 @@
   text-decoration: underline;
 }
 
+.clearButton {
+  color: #E07961;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: left;
+  margin-left: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.clearButton:hover {
+  text-decoration: underline;
+}
+
 .SurveyDescription {
   font-size: 1.2em;
 }

@@ -8,18 +8,26 @@ import { on } from "events";
 import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 import { set } from "firebase/database";
+import { useEffect } from "react";
 
 function HomePage() {
   const router = useRouter();
   const [masterKey, setMasterKey] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const session = useSession({
     required: true,
     onUnauthenticated() {
       redirect("/login");
     },
   });
+
+  useEffect(() => {
+    if (session && sessionStorage.getItem("userEmail") !== null) {
+      setIsLoading(false);
+    }
+  }, [session]);
+
 
   const handleMasterKeySubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,7 +40,7 @@ function HomePage() {
         sessionStorage.setItem("masterKey", "true");
         console.log("Master key is correct");
         sessionStorage.setItem("userEmail", session.data.user?.email);
-        setLoading(false);
+        setIsLoading(false);
         sessionStorage.setItem("validInfo", "true");
         router.push("/surveymodule");
         

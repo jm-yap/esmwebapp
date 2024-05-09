@@ -37,6 +37,10 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   const [error, SetError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const handleClick = (e) => {
+    setIsLoading(true);
+  };
+
   // Adding
   const handleAddSurvey = async (e: any) => {
     e.preventDefault();
@@ -140,12 +144,12 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   return (
     <div className={styles.container}>
       <div className={styles.navbar}>
-        <Link href="/surveymodule" className={styles.navtext}>
+        <Link href="/surveymodule" className={styles.navtext} onClick={handleClick}>
           <h1 className={styles.navblack}>Sagot</h1>
           <h1 className={styles.navwhite}>Kita</h1>
           <h1 className={styles.navblack}>.</h1>
         </Link>
-        <Link href="/builderprofile" className={styles.navprofilecontainer}>
+        <Link href="/builderprofile" className={styles.navprofilecontainer} onClick={handleClick}>
           <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
           <AccountCircleIcon fontSize="large" />
         </Link>
@@ -202,7 +206,7 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
           )}
         </div>
         <div className={styles.mainRow}>
-          <Link href={`/surveymodule/`}>
+          <Link href={`/surveymodule/`} onClick={handleClick}>
             <ArrowBackIcon sx={{ fontSize: 40 }}/>
           </Link>
           <h1 className={styles.SurveyModuleTitle}>{surveyModule.data.Title}</h1>
@@ -213,13 +217,13 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
           <div key={survey.id}>
             <div className={styles.SurveyContainer}>
               <div className={styles.cardRow}>
-                <Link href={`/surveymodule/${params.accessKey}/${survey.id}/questions`}>
+                <Link href={`/surveymodule/${params.accessKey}/${survey.id}/questions`} onClick={handleClick}>
                   <button className={styles.SurveyTitle} onClick={() => localStorage.setItem("survey", JSON.stringify(survey))}>
                     {survey.data.Title}
                   </button>
                 </Link>
                 <div className={styles.cardRow}>
-                <Link href={`/surveymodule/${params.accessKey}/${survey.id}/responses`}>
+                <Link href={`/surveymodule/${params.accessKey}/${survey.id}/responses`} onClick={handleClick}>
                   <ListAltOutlinedIcon sx={{ fontSize: 30, color: '#E07961' }}/>
                 </Link>
                 <button onClick={() => handleDeleteSurvey(survey.id)}>

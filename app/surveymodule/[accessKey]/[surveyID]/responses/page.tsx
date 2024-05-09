@@ -183,7 +183,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                     className={styles.sidebarTextField}
                     value = {filterName}                
                     onChange = {handleNameFilter}>
-                    <option value='None'>No filter</option>
+                    <option value='None'>Filter by Name</option>
                     {clientNames.map((data)=>{return <option key={data} value={data}>{data}</option>})}
                   </select>           
                 }

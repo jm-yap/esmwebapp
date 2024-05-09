@@ -36,6 +36,10 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   const [survey, setSurvey] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const handleClick = (e) => {
+    setIsLoading(true);
+  };
+
   useEffect(() => {
     const surveyStr = localStorage.getItem("survey");
     const parsedSurvey = surveyStr ? JSON.parse(surveyStr) : null;
@@ -209,12 +213,12 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
         <>
         {/* Navbar */}
         <div className={styles.navbar}>
-          <Link href="/surveymodule" className={styles.navtext}>
+          <Link href="/surveymodule" className={styles.navtext} onClick={handleClick}>
             <h1 className={styles.navblack}>Sagot</h1>
             <h1 className={styles.navwhite}>Kita</h1>
             <h1 className={styles.navblack}>.</h1>
           </Link>
-          <Link href="/builderprofile" className={styles.navprofilecontainer}>
+          <Link href="/builderprofile" className={styles.navprofilecontainer} onClick={handleClick}>
             <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
             <AccountCircleIcon fontSize="large" />
           </Link>
@@ -249,7 +253,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                   (questionType === "2" || questionType === "3") ? ( 
                     <div className={styles.sidebarFormBit}>
                       <label className={styles.sidebarLabel}>Number of Choices</label>
-                      <input value={numFields} type="number" required onChange={handleNumFieldsChange} min="1" name="NumOptions" className={styles.sidebarTextField} />
+                      <input value={numFields} type="number" required onChange={handleNumFieldsChange} min="1" max="20" name="NumOptions" className={styles.sidebarTextField} />
                       {fields.map((field, index) => (
                         <label key={index} className={styles.sidebarLabel}>
                           Option {index + 1}:
@@ -306,7 +310,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
             )}
           </div>
           <div className={styles.mainRow}>
-            <Link href={`/surveymodule/${params.accessKey}`}>
+            <Link href={`/surveymodule/${params.accessKey}`} onClick={handleClick}>
               <ArrowBackIcon sx={{ fontSize: 40 }}/>
             </Link>
             <h1 className={styles.SurveyModuleTitle}>{survey.data.Title}</h1>
@@ -325,9 +329,9 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
           
           {QuestionsList.map((Question: any) => (
           <div key={Question.id}> 
-            <div className={styles.SurveyContainer}>
+            <div className={styles.QuestionContainer}>
               <div className={styles.cardRow}>
-                <h1 className={styles.SurveyTitle}>{Question.data.QuestionText}</h1>
+                <h1 className={styles.QuestionTitle}>{Question.data.QuestionText}</h1>
                 <button onClick={() => handleDeleteQuestion(Question.id)}>
                   <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
                 </button>

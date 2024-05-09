@@ -55,6 +55,10 @@ export default function SurveyModule() {
   const [lastName, setLastName] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
+  const handleClick = (e) => {
+    setIsLoading(true);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const email = sessionStorage.getItem("userEmail");
@@ -148,12 +152,12 @@ export default function SurveyModule() {
     <div className={styles.container}>
       {/* <div> */}
         <div className={styles.navbar}>
-          <Link href="/surveymodule" className={styles.navtext}>
+          <Link href="/surveymodule" className={styles.navtext} onClick={handleClick}>
             <h1 className={styles.navblack}>Sagot</h1>
             <h1 className={styles.navwhite}>Kita</h1>
             <h1 className={styles.navblack}>.</h1>
           </Link>
-          <Link href="/builderprofile" className={styles.navprofilecontainer}>
+          <Link href="/builderprofile" className={styles.navprofilecontainer} onClick={handleClick}>
             <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
             <AccountCircleIcon fontSize="large" />
           </Link>
@@ -216,7 +220,7 @@ export default function SurveyModule() {
             
               <div className={styles.SurveyContainer}>
                 <div className={styles.sidebarRow}>
-                  <Link href={`/surveymodule/${surveyModule.id}`}>
+                  <Link href={`/surveymodule/${surveyModule.id}`} onClick={handleClick}>
                     <button onClick={() =>
                       localStorage.setItem("surveyModule", JSON.stringify(surveyModule))} // export survey module details
                       className={styles.SurveyTitle}>

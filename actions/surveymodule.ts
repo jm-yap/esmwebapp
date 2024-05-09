@@ -5,8 +5,8 @@ import {
   QueryDocumentSnapshot,
   addDoc,
   deleteDoc,
-  // query,
-  // where,
+  query,
+  where,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { doc } from "firebase/firestore";
@@ -64,8 +64,34 @@ export async function deleteSurveyModule(
 ): Promise<boolean> {
   try {
     const surveyModuleCollection = collection(db, "ResearchModules");
+    const surveyCollection = collection(db, "Survey");
+    const surveyQuestionCollection = collection(db, "SurveyQuestion");
+    const responseCollection = collection(db, "Response");
+
     await deleteDoc(doc(surveyModuleCollection, surveyModuleID));
     console.log("Survey module deleted with ID: ", surveyModuleID);
+    
+    const querySurvey = query(surveyCollection, where("AccessCode", "==", surveyModuleID));
+    const querySurveySnapshot = await getDocs(querySurvey);
+    for (const survey of querySurveySnapshot.docs) {
+      await deleteDoc(doc(surveyCollection, survey.id));
+      console.log("Survey deleted with ID: ", survey.id);
+    
+      const queryQuestion = query(surveyQuestionCollection, where("SurveyID", "==", survey.id));
+      const queryQuestionSnapshot = await getDocs(queryQuestion);
+      for (const question of queryQuestionSnapshot.docs) {
+        await deleteDoc(doc(surveyQuestionCollection, question.id));
+        console.log("Question deleted with ID: ", question.id);
+      }
+
+      const queryResponse = query(responseCollection, where("SurveyID", "==", survey.id));
+      const queryResponseSnapshot = await getDocs(queryResponse);
+      for (const response of queryResponseSnapshot.docs) {
+        await deleteDoc(doc(responseCollection, response.id));
+        console.log("Response deleted with ID: ", response.id);
+      }
+    }
+    
     return true;
   } catch (error) {
     console.error("Error deleting survey module", error);

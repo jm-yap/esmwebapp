@@ -22,10 +22,21 @@ function HomePage() {
     },
   });
 
+  console.log("Session: ", session);
+
+  // const { data: sesh, status } = useSession();
+  // if (status === "authenticated") {
+  //   sessionStorage.setItem("userEmail", email);
+  //   sessionStorage.setItem("validInfo", "true");
+  // }
+
   useEffect(() => {
-    if (session && sessionStorage.getItem("userEmail") !== null) {
+
+    if (localStorage.getItem("userEmail") !== null) {
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [session]);
 
 

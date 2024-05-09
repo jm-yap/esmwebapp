@@ -47,18 +47,26 @@ export async function deleteQuestion(
   questionID: string
 ): Promise<boolean> {
   try {
-    const questionCollection = collection(
-      db,
-      `/SurveyQuestion`
-    );
+    const questionCollection = collection(db, `/SurveyQuestion`);
+    const responseCollection = collection(db, "Response");
+
     await deleteDoc(doc(questionCollection, questionID));
+    console.log("Question deleted with ID: ", questionID);
+
+    const queryResponse = query(responseCollection, where("SurveyID", "==", surveyID));
+    const queryResponseSnapshot = await getDocs(queryResponse);
+    for (const response of queryResponseSnapshot.docs) {
+      await deleteDoc(doc(responseCollection, response.id));
+      console.log("Response deleted with ID: ", response.id);
+    }
+
     const surveyRef = doc(db, "/Survey", surveyID);
       await updateDoc(surveyRef, {
       TotalQuestions: increment(-1),
       // remove id from question order array
       QuestionOrder: arrayRemove(questionID)
       });
-    console.log("Question deleted with ID: ", questionID);
+    
     return true;
   } catch (error) {
     console.error("Error deleting question", error);

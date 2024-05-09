@@ -16,36 +16,41 @@ import { getClientAccountByEmail } from "@/actions/clients";
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import LinearProgress from '@mui/material/LinearProgress';
-import { red } from "@mui/material/colors";
-import { set } from "firebase/database";
 import Stack from '@mui/material/Stack';
+import { sign } from "crypto";
+import { red } from "@mui/material/colors";
 
 
 export default function SurveyModule() {
+  const router = useRouter();
+  const [verified, setVerified] = useState(false);
+
+  const session = useSession({
+    required: true,
+    onUnauthenticated() {
+      console.log("Unauthenticated, redirecting to login")
+      sessionStorage.removeItem("userEmail");
+      redirect("/login");
+    },
+  });
+
   useEffect(() => {
     const fetchMasterKey = async () => {
       try {
         const isMasterKeyPresent = sessionStorage.getItem("masterKey");
         if (isMasterKeyPresent !== "true") {
-          console.log("Redirecting to masterkey")
+          console.log("Redirecting to masterkey");
           redirect("/");
+        } else {
+          setVerified(true);
         }
       } catch (error: any) {
-        redirect("/");
+        router.push("/");
       }
     };
 
     fetchMasterKey();
   }, []);
-
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect("/login");
-    },
-  });
-
-  const router = useRouter();
 
   const [builderEmail, setBuilderEmail] = useState(""); 
   const [surveyModules, setSurveyModules] = useState([]); // Get the list of survey modules
@@ -78,13 +83,12 @@ export default function SurveyModule() {
             setFirstName(userdata.FirstName);
             setLastName(userdata.LastName);
           } else {
-            router.push("/editaccountinfo");
+            redirect("/editaccountinfo");
           }
         } catch (error: any) {
           console.error("Error fetching survey modules:", error.message);
         }
       } else {
-        signOut();
         router.push("/login");
       }
     };
@@ -215,7 +219,7 @@ export default function SurveyModule() {
             </div>
           )}
         </div>
-        {surveyModules.map((surveyModule: any) => (
+        {verified && surveyModules.map((surveyModule: any) => (
           <div key={surveyModule.id}>
             
               <div className={styles.SurveyContainer}>

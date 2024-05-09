@@ -6,7 +6,7 @@ import { addDoc, collection, doc, updateDoc, increment } from "firebase/firestor
 import { db, auth } from "@/firebase";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { SurveyCardProps } from "@/app/components/surveys";
 import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
 import TextField from "@mui/material/TextField";
@@ -27,12 +27,31 @@ interface SurveyPageProps {
 
 
 export default function QuestionsPage({ params }: SurveyPageProps) {
+  const router = useRouter();
+
   const session = useSession({
     required: true,
     onUnauthenticated() {
       redirect("/login");
     },
   });
+
+  useEffect(() => {
+    const fetchMasterKey = async () => {
+      try {
+        const isMasterKeyPresent = sessionStorage.getItem("masterKey");
+        if (isMasterKeyPresent !== "true") {
+          console.log("Redirecting to masterkey");
+          redirect("/");
+        }
+      } catch (error: any) {
+        router.push("/");
+      }
+    };
+
+    fetchMasterKey();
+  }, []);
+
   const [SurveyList, setSurveyList] = useState([]);
   const [error, SetError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);

@@ -26,6 +26,7 @@ import { red } from "@mui/material/colors";
 export default function SurveyModule() {
   const router = useRouter();
   const [verified, setVerified] = useState(false);
+  const [withInfo, setWithInfo] = useState(false);
 
   const session = useSession({
     required: true,
@@ -85,8 +86,10 @@ export default function SurveyModule() {
             sessionStorage.setItem("contactNumber", userdata.ContactNumber);
             setFirstName(userdata.FirstName);
             setLastName(userdata.LastName);
+            setWithInfo(true);
           } else {
-            redirect("/editaccountinfo");
+            console.log("No user data found");  
+            router.push("/editaccountinfo");
           }
         } catch (error: any) {
           console.error("Error fetching survey modules:", error.message);
@@ -156,7 +159,7 @@ export default function SurveyModule() {
 
   return (
     <div>
-      {!verified ?
+      {(!verified || !withInfo) ?
         <div className={styles.loadingContainer}> 
           <Stack sx={{ color: '#E07961' }} spacing={2} direction="row">
             <CircularProgress color="inherit" size={50}/>

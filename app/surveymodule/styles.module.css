@@ -51,6 +51,13 @@
     text-decoration: underline;
 }
 
+.loadingContainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .navinfotext {
     font-size: x-large;
     font-weight: bold;

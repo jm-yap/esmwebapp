@@ -21,6 +21,7 @@ import Stack from '@mui/material/Stack';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { sign } from "crypto";
 import { red } from "@mui/material/colors";
+import Tooltip from '@mui/material/Tooltip';
 
 
 export default function SurveyModule() {
@@ -249,9 +250,11 @@ export default function SurveyModule() {
                             {surveyModule.data.Title}
                         </button>
                       </Link>
-                      <button onClick={() => handleDeleteSurveyModule(surveyModule.id)}>
-                        <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
-                      </button>
+                      <Tooltip title="Delete" arrow>
+                        <button onClick={() => handleDeleteSurveyModule(surveyModule.id)}>
+                          <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+                        </button>
+                      </Tooltip>
                     </div>
                     <h1 className={styles.SurveyDescription}>{surveyModule.data.Description}</h1>
                     <h1 className={styles.BuilderInfo}>Prepared by: {surveyModule.data.BuilderID}</h1>

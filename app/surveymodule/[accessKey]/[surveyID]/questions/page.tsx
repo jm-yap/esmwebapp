@@ -36,6 +36,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   const [QuestionsList, setQuestionsList] = useState([]);
   const [survey, setSurvey] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const handleClick = (e) => {
     setIsLoading(true);
@@ -67,6 +68,21 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
         const MinValue = parseInt(e.target.elements.MinValue.value);
         const MaxValue = parseInt(e.target.elements.MaxValue.value);
         const Step = parseInt(e.target.elements.Step.value);
+        if (MinValue >= MaxValue) {
+          setIsLoading(false);
+          setError("Minimum value must be less than maximum value");
+          return;
+        }
+        if (Step <= 0) {
+          setIsLoading(false);
+          setError("Step must be greater than 0");
+          return;
+        }
+        if ((MaxValue - MinValue) % Step !== 0) {
+          setIsLoading(false);
+          setError("Step must be a divisor of the range");
+          return;
+        }
         const slider = [MinValue, MaxValue, Step];
         docRef = await addDoc(questionRef, {
           SurveyID: SurveyID,
@@ -282,6 +298,10 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                       <input type="number" required name="MaxValue" className={styles.sidebarTextField} />
                       <label className={styles.sidebarLabel}>Step</label>
                       <input type="number" required name="Step" className={styles.sidebarTextField} />
+                      <div style={{marginLeft: 10}}>
+                        {error && <p style={{color: 'red', fontSize: 15}}>{error}</p>}
+                      </div>
+
                     </div>
                   ) : null
                 }

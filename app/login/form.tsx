@@ -20,7 +20,7 @@ export default function Form() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    sessionStorage.setItem("userEmail", email);
+    localStorage.setItem("userEmail", email);
     const response = await signIn("credentials", {
       email: email,
       password: password,

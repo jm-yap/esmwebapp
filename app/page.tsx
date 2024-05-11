@@ -32,7 +32,7 @@ function HomePage() {
 
   useEffect(() => {
 
-    if (sessionStorage.getItem("userEmail") !== null) {
+    if (localStorage.getItem("userEmail") !== null) {
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

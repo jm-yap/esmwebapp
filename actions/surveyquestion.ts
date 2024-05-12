@@ -41,6 +41,28 @@ export async function getQuestions(
   return sortedItemsArr;
 }
 
+export async function editQuestion(
+  questionID: string,
+  questionText: string,
+  questionType: string,
+  choices: string[]
+): Promise<boolean> {
+  try {
+    const surveyModuleCollection = collection(db, "SurveyQuestion");
+    await updateDoc(doc(surveyModuleCollection, questionID), {
+      QuestionText: questionText,
+      QuestionType: questionType,
+      Choices: choices,
+    });
+
+    console.log("Question edited with ID: ", questionID);
+    return true;
+  } catch (error) {
+    console.error("Error editing survey question", error);
+    return false;
+  }
+}
+
 export async function deleteQuestion(
   AccessCode: string,
   surveyID: string,

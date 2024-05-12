@@ -174,10 +174,6 @@
 
 }
 
-.tableCell tr:hover {
-  text-decoration: underline;
-}
-
 .clearButton:hover {
   text-decoration: underline;
 }

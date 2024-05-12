@@ -4,7 +4,8 @@ import {
   getSurveyModules,
   // countSurveys,
   addSurveyModule,
-  deleteSurveyModule
+  deleteSurveyModule,
+  editSurveyModule,
 } from "@/actions/surveymodule";
 import { useSession, signOut } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
@@ -22,6 +23,8 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { sign } from "crypto";
 import { red } from "@mui/material/colors";
 import Tooltip from '@mui/material/Tooltip';
+import { set } from "firebase/database";
+import EditIcon from '@mui/icons-material/Edit';
 
 
 export default function SurveyModule() {
@@ -64,6 +67,10 @@ export default function SurveyModule() {
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [surveyMod, setSurveyMod] = useState("");
+  const [editing, setEditing] = useState(false);
 
   const handleClick = (e) => {
     setIsLoading(true);
@@ -128,6 +135,23 @@ export default function SurveyModule() {
     setIsAnonymous(e.target.checked);
   };
 
+  const handleSubmit = async (e: any) => {
+    if (!editing) {
+      handleAddSurveyModule(e);
+    }
+    else {
+      handleEditSurveyModule(e);
+      console.log("editing");
+    }
+  }
+
+  const cancelEditing = () => {
+    setEditing(false);
+    setSurveyMod("");
+    setTitle("");
+    setDescription("");
+  }
+
   const handleAddSurveyModule = async (e: any) => {
     e.preventDefault();
     try {
@@ -145,6 +169,37 @@ export default function SurveyModule() {
     e.target.elements.title.value = "";
     e.target.elements.description.value = "";
   };
+
+  const handleEditSurveyModule = async (e:any) => {
+    setIsLoading(true);
+    e.preventDefault();
+    try {
+      // const title = e.target.elements.title.value;
+      // const description = e.target.elements.description.value;
+      // const isAnonymous = e.target.elements.isAnonymous.checked;
+      // update document here
+      await editSurveyModule(surveyMod, title, description, isAnonymous);
+      const updatedModules = await getSurveyModules();
+      setSurveyModules(updatedModules);
+      console.log("Survey module edited");
+      setEditing(false);
+      setSurveyMod("");
+      setTitle("");
+      setDescription("");
+      setIsLoading(false);
+    } catch (error: any) {
+      console.error("Error editing survey module:", error.message);
+    }
+  }
+
+  const handleEditSurveyDetails = async (surveyModule) => {
+    setEditing(true);
+    setTitle(surveyModule.data.Title);
+    setDescription(surveyModule.data.Description);
+    setIsAnonymous(surveyModule.data.IsAnonymous);
+
+    setSurveyMod(surveyModule.id);
+  }
 
   const handleDeleteSurveyModule = async (surveyModuleID: string) => {
     try {
@@ -191,19 +246,20 @@ export default function SurveyModule() {
           <div className={styles.sidebar}>
             <div className={styles.sidebarContent}>
               <div className={styles.sidebarTitleContainer}>
-                <h1 className={styles.sidebarTitle}>Create Survey Module</h1>
+                {(editing) ? <h1 className={styles.sidebarTitle}>Edit Survey <br /> Module</h1> :
+                <h1 className={styles.sidebarTitle}>Create Survey Module</h1>}
               </div>
               
               <div className={styles.sidebarForm}>
-                <form className={styles.sidebarFormComp} onSubmit={handleAddSurveyModule}>
+                <form className={styles.sidebarFormComp} onSubmit={handleSubmit}>
                   <div className={styles.sidebarFormBit}>
                     <label className={styles.sidebarLabel}>Title</label>
-                    <input type="text" name="title" className={styles.sidebarTextField} required/>
+                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} name="title" className={styles.sidebarTextField} required/>
                   </div>
 
                   <div className={styles.sidebarFormBit}>
                     <label className={styles.sidebarLabel}>Description</label>
-                    <textarea rows={2}  name="description" className={styles.sidebarTextField} required/>
+                    <textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)}  name="description" className={styles.sidebarTextField} required/>
                   </div>
 
                   <div className={styles.sidebarFormBit}>
@@ -216,7 +272,14 @@ export default function SurveyModule() {
                     />
                   </div>
                   
-                  <button className={styles.sidebarButton} type="submit">C R E A T E</button>
+                  {editing ? 
+                    <div>
+                    <button className={styles.sidebarButton} type="submit">E D I T</button> 
+                    <button onClick={cancelEditing} style={{color: '#E07961', marginTop: 10}}>C A N C E L</button>
+                    </div>
+                    :
+                    <button className={styles.sidebarButton} type="submit">C R E A T E</button>
+                  }
                 </form>
               </div>
             </div>
@@ -250,11 +313,18 @@ export default function SurveyModule() {
                             {surveyModule.data.Title}
                         </button>
                       </Link>
-                      <Tooltip title="Delete" arrow>
-                        <button onClick={() => handleDeleteSurveyModule(surveyModule.id)}>
-                          <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
-                        </button>
-                      </Tooltip>
+                      <div style={{display: 'flex', flexDirection: 'row', gap: 10}}>
+                        <Tooltip title="Edit" arrow placement="top">
+                          <button onClick={() => handleEditSurveyDetails(surveyModule)}>
+                            <EditIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+                          </button>
+                        </Tooltip>
+                        <Tooltip title="Delete" arrow placement="top">
+                          <button onClick={() => handleDeleteSurveyModule(surveyModule.id)}>
+                            <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+                          </button>
+                        </Tooltip>
+                      </div>
                     </div>
                     <h1 className={styles.SurveyDescription}>{surveyModule.data.Description}</h1>
                     <h1 className={styles.BuilderInfo}>Prepared by: {surveyModule.data.BuilderID}</h1>

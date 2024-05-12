@@ -7,9 +7,11 @@ import {
   deleteDoc,
   query,
   where,
+  updateDoc
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { doc } from "firebase/firestore";
+import { update } from "firebase/database";
 
 export async function getSurveyModules(): Promise<any> {
   const surveyModuleCollection = collection(db, "ResearchModules");
@@ -33,6 +35,28 @@ export async function getSurveyModules(): Promise<any> {
 
 //   return surveyCollectionSnapshot.docs.length.toString();
 // }
+
+export async function editSurveyModule(
+  surveyModuleID: string,
+  title: string,
+  description: string,
+  isAnonymous: boolean
+): Promise<boolean> {
+  try {
+    const surveyModuleCollection = collection(db, "ResearchModules");
+    await updateDoc(doc(surveyModuleCollection, surveyModuleID), {
+      Title: title,
+      Description: description,
+      IsAnonymous: isAnonymous
+    });
+
+    console.log("Survey module edited with ID: ", surveyModuleID);
+    return true;
+  } catch (error) {
+    console.error("Error editing survey module", error);
+    return false;
+  }
+}
 
 export async function addSurveyModule(
   builderEmail: string,

@@ -1,6 +1,6 @@
 "use client";
 import QuestionCard from "@/app/components/questions";
-import { getQuestions, deleteQuestion } from "@/actions/surveyquestion";
+import { getQuestions, deleteQuestion, editQuestion } from "@/actions/surveyquestion";
 import { useEffect, useState } from "react";
 import { addDoc, collection, doc, updateDoc, increment, arrayUnion} from "firebase/firestore";
 import { db } from "@/firebase";
@@ -22,6 +22,8 @@ import { set } from "firebase/database";
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import Tooltip from '@mui/material/Tooltip';
+import EditIcon from '@mui/icons-material/Edit';
 
 interface QuestionPageProps {
   params: {
@@ -37,6 +39,11 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   const [survey, setSurvey] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [question, setQuestion] = useState(null);
+  const [questionText, setQuestionText] = useState("");
+  const [choices, setChoices] = useState([]);
+  const [questionType, setQuestionType] = useState('1');
+  const [editing, setEditing] = useState(false);
 
   const handleClick = (e) => {
     setIsLoading(true);
@@ -49,9 +56,22 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     // if (survey) setQuestionOrder(survey.data.QuestionOrder);
   }, [params.surveyID]);
   
+  const cancelEditing = () => {
+    setEditing(false);
+    setQuestion(null);
+    setQuestionText("");
+    setQuestionType("1");
+    setFields([]);
+  }
+
 
   // Adding
   const handleAddQuestion = async (e: any) => {
+
+    if (editing === true)  {
+      handleEditQuestion(e);
+      return;
+    }
     const questionRef = collection(db, `SurveyQuestion`);
 
     e.preventDefault();
@@ -169,8 +189,50 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     }
   };
 
+  const handleEditQuestionDetails = async (ques) => {
+    setEditing(true);
+    setQuestion(ques);
+    setQuestionText(ques.data.QuestionText);
+    setQuestionType(ques.data.QuestionType);
+    setNumFields(ques.data.Choices.length);
+    setFields(ques.data.Choices);
+  }
+
+  const handleEditQuestion = async (e: any) => {
+    setIsLoading(true);
+    e.preventDefault();
+    try {
+      setIsLoading(true);
+      // Add a new document with a generated id
+      if (questionType === "1" || questionType === "4") {
+        await editQuestion(question.id, questionText, questionType, []);
+      }
+      else {
+        await editQuestion(question.id, questionText, questionType, fields);
+      }
+      // await editQuestion(question.id, questionText, questionType, fields);
+      setIsLoading(false);
+      // console.log("Question edited with ID:", docRef.id);
+
+      // Update the list of questions
+      const updatedQuestions = await getQuestions(
+        params.accessKey,
+        params.surveyID,
+      );
+      setQuestionsList(updatedQuestions);
+      setEditing(false);
+
+      // Clear form
+      e.target.elements.QuestionText.value = "";
+      e.target.elements.QuestionType.value = "1";
+      setNumFields(0);
+      setQuestionType("1");
+    } catch (error) {
+      console.error("Error editing  Question:", error);
+    }
+  }
+
   // Question Type
-  const [questionType, setQuestionType] = useState('1');
 
   const handleQuestionTypeChange = (e) => {
     setQuestionType(e.target.value);
@@ -255,7 +317,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
               <form className={styles.sidebarFormComp} onSubmit={handleAddQuestion}>
                 <div className={styles.sidebarFormBit}>
                   <label className={styles.sidebarLabel}>Question</label>
-                  <textarea rows={2} required name="QuestionText" className={styles.sidebarTextField} />
+                  <textarea rows={2} required name="QuestionText" value={questionText} onChange={(e) => setQuestionText(e.target.value)} className={styles.sidebarTextField} />
                 </div>
                 <div className={styles.sidebarFormBit}>
                   <label className={styles.sidebarLabel}>Type</label>
@@ -293,11 +355,11 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                   (questionType === "5") ? (
                     <div className={styles.sidebarFormBit}>
                       <label className={styles.sidebarLabel}>Minimum Value</label>
-                      <input type="number" required name="MinValue" className={styles.sidebarTextField} />
+                      <input type="number" value={fields[0]} onChange={(e) => setFields(prevFields => [e.target.value, ...prevFields.slice(1)])} required name="MinValue" className={styles.sidebarTextField} />
                       <label className={styles.sidebarLabel}>Maximum Value</label>
-                      <input type="number" required name="MaxValue" className={styles.sidebarTextField} />
+                      <input type="number" value={fields[1]} onChange={(e) => setFields(prevFields => [prevFields[0], e.target.value, ...prevFields.slice(2)])} required name="MaxValue" className={styles.sidebarTextField} />
                       <label className={styles.sidebarLabel}>Step</label>
-                      <input type="number" required name="Step" className={styles.sidebarTextField} />
+                      <input type="number" value={fields[2]} onChange={(e) => setFields(prevFields => [...prevFields.slice(0, 2), e.target.value])} required name="Step" className={styles.sidebarTextField} />
                       <div style={{marginLeft: 10}}>
                         {error && <p style={{color: 'red', fontSize: 15}}>{error}</p>}
                       </div>
@@ -319,7 +381,15 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                     </label>
                   </div>
                 ))} */}
-                <button className={styles.sidebarButton} type="submit">C R E A T E</button>
+
+                {editing ? 
+                  <div>
+                  <button className={styles.sidebarButton} type="submit">E D I T</button> 
+                  <button onClick={cancelEditing} style={{color: '#E07961', marginTop: 10}}>C A N C E L</button>
+                  </div>
+                  :
+                  <button className={styles.sidebarButton} type="submit">C R E A T E</button>
+                }
               </form>
             </div>
           </div>
@@ -363,9 +433,18 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
             <div className={styles.QuestionContainer}>
               <div className={styles.cardRow}>
                 <h1 className={styles.QuestionTitle}>{Question.data.QuestionText}</h1>
-                <button onClick={() => handleDeleteQuestion(Question.id)}>
-                  <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
-                </button>
+                <div className={styles.cardRow} style={{gap: '10px'}}>
+                  <Tooltip title="Edit" arrow placement="top">
+                    <button onClick={() => handleEditQuestionDetails(Question)}>
+                      <EditIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+                    </button>
+                  </Tooltip>
+                  <Tooltip title="Delete" arrow placement="top">
+                    <button onClick={() => handleDeleteQuestion(Question.id)}>
+                      <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+                    </button>
+                  </Tooltip>
+                </div>
               </div>
               {
                 // Type 1 - Text
@@ -398,7 +477,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                   <FormControl>
                     <FormGroup row>
                       {Question.data.Choices.map((choice, index) => {
-                        return <FormControlLabel key={index} control={<Checkbox sx={{
+                        return <FormControlLabel key={index} value={choice} control={<Checkbox sx={{
                         color: '#E07961',
                         '&.Mui-checked': {
                           color: '#E07961',
@@ -411,7 +490,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                 // Type 4 - Date
                 (Question.data.QuestionType === "4") ? (
                   <div className={styles.sidebarFormBit}>
-                    <input type="date" name="QuestionText" className={styles.sidebarTextField} />
+                    <input type="date" name="QuestionText" value={questionText} className={styles.sidebarTextField} />
                   </div>
                 ) : 
                 // Type 5 - Slider

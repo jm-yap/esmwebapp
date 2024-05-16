@@ -13,8 +13,8 @@ export default function Form() {
 
   const { data: session, status } = useSession();
   if (status === "authenticated") {
-    sessionStorage.setItem("userEmail", email);
-    sessionStorage.setItem("validInfo", "true");
+    localStorage.setItem("userEmail", email);
+    localStorage.setItem("validInfo", "true");
     redirect("/");
   }
 

@@ -36,7 +36,7 @@ export default function SurveyModule() {
     required: true,
     onUnauthenticated() {
       console.log("Unauthenticated, redirecting to login")
-      sessionStorage.removeItem("userEmail");
+      localStorage.removeItem("userEmail");
       redirect("/login");
     },
   });
@@ -78,7 +78,7 @@ export default function SurveyModule() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const email = sessionStorage.getItem("userEmail");
+      const email = localStorage.getItem("userEmail");
       if (email) {
         try {
           const modules = await getSurveyModules();

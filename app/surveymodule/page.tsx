@@ -25,6 +25,7 @@ import { red } from "@mui/material/colors";
 import Tooltip from '@mui/material/Tooltip';
 import { set } from "firebase/database";
 import EditIcon from '@mui/icons-material/Edit';
+import build from "next/dist/build";
 
 
 
@@ -62,7 +63,8 @@ export default function SurveyModule() {
   }, []);
 
   const [builderEmail, setBuilderEmail] = useState(""); 
-  const [surveyModules, setSurveyModules] = useState([]);
+  const [surveyModules, setSurveyModules] = useState(null);
+  const [isNull, setIsNull] = useState(true);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
@@ -114,9 +116,11 @@ export default function SurveyModule() {
       }
     };
 
-    fetchData();
+    if (surveyModules === null) fetchData();
+
+    setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
+  }, [builderEmail]);
 
   const handleCheckboxChange = (e: any) => {
     setIsAnonymous(e.target.checked);
@@ -322,7 +326,7 @@ export default function SurveyModule() {
                 </div>
               )}
             </div>
-            {surveyModules.length === 0 && !isLoading &&
+            {surveyModules === null && !isLoading &&
               <div className={styles.empty}>
                 <AutoAwesomeIcon sx={{ fontSize: 100, color: '#ddd' }} style={{marginBottom: '20px'}}/>
                 <h1>No modules yet. Create one on the left!</h1>

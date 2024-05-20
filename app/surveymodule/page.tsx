@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import {
   getSurveyModules,
   addSurveyModule,
@@ -20,6 +20,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import { auth } from "../../firebase"
 import { sign } from "crypto";
 import { red } from "@mui/material/colors";
 import Tooltip from '@mui/material/Tooltip';
@@ -61,6 +62,14 @@ export default function SurveyModule() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user.emailVerified) {
+        setIsVerified(true);
+      }
+    });
+  }, []);
+
   const [builderEmail, setBuilderEmail] = useState(""); 
   const [surveyModules, setSurveyModules] = useState([]);
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -73,6 +82,7 @@ export default function SurveyModule() {
   const [editing, setEditing] = useState(false);
   const [builders, setBuilders] = useState([]);
   const [collaborators, setCollaborators] = useState([]);
+  const [isVerified, setIsVerified] = useState(false);
 
   const handleClick = () => {
     setIsLoading(true);
@@ -214,10 +224,16 @@ export default function SurveyModule() {
 
   return (
     <div>
-      {(!verified || !withInfo) ?
+      {(!verified || !withInfo || !isVerified) ?
         <div className={styles.loadingContainer}> 
           <Stack sx={{ color: '#E07961' }} spacing={2} direction="row">
             <CircularProgress color="inherit" size={50}/>
+            {(!isVerified) ? 
+            <div>
+              <h1 className={styles.verifytext}>Please verify your email address to continue. Click on the link sent to your email to activate</h1> 
+              <button onClick={() => signOut()} className={styles.signouttext}>Sign Out</button>
+            </div>
+            : null}
           </Stack>
         </div>:
         <div className={styles.container}>

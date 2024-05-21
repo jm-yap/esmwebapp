@@ -66,7 +66,6 @@ export default function SurveyModule() {
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
-      console.log(user)
       if (user.emailVerified) {
         setIsVerified(true);
       } else {
@@ -74,7 +73,6 @@ export default function SurveyModule() {
       }
     });
   }, []);
-
   const [builderEmail, setBuilderEmail] = useState(""); 
   const [surveyModules, setSurveyModules] = useState(null);
   const [isNull, setIsNull] = useState(true);

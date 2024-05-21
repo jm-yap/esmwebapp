@@ -343,7 +343,7 @@ export default function SurveyModule() {
                 </div>
               )}
             </div>
-            {surveyModules === null && !isLoading &&
+            {surveyModules.length === 0 && !isLoading &&
               <div className={styles.empty}>
                 <AutoAwesomeIcon sx={{ fontSize: 100, color: '#ddd' }} style={{marginBottom: '20px'}}/>
                 <h1>No modules yet. Create one on the left!</h1>

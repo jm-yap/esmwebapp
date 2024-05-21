@@ -40,7 +40,7 @@ export default function Form() {
     } else {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          console.log(userCredential);
+          // console.log(userCredential);
           sessionStorage.setItem("userEmail", email);
           router.push("/login");
         })

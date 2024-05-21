@@ -29,7 +29,7 @@ export default function SurveyModule() {
   const session = useSession({
     required: true,
     onUnauthenticated() {
-      console.log("Unauthenticated, redirecting to login")
+      // console.log("Unauthenticated, redirecting to login")
       sessionStorage.removeItem("userEmail");
       redirect("/login");
     },
@@ -40,7 +40,7 @@ export default function SurveyModule() {
       try {
         const isMasterKeyPresent = sessionStorage.getItem("masterKey");
         if (isMasterKeyPresent !== "true") {
-          console.log("Redirecting to masterkey");
+          // console.log("Redirecting to masterkey");
           redirect("/");
         } else {
           setVerified(true);

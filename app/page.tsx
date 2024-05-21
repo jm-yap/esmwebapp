@@ -22,7 +22,7 @@ function HomePage() {
     },
   });
 
-  console.log("Session: ", session);
+  // console.log("Session: ", session);
 
   // const { data: sesh, status } = useSession();
   // if (status === "authenticated") {
@@ -49,7 +49,7 @@ function HomePage() {
       if (masterKey === databaseMasterkey?.MasterKey) {
         // If master key is correct, navigate to the login/signup page
         sessionStorage.setItem("masterKey", "true");
-        console.log("Master key is correct");
+        // console.log("Master key is correct");
         sessionStorage.setItem("userEmail", session.data.user?.email);
         setIsLoading(false);
         sessionStorage.setItem("validInfo", "true");

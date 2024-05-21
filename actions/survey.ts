@@ -47,7 +47,7 @@ export async function addSurvey({survey}:NewSurveyProps){
         QuestionOrder: []
       });
 
-      console.log("Survey added with ID:", docRef.id);
+      // console.log("Survey added with ID:", docRef.id);
     } catch (error) {
       console.error("Error adding  survey:", error);
     }
@@ -63,20 +63,20 @@ export async function deleteSurvey(
     const responseCollection = collection(db, "Response");
 
     await deleteDoc(doc(surveyCollection, SurveyID));
-    console.log("Survey deleted with ID: ", SurveyID);
+    // console.log("Survey deleted with ID: ", SurveyID);
     
     const queryQuestion = query(surveyQuestionCollection, where("SurveyID", "==", SurveyID));
     const queryQuestionSnapshot = await getDocs(queryQuestion);
     for (const question of queryQuestionSnapshot.docs) {
       await deleteDoc(doc(surveyQuestionCollection, question.id));
-      console.log("Question deleted with ID: ", question.id);
+      // console.log("Question deleted with ID: ", question.id);
     }
 
     const queryResponse = query(responseCollection, where("SurveyID", "==", SurveyID));
     const queryResponseSnapshot = await getDocs(queryResponse);
     for (const response of queryResponseSnapshot.docs) {
       await deleteDoc(doc(responseCollection, response.id));
-      console.log("Response deleted with ID: ", response.id);
+      // console.log("Response deleted with ID: ", response.id);
     }
 
     const surveyModuleRef = doc(db, "ResearchModules", AccessCode);

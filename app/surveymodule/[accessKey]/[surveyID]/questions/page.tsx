@@ -75,7 +75,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
           Choices: slider,
         });
         setIsLoading(false);
-        console.log("Question added with ID:", docRef.id);
+        // console.log("Question added with ID:", docRef.id);
       } else {
         setIsLoading(true);
         docRef = await addDoc(questionRef, {
@@ -85,7 +85,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
           Choices: fields,
         });
         setIsLoading(false);
-        console.log("Question added with ID:", docRef.id);
+        // console.log("Question added with ID:", docRef.id);
       }
 
 

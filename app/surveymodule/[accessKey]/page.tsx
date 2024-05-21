@@ -42,7 +42,7 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
       try {
         const isMasterKeyPresent = sessionStorage.getItem("masterKey");
         if (isMasterKeyPresent !== "true") {
-          console.log("Redirecting to masterkey");
+          // console.log("Redirecting to masterkey");
           redirect("/");
         }
       } catch (error: any) {

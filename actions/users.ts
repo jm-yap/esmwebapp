@@ -30,7 +30,7 @@ export async function getUsers(accessKey: string): Promise<any[]> {
         }
     });
     
-    console.log(surveyModArr); //[ { id: 'YDSpGAsOqqIlMOh7pTQJ' }, { id: 'WT9VRxK3OgjD6HPdIYIz' } ]
+    // console.log(surveyModArr); //[ { id: 'YDSpGAsOqqIlMOh7pTQJ' }, { id: 'WT9VRxK3OgjD6HPdIYIz' } ]
 
     // const userDocsList = await Promise.all(surveyModArr.map(async (user) => {
     //     const userInfo = await getUserInfo(user.id); // list of responses per responseID????????
@@ -44,14 +44,14 @@ export async function getUsers(accessKey: string): Promise<any[]> {
     let filteredUserDocsList: any[] = [];
     
     userDocsList.forEach((user: any) => {
-        console.log({id: user.id});
+        // console.log({id: user.id});
         if (surveyModArr.some(surveyUser => surveyUser.id === user.id)) {
             delete user.PasswordHash; // deletes passwordhash from the user object
             delete user.Birthdate; // deletes birthdate from the user object
             filteredUserDocsList.push(user);
         }
     });
-    console.log(filteredUserDocsList);
+    // console.log(filteredUserDocsList);
     return filteredUserDocsList;
 }
 

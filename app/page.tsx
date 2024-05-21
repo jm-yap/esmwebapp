@@ -22,12 +22,6 @@ function HomePage() {
     },
   });
 
-  // const { data: sesh, status } = useSession();
-  // if (status === "authenticated") {
-  //   sessionStorage.setItem("userEmail", email);
-  //   sessionStorage.setItem("validInfo", "true");
-  // }
-
   useEffect(() => {
 
     if (localStorage.getItem("userEmail") !== null) {
@@ -47,7 +41,7 @@ function HomePage() {
       if (masterKey === databaseMasterkey?.MasterKey) {
         // If master key is correct, navigate to the login/signup page
         sessionStorage.setItem("masterKey", "true");
-        console.log("Master key is correct");
+        // console.log("Master key is correct");
         sessionStorage.setItem("userEmail", session.data.user?.email);
         setIsLoading(false);
         sessionStorage.setItem("validInfo", "true");

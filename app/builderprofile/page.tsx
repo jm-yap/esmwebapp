@@ -53,7 +53,7 @@ export default function ClientAccount() {
         ContactNumber: contactNumber,
       };
     } else {
-      console.log("fetching user data");
+      // console.log("fetching user data");
       const userdata = await getClientAccountByEmail(email);
       if (userdata) {
         sessionStorage.setItem("firstName", userdata.FirstName);

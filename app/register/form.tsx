@@ -3,6 +3,7 @@ import { FormEvent, useState, useEffect } from "react";
 import { auth } from "../../firebase";
 import {
   createUserWithEmailAndPassword,
+  sendEmailVerification,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -34,13 +35,19 @@ export default function Form() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (password !== repassword) {
+    if (email.slice(-10) !== "@up.edu.ph") {
+      setError("Email must be a UP email");
+    } else if (password !== repassword) {
       setError("Passwords do not match");
-    // } else if { 
+    } else if (/(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{6,15})$/.test(password) === false) { 
+      setError("Password must be alphanumeric");
+    } else if (password.length < 8) {
+      setError("Password must be at least 8 characters long");
     } else {
       createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          // console.log(userCredential);
+        .then(async (userCredential) => {
+          const user = userCredential.user;
+          await sendEmailVerification(user);
           sessionStorage.setItem("userEmail", email);
           router.push("/login");
         })

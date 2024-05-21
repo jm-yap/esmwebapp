@@ -166,6 +166,14 @@
   font-size: 20px;
 }
 
+.surveyDesc {
+  font-size: 1.2em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  margin-left: 0.5em;
+
+}
+
 .clearButton:hover {
   text-decoration: underline;
 }
@@ -456,7 +464,7 @@
     
 .SurveyTitle {
     font-size: 1.5em;
-    font-weight: bold;
+    font-weight: bolder;
     word-break: break-all;
 }
 

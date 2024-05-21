@@ -12,6 +12,7 @@ import { LinearProgress, Stack } from "@mui/material";
 
 import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
 import { set } from "firebase/database";
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 
 interface ResponsePageProps {
@@ -33,6 +34,10 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
   // Fetching: Fetch the responses once the questions have been fetched
 
   const { data: session } = useSession();
+
+  const handleClick = (e) => {
+    setIsLoading(true);
+  };
 
   useEffect(() => {
     const fetchData = () => {
@@ -118,17 +123,17 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
               // empty array
               perRow[value.QuestionID] = ""
             } else {
-              perRow[value.QuestionID] = `"${value.Response.join(", ").replace(/\n/g, ' ')}"`;
+              perRow[value.QuestionID] = `"${value.Response.join(", ").replace(/,,,,,/g, "")}"`;
             }
           } else {
-            perRow[value.QuestionID] = value.Response ? value.Response.replace(/\n/g, ' ') : "";
+            perRow[value.QuestionID] = value.Response ? `"${value.Response.replace(/,,,,,/g, "")}"` : "";
           }
 
         })
         questionIDToResponseInst.push(perRow);
       }      
     })
-    return [questionIDToText, questionIDToResponseInst]
+    return [questionIDToText, questionIDToResponseInst];
         
   }  
   let csvData: any = downloadCSVHandler()
@@ -169,15 +174,19 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
             <div className="surveyInfoLeft">
               {/* left */}
               <div className="surveyTitleBack">
-                <Link href={`/surveymodule/${params.accessKey}`}>
+                <Link href={`/surveymodule/${params.accessKey}`} onClick={handleClick}>
                   <ArrowBackIcon sx={{ fontSize: 60 }}/>
                 </Link> 
                 <h1 className="surveyTitle">{surveyInfo?.Title}</h1>
               </div>
               <div className="surveyInfoLeftBottom">
-                <h1 className="surveyInfoText">Survey Description: {surveyInfo?.Description}</h1>
-                <h1 className="surveyInfoText">Required No. of Sessions: {surveyInfo?.Sessions}</h1>
-                <h1 className="surveyInfoText">Minimum Interval (in hours): {surveyInfo?.Interval}</h1> 
+                <h1>
+                <span className="surveyDescHeader">Survey Description</span></h1>
+                <h1 className="surveyDesc"> {surveyInfo?.Description}</h1>
+                <h1><span className="surveyDescHeader">Required No. of Sessions</span>
+                <span className="roundedRec">{surveyInfo?.Sessions}</span></h1>
+                <h1><span className="surveyDescHeader">Minimum Interval (in hours)</span>
+                <span className="roundedRec">{surveyInfo?.Interval}</span> </h1>
                 {((responses.length !== 0) && (moduleAnon === false)) &&
                     <select 
                     className={styles.sidebarTextField}
@@ -203,13 +212,18 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                   meta= {true}
                   title = {csvFileName}
                   columns = {csvData[0]}
-                  datas = {csvData[1]}                
+                  datas = {csvData[1]}    
+                  // wrapColumnChar = '""'            
                 />              
               }
-              <h1 className="surveyInfoText">Module Anonymity: {`${moduleAnon ? 'Anonymous' : 'Not Anonymous'}`}</h1>
-              <h1 className="surveyInfoText">Opens on: {startDate}</h1>
-              <h1 className="surveyInfoText">Closes on: {endDate}</h1>
-              <h1 className="surveyInfoText">Total Questions: {headerQuestions.length}</h1>
+              <h1><span className="surveyDescHeader">Module Anonymity: </span>
+              <span className="roundedRec">{`${moduleAnon ? 'Anonymous' : 'Not Anonymous'}`}</span></h1>
+              <h1><span className="surveyDescHeader">Opens on: </span>
+              <span className="roundedRec">{startDate}</span></h1>
+              <h1><span className="surveyDescHeader">Closes on: </span>
+              <span className="roundedRec">{endDate}</span></h1>
+              <h1><span className="surveyDescHeader">Total Questions: </span>
+              <span className="roundedRec">{headerQuestions.length}</span></h1>
             </div>
           </div>
 
@@ -305,8 +319,9 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
        
           {
             (responses.length === 0) && (isLoading === false) &&
-            <div className="nothingDiv">
-              <h2 className="nothingH2">
+            <div className="empty" style={{marginTop: '100px'}}>
+              <AutoAwesomeIcon sx={{ fontSize: 100, color: '#ddd' }} style={{marginBottom: '20px'}}/>
+              <h2>
                 No responses for this survey yet!
               </h2>
             </div>    

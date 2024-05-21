@@ -7,18 +7,22 @@ import {
   deleteDoc,
   query,
   where,
+  updateDoc,
+  arrayUnion,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { doc } from "firebase/firestore";
+import { update } from "firebase/database";
 
-export async function getSurveyModules(): Promise<any> {
+export async function getSurveyModules(builderEmail: string): Promise<any> {
   const surveyModuleCollection = collection(db, "ResearchModules");
-  const surveyModuleSnapshot = await getDocs(surveyModuleCollection);
+  const q = query(surveyModuleCollection, where("BuilderID", "array-contains", builderEmail));
+  const surveyModuleSnapshot = await getDocs(q);
   const surveyModuleList = surveyModuleSnapshot.docs.map(
     (doc: QueryDocumentSnapshot) => {
       return {
         id: doc.id,
-        data: doc.data() as { BuilderID: string; Title: string; Description: string; TotalSurveys: number; IsAnonymous: boolean }
+        data: doc.data() as { BuilderID: string[]; Title: string; Description: string; TotalSurveys: number; IsAnonymous: boolean }
       };
     }
   );
@@ -26,13 +30,44 @@ export async function getSurveyModules(): Promise<any> {
   return surveyModuleList;
 }
 
-// export async function countSurveys(AccessCode: string): Promise<any> {
-//   const surveyCollection = collection(db, "Survey");
-//   const filteredSurveyCollection = query(surveyCollection, where("AccessCode", "==", AccessCode));
-//   const surveyCollectionSnapshot = await getDocs(filteredSurveyCollection);
+export async function getBuilders(builderEmail: string): Promise<any> {
+  const BuilderCollection = collection(db, "Builder");
+  const BuilderSnapshot = await getDocs(BuilderCollection);
+  const BuilderList = BuilderSnapshot.docs
+    .filter((doc: QueryDocumentSnapshot) => doc.id !== builderEmail)
+    .map((doc: QueryDocumentSnapshot) => {
+      return {
+        id: doc.id,
+        data: doc.data() as { FirstName: string; LastName: string; MiddleName: string; ContactNumber: string}
+      };
+    });
 
-//   return surveyCollectionSnapshot.docs.length.toString();
-// }
+  return BuilderList;
+}
+
+export async function editSurveyModule(
+  surveyModuleID: string,
+  title: string,
+  description: string,
+  isAnonymous: boolean,
+  collaboratorEmails: string[]
+): Promise<boolean> {
+  try {
+    const surveyModuleCollection = collection(db, "ResearchModules");
+    await updateDoc(doc(surveyModuleCollection, surveyModuleID), {
+      BuilderID: collaboratorEmails,
+      Title: title,
+      Description: description,
+      IsAnonymous: isAnonymous,
+    });
+
+    console.log("Survey module edited with ID: ", surveyModuleID);
+    return true;
+  } catch (error) {
+    console.error("Error editing survey module", error);
+    return false;
+  }
+}
 
 export async function addSurveyModule(
   builderEmail: string,
@@ -44,7 +79,7 @@ export async function addSurveyModule(
   try {
     const surveyModuleCollection = collection(db, "ResearchModules");
     const newSurveyModule = await addDoc(surveyModuleCollection, {
-      BuilderID: builderEmail,
+      BuilderID: [builderEmail],
       Title: title,
       Description: description,
       TotalSurveys: totalSurveys,

@@ -19,6 +19,9 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import { set } from "firebase/database";
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import Tooltip from '@mui/material/Tooltip';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 interface SurveyPageProps {
   params: {
@@ -161,6 +164,16 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   const firstName = sessionStorage.getItem("firstName");
   const lastName = sessionStorage.getItem("lastName");
 
+
+  const [tooltipContent, setTooltipContent] = useState('Click to copy');
+
+  const handleCopy = () => {
+    setTooltipContent('Copied!');
+    setTimeout(() => {
+      setTooltipContent('Click to copy');
+    }, 2000); // Reset tooltip content after 2 seconds
+  };
+
   // Rendering
   return (
     <div className={styles.container}>
@@ -233,7 +246,16 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
           <h1 className={styles.SurveyModuleTitle}>{surveyModule.data.Title}</h1>
         </div>
         <h2 className={styles.SurveyModuleDescription}>{surveyModule.data.Description}</h2>
+        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'left', gap: '10px'}}>
         <h3 className={styles.SurveyModuleAccessCode}>Access Code: {surveyModule.id}</h3>
+        <CopyToClipboard text={surveyModule.id} onCopy={handleCopy}>
+          <Tooltip title={tooltipContent} arrow placement="top">
+            <div style={{ cursor: 'pointer' }}>
+              <ContentCopyIcon sx={{ fontSize: 30, color: '#E07961' }} />
+            </div>
+          </Tooltip>
+        </CopyToClipboard>
+        </div>
 
         {SurveyList.length === 0 && !isLoading &&
           <div className={styles.empty}>
@@ -251,12 +273,17 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
                   </button>
                 </Link>
                 <div className={styles.cardRow}>
-                <Link href={`/surveymodule/${params.accessKey}/${survey.id}/responses`} onClick={handleClick}>
-                  <ListAltOutlinedIcon sx={{ fontSize: 30, color: '#E07961' }}/>
-                </Link>
+                <Tooltip title="Responses" arrow placement="top">
+                  <Link href={`/surveymodule/${params.accessKey}/${survey.id}/responses`} onClick={handleClick}>
+                    <ListAltOutlinedIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+                  </Link>
+                </Tooltip>
+
+                <Tooltip title="Delete" arrow placement="top">
                 <button onClick={() => handleDeleteSurvey(survey.id)}>
                   <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
                 </button>
+                </Tooltip>
                 </div>
               </div>
               <h1 className={styles.SurveyDescription}>{survey.data.Description}</h1>

@@ -32,7 +32,7 @@ export default function Form() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const email = sessionStorage.getItem("userEmail");
+    const email = localStorage.getItem("userEmail");
     const isValid = sessionStorage.getItem("validInfo");
 
     if (email) {

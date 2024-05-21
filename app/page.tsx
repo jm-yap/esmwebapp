@@ -22,14 +22,6 @@ function HomePage() {
     },
   });
 
-  // console.log("Session: ", session);
-
-  // const { data: sesh, status } = useSession();
-  // if (status === "authenticated") {
-  //   sessionStorage.setItem("userEmail", email);
-  //   sessionStorage.setItem("validInfo", "true");
-  // }
-
   useEffect(() => {
 
     if (localStorage.getItem("userEmail") !== null) {

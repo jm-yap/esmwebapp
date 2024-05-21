@@ -1,15 +1,17 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import {
   getSurveyModules,
-  // countSurveys,
   addSurveyModule,
-  deleteSurveyModule
+  deleteSurveyModule,
+  editSurveyModule,
+  getBuilders,
 } from "@/actions/surveymodule";
 import { useSession, signOut } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
 import styles from "@/app/surveymodule/styles.module.css";
 import Link from "next/link";
+import CircularProgress from '@mui/material/CircularProgress';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { getClientAccountByEmail } from "@/actions/clients";
@@ -18,13 +20,21 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import { auth } from "../../firebase"
 import { sign } from "crypto";
 import { red } from "@mui/material/colors";
+import Tooltip from '@mui/material/Tooltip';
+import { set } from "firebase/database";
+import EditIcon from '@mui/icons-material/Edit';
+import build from "next/dist/build";
+
 
 
 export default function SurveyModule() {
   const router = useRouter();
   const [verified, setVerified] = useState(false);
+  const [withInfo, setWithInfo] = useState(false);
+  const [isVerified, setIsVerified] = useState(true);
 
   const session = useSession({
     required: true,
@@ -54,28 +64,48 @@ export default function SurveyModule() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user.emailVerified) {
+        setIsVerified(true);
+      } else {
+        setIsVerified(false);
+      }
+    });
+  }, []);
   const [builderEmail, setBuilderEmail] = useState(""); 
-  const [surveyModules, setSurveyModules] = useState([]); // Get the list of survey modules
-  // const [surveyCount, setSurveyCount] = useState<Record<string, number>>({});
+  const [surveyModules, setSurveyModules] = useState(null);
+  const [isNull, setIsNull] = useState(true);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [surveyMod, setSurveyMod] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [builders, setBuilders] = useState([]);
+  const [collaborators, setCollaborators] = useState([]);
 
-  const handleClick = (e) => {
+  const handleClick = () => {
     setIsLoading(true);
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      const email = sessionStorage.getItem("userEmail");
+      const email = localStorage.getItem("userEmail");
       if (email) {
         try {
-          const modules = await getSurveyModules();
-          setSurveyModules(modules);
-          setIsLoading(false);
           setBuilderEmail(email);
-          
+
+          const builders = await getBuilders(email);
+          setBuilders(builders);
+
+          const modules = await getSurveyModules(builderEmail);
+          setSurveyModules(modules);
+
+          setIsLoading(false);
+
           const userdata = await getClientAccountByEmail(email);
           if (userdata) {
             sessionStorage.setItem("firstName", userdata.FirstName);
@@ -84,8 +114,10 @@ export default function SurveyModule() {
             sessionStorage.setItem("contactNumber", userdata.ContactNumber);
             setFirstName(userdata.FirstName);
             setLastName(userdata.LastName);
+            setWithInfo(true);
           } else {
-            redirect("/editaccountinfo");
+            console.log("No user data found");  
+            router.push("/editaccountinfo");
           }
         } catch (error: any) {
           console.error("Error fetching survey modules:", error.message);
@@ -95,34 +127,42 @@ export default function SurveyModule() {
       }
     };
 
-    fetchData();
+    if (surveyModules === null) fetchData();
+
+    setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
+  }, [builderEmail]);
 
-
-  // useEffect(() => {
-  //   const fetchSurveyCounts = async () => {
-  //     const counts = await Promise.all(
-  //       surveyModules.map(async (surveyModule) => {
-  //         const count = await countSurveys(surveyModule.id);
-  //         return { id: surveyModule.id, count };
-  //       })
-  //     );
-  
-  //     const countMap = counts.reduce((map, { id, count }) => {
-  //       map[id] = count;
-  //       return map;
-  //     }, {});
-  
-  //     setSurveyCount(countMap);
-  //   };
-  
-  //   fetchSurveyCounts();
-  // }, [surveyModules]);
-  
   const handleCheckboxChange = (e: any) => {
     setIsAnonymous(e.target.checked);
   };
+
+  const handleCollaborators = (e: any, builderID: string) => {
+    if (e.target.checked) {
+      setCollaborators([...collaborators, builderID]);
+    } else {
+      setCollaborators(collaborators.filter((id) => id !== builderID));
+    }
+    console.log(collaborators);
+  };
+
+  const handleSubmit = async (e: any) => {
+    if (!editing) {
+      handleAddSurveyModule(e);
+    }
+    else {
+      handleEditSurveyModule(e);
+      console.log("editing");
+    }
+  }
+
+  const cancelEditing = () => {
+    setEditing(false);
+    setSurveyMod("");
+    setTitle("");
+    setDescription("");
+    setCollaborators([]);
+  }
 
   const handleAddSurveyModule = async (e: any) => {
     e.preventDefault();
@@ -131,22 +171,55 @@ export default function SurveyModule() {
       const title = e.target.elements.title.value;
       const description = e.target.elements.description.value;
 
-      await addSurveyModule(`${firstName} ${lastName} (${builderEmail})`, title, description, 0, isAnonymous);
-      const updatedModules = await getSurveyModules();
+      await addSurveyModule(builderEmail, title, description, 0, isAnonymous);
+      const updatedModules = await getSurveyModules(builderEmail);
       setSurveyModules(updatedModules);
       setIsLoading(false);
     } catch (error: any) {
       console.error("Error adding survey module:", error.message);
     }
-    e.target.elements.title.value = "";
-    e.target.elements.description.value = "";
+    setTitle("");
+    setDescription("");
   };
+
+  const handleEditSurveyModule = async (e:any) => {
+    setIsLoading(true);
+    e.preventDefault();
+    try {
+      // const title = e.target.elements.title.value;
+      // const description = e.target.elements.description.value;
+      // const isAnonymous = e.target.elements.isAnonymous.checked;
+      // update document here
+      await editSurveyModule(surveyMod, title, description, isAnonymous, collaborators);
+      const updatedModules = await getSurveyModules(builderEmail);
+      setSurveyModules(updatedModules);
+      console.log("Survey module edited");
+      setEditing(false);
+      setSurveyMod("");
+      setTitle("");
+      setDescription("");
+      setIsLoading(false);
+      setCollaborators([]);
+    } catch (error: any) {
+      console.error("Error editing survey module:", error.message);
+    }
+  }
+
+  const handleEditSurveyDetails = async (surveyModule) => {
+    setEditing(true);
+    setTitle(surveyModule.data.Title);
+    setDescription(surveyModule.data.Description);
+    setIsAnonymous(surveyModule.data.IsAnonymous);
+    setCollaborators(surveyModule.data.BuilderID);
+
+    setSurveyMod(surveyModule.id);
+  }
 
   const handleDeleteSurveyModule = async (surveyModuleID: string) => {
     try {
       setIsLoading(true);
       await deleteSurveyModule(surveyModuleID);
-      const updatedModules = await getSurveyModules();
+      const updatedModules = await getSurveyModules(builderEmail);
       setSurveyModules(updatedModules);
       setIsLoading(false);
     } catch (error: any) {
@@ -155,82 +228,129 @@ export default function SurveyModule() {
   };
 
   return (
-    <div className={styles.container}>
-      {/* <div> */}
-        <div className={styles.navbar}>
-          <Link href="/surveymodule" className={styles.navtext} onClick={handleClick}>
-            <h1 className={styles.navblack}>Sagot</h1>
-            <h1 className={styles.navwhite}>Kita</h1>
-            <h1 className={styles.navblack}>.</h1>
-          </Link>
-          <Link href="/builderprofile" className={styles.navprofilecontainer} onClick={handleClick}>
-            <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
-            <AccountCircleIcon fontSize="large" />
-          </Link>
-        </div>
-        {/* {isLoading &&
-          <div className={styles.loading}>
-            <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
-              <LinearProgress color="inherit"  sx={{ width: '100%', height: '7px' }}/> 
-            </Stack>
-          </div>
-        } */}
-      {/* </div> */}
-
-      <div className={styles.sidebar}>
-        <div className={styles.sidebarContent}>
-          <div className={styles.sidebarTitleContainer}>
-            <h1 className={styles.sidebarTitle}>Create Survey Module</h1>
-          </div>
-          
-          <div className={styles.sidebarForm}>
-            <form className={styles.sidebarFormComp} onSubmit={handleAddSurveyModule}>
-              <div className={styles.sidebarFormBit}>
-                <label className={styles.sidebarLabel}>Title</label>
-                <input type="text" name="title" className={styles.sidebarTextField} required/>
+    <div>
+      {(!verified || !withInfo || !isVerified) ?
+        <div className={styles.loadingContainer}> 
+          <Stack sx={{ color: '#E07961' }} spacing={2} direction="row">
+            <CircularProgress color="inherit" size={50}/>
+            {(!isVerified) ? 
+            <div>
+              <h1 className={styles.verifytext}>Please verify your email address to continue. Click on the link sent to your email to activate</h1> 
+              <button onClick={() => signOut()} className={styles.signouttext}>Sign Out</button>
+            </div>
+            : null}
+          </Stack>
+        </div>:
+        <div className={styles.container}>
+          {/* <div> */}
+            <div className={styles.navbar}>
+              <Link href="/surveymodule" className={styles.navtext} onClick={handleClick}>
+                <h1 className={styles.navblack}>Sagot</h1>
+                <h1 className={styles.navwhite}>Kita</h1>
+                <h1 className={styles.navblack}>.</h1>
+              </Link>
+              <Link href="/builderprofile" className={styles.navprofilecontainer} onClick={handleClick}>
+                <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
+                <AccountCircleIcon fontSize="large" />
+              </Link>
+            </div>
+            {/* {isLoading &&
+              <div className={styles.loading}>
+                <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
+                  <LinearProgress color="inherit"  sx={{ width: '100%', height: '7px' }}/> 
+                </Stack>
               </div>
+            } */}
+          {/* </div> */}
 
-              <div className={styles.sidebarFormBit}>
-                <label className={styles.sidebarLabel}>Description</label>
-                <textarea rows={2}  name="description" className={styles.sidebarTextField} required/>
-              </div>
-
-              <div className={styles.sidebarFormBit}>
-                <FormControlLabel 
-                  control={<Checkbox
-                      onChange={handleCheckboxChange} 
-                      sx={{'&.Mui-checked': {color: '#E07961'}}}
-                    />}
-                  label="Are Clients Anonymous"
-                />
+          <div className={styles.sidebar}>
+            <div className={styles.sidebarContent}>
+              <div className={styles.sidebarTitleContainer}>
+                {(editing) ? <h1 className={styles.sidebarTitle}>Edit Survey <br /> Module</h1> :
+                <h1 className={styles.sidebarTitle}>Create Survey Module</h1>}
               </div>
               
-              <button className={styles.sidebarButton} type="submit">C R E A T E</button>
-            </form>
-          </div>
-        </div>
-      </div>
-      
-      <main className={styles.main}>
-        <div style={{position: 'fixed', width: '100%'}}>
-          {isLoading && (
-            <div style={{ marginTop: '-20px', marginLeft: '-20px' }}>
-              <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
-                <LinearProgress color="inherit" sx={{ width: '100%', height: '7px' }} />
-              </Stack>
+              <div className={styles.sidebarForm}>
+                <form className={styles.sidebarFormComp} onSubmit={handleSubmit}>
+                  <div className={styles.sidebarFormBit}>
+                    <label className={styles.sidebarLabel}>Title</label>
+                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} name="title" className={styles.sidebarTextField} required/>
+                  </div>
+
+                  <div className={styles.sidebarFormBit}>
+                    <label className={styles.sidebarLabel}>Description</label>
+                    <textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)}  name="description" className={styles.sidebarTextField} required/>
+                  </div>
+
+                  {editing ? (
+                    <div>
+                      <div className={styles.sidebarFormBit}>
+                        <label className={styles.sidebarLabel}>Add Collaborators</label>
+                        {builders.map((builder: any) => (
+                          <div key={builder.id} className={styles.sidebarFormBit}>
+                            <FormControlLabel 
+                              control={<Checkbox
+                                  onChange={(e) => handleCollaborators(e, builder.id)}
+                                  checked={collaborators.includes(builder.id)} 
+                                  sx={{'&.Mui-checked': {color: '#E07961'}}}
+                                />}
+                              label={builder.data.FirstName + " " + builder.data.LastName + " (" + builder.id + ")"}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <div className={styles.sidebarFormBit}>
+                        <FormControlLabel 
+                          control={<Checkbox
+                              onChange={handleCheckboxChange} 
+                              sx={{'&.Mui-checked': {color: '#E07961'}}}
+                            />}
+                          label="Are Clients Anonymous"
+                        />
+                      </div>
+                      <button className={styles.sidebarButton} type="submit">E D I T</button> 
+                      <div style={{display: 'flex', justifyContent: 'center'}}>
+                        <button onClick={cancelEditing} style={{color: '#E07961', marginTop: '1em'}}>C A N C E L</button> 
+                      </div>
+                    </div>
+                    ) : (
+                    <div>
+                      <div className={styles.sidebarFormBit}>
+                        <FormControlLabel 
+                          control={<Checkbox
+                              onChange={handleCheckboxChange} 
+                              sx={{'&.Mui-checked': {color: '#E07961'}}}
+                            />}
+                          label="Are Clients Anonymous"
+                        />
+                      </div>
+                      <button className={styles.sidebarButton} type="submit">C R E A T E</button>
+                    </div>
+                    )
+                  }
+                </form>
+              </div>
             </div>
-          )}
-        </div>
-        {surveyModules.length === 0 && !isLoading &&
-          <div className={styles.empty}>
-            <AutoAwesomeIcon sx={{ fontSize: 100, color: '#ddd' }} style={{marginBottom: '20px'}}/>
-            <h1>No modules yet. Create one on the left!</h1>
           </div>
-        }
-        {verified && surveyModules.map((surveyModule: any) => (
-          <div key={surveyModule.id}>
-            
-              <div className={styles.SurveyContainer}>
+          
+          <main className={styles.main}>
+            <div style={{position: 'fixed', width: '100%'}}>
+              {isLoading && (
+                <div style={{ marginTop: '-20px', marginLeft: '-20px' }}>
+                  <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
+                    <LinearProgress color="inherit" sx={{ width: '100%', height: '7px' }} />
+                  </Stack>
+                </div>
+              )}
+            </div>
+            {surveyModules.length === 0 && !isLoading &&
+              <div className={styles.empty}>
+                <AutoAwesomeIcon sx={{ fontSize: 100, color: '#ddd' }} style={{marginBottom: '20px'}}/>
+                <h1>No modules yet. Create one on the left!</h1>
+              </div>
+            }
+            {verified && surveyModules.map((surveyModule: any) => (
+              <div key={surveyModule.id} className={styles.SurveyContainer}>
                 <div className={styles.sidebarRow}>
                   <Link href={`/surveymodule/${surveyModule.id}`} onClick={handleClick}>
                     <button onClick={() =>
@@ -239,19 +359,36 @@ export default function SurveyModule() {
                         {surveyModule.data.Title}
                     </button>
                   </Link>
-                  <button onClick={() => handleDeleteSurveyModule(surveyModule.id)}>
-                    <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
-                  </button>
+                  <div style={{display: 'flex', flexDirection: 'row', gap: 10}}>
+                    <Tooltip title="Edit" arrow placement="top">
+                      <button onClick={() => handleEditSurveyDetails(surveyModule)}>
+                        <EditIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+                      </button>
+                    </Tooltip>
+                    <Tooltip title="Delete" arrow placement="top">
+                      <button onClick={() => handleDeleteSurveyModule(surveyModule.id)}>
+                        <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
+                      </button>
+                    </Tooltip>
+                  </div>
                 </div>
                 <h1 className={styles.SurveyDescription}>{surveyModule.data.Description}</h1>
-                <h1 className={styles.BuilderInfo}>Prepared by: {surveyModule.data.BuilderID}</h1>
+                <h1 className={styles.BuilderInfo}>Prepared by: {
+                    surveyModule.data.BuilderID.map((id: string, index: number) => {
+                      if (id === builderEmail) {
+                        return surveyModule.data.BuilderID.length === 1 ? `${firstName} ${lastName}` : `${firstName} ${lastName}, `;
+                      } else {
+                        const builder = builders.find((builder) => builder.id === id);
+                        return (index + 1) === surveyModule.data.BuilderID.length ? `${builder.data.FirstName} ${builder.data.LastName}` : `${builder.data.FirstName} ${builder.data.LastName}, `
+                      };
+                    })
+                  }
+                </h1>
               </div>
-            
-          </div>
-        ))}
-      </main>
-      {/* } */}
-      
+            ))}
+          </main>
+        </div>
+      }
     </div>
   );
 }

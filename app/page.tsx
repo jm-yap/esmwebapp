@@ -22,8 +22,6 @@ function HomePage() {
     },
   });
 
-  console.log("Session: ", session);
-
   // const { data: sesh, status } = useSession();
   // if (status === "authenticated") {
   //   sessionStorage.setItem("userEmail", email);

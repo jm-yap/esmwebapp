@@ -39,7 +39,7 @@ export default function Form() {
       setError("Email must be a UP email");
     } else if (password !== repassword) {
       setError("Passwords do not match");
-    } else if (/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+[0-9a-z]+$/i.test(password) === false) { 
+    } else if (/(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{6,15})$/.test(password) === false) { 
       setError("Password must be alphanumeric");
     } else if (password.length < 8) {
       setError("Password must be at least 8 characters long");

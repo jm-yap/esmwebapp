@@ -34,6 +34,7 @@ export default function SurveyModule() {
   const router = useRouter();
   const [verified, setVerified] = useState(false);
   const [withInfo, setWithInfo] = useState(false);
+  const [isVerified, setIsVerified] = useState(true);
 
   const session = useSession({
     required: true,
@@ -65,8 +66,11 @@ export default function SurveyModule() {
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
+      console.log(user)
       if (user.emailVerified) {
         setIsVerified(true);
+      } else {
+        setIsVerified(false);
       }
     });
   }, []);
@@ -84,7 +88,6 @@ export default function SurveyModule() {
   const [editing, setEditing] = useState(false);
   const [builders, setBuilders] = useState([]);
   const [collaborators, setCollaborators] = useState([]);
-  const [isVerified, setIsVerified] = useState(false);
 
   const handleClick = () => {
     setIsLoading(true);

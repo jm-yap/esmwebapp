@@ -11,6 +11,8 @@ import { useSession, signIn } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import styles from "./styles.module.css";
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { Tooltip } from "@mui/material";
 
 export default function Form() {
   const { data: session } = useSession();
@@ -83,14 +85,22 @@ export default function Form() {
       </div>
       <div className={styles.rowInputContainer}>
         <div className={styles.inputContainer}>
-          <label className={styles.inputLabel}>Password</label>
+          <div style={{display: "flex", flexDirection: "row"}}>
+            <label className={styles.inputLabel}>Password</label>
+            <Tooltip title="Password must be alphanumeric and at least 8 characters long"
+              placement="top" arrow
+              slotProps={{ tooltip: { sx: { fontSize: '0.8em' } } }}
+            >
+              <HelpOutlineIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}} />
+            </Tooltip>
+          </div>
           <input
-            className={styles.input}
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+              className={styles.input}
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
         </div>
         <div className={styles.inputContainer}>
           <label className={styles.inputLabel}>Confirm Password</label>

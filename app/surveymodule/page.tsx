@@ -215,16 +215,18 @@ export default function SurveyModule() {
     setSurveyMod(surveyModule.id);
   }
 
-  const handleDeleteSurveyModule = async (surveyModuleID: string) => {
-    try {
-      setIsLoading(true);
-      await deleteSurveyModule(surveyModuleID);
-      const updatedModules = await getSurveyModules(builderEmail);
-      setSurveyModules(updatedModules);
-      setIsLoading(false);
-    } catch (error: any) {
-      console.error("Error deleting survey module:", error.message);
-    }
+  const handleDeleteSurveyModule = async (surveyModuleID: string, surveyModuleTitle) => {
+    const userConfirmed = window.confirm(`Are you sure you want to delete the Survey Module "${surveyModuleTitle}"?`);
+    if (!userConfirmed) return;
+      try {
+        setIsLoading(true);
+        await deleteSurveyModule(surveyModuleID);
+        const updatedModules = await getSurveyModules(builderEmail);
+        setSurveyModules(updatedModules);
+        setIsLoading(false);
+      } catch (error: any) {
+        console.error("Error deleting survey module:", error.message);
+      }
   };
 
   return (
@@ -351,7 +353,7 @@ export default function SurveyModule() {
             }
             {verified && surveyModules.map((surveyModule: any) => (
               <div key={surveyModule.id} className={styles.SurveyContainer}>
-                <div className={styles.sidebarRow}>
+                <div className={styles.mainRow}>
                   <Link href={`/surveymodule/${surveyModule.id}`} onClick={handleClick}>
                     <button onClick={() =>
                       localStorage.setItem("surveyModule", JSON.stringify(surveyModule))} // export survey module details
@@ -366,14 +368,16 @@ export default function SurveyModule() {
                       </button>
                     </Tooltip>
                     <Tooltip title="Delete" arrow placement="top">
-                      <button onClick={() => handleDeleteSurveyModule(surveyModule.id)}>
+                      <button onClick={() => handleDeleteSurveyModule(surveyModule.id, surveyModule.data.Title)}>
                         <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
                       </button>
                     </Tooltip>
                   </div>
                 </div>
-                <h1 className={styles.SurveyDescription}>{surveyModule.data.Description}</h1>
-                <h1 className={styles.BuilderInfo}>Prepared by: {
+                <div className="SurveyDescriptionDiv">
+                  <h1 className={styles.SurveyDescription}>{surveyModule.data.Description}</h1>
+                </div>
+                <h1 className={styles.BuilderInfo}><span style={{fontWeight: 'bold'}}>Prepared by:</span> {
                     surveyModule.data.BuilderID.map((id: string, index: number) => {
                       if (id === builderEmail) {
                         return surveyModule.data.BuilderID.length === 1 ? `${firstName} ${lastName}` : `${firstName} ${lastName}, `;

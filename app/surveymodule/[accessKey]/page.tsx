@@ -142,7 +142,9 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   }, []);
 
   // Deletion
-  const handleDeleteSurvey = async (SurveyID: string) => {
+  const handleDeleteSurvey = async (SurveyID: string, SurveyTitle: string) => {
+    const userConfirmed = confirm(`Are you sure you want to delete the survey "${SurveyTitle}"?`);
+    if (!userConfirmed) return;
     try {
       setIsLoading(true);
       await deleteSurvey(params.accessKey, SurveyID);
@@ -280,7 +282,7 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
                 </Tooltip>
 
                 <Tooltip title="Delete" arrow placement="top">
-                <button onClick={() => handleDeleteSurvey(survey.id)}>
+                <button onClick={() => handleDeleteSurvey(survey.id, survey.data.Title)}>
                   <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
                 </button>
                 </Tooltip>

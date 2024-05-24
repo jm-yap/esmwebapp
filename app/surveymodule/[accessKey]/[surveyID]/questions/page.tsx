@@ -154,6 +154,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
         e.target.elements.NumOptions.value = 0;
         setFields([]);
       }
+      setQuestionText("");
       e.target.elements.QuestionText.value = "";
       e.target.elements.QuestionType.value = "1";
       setNumFields(0);
@@ -178,6 +179,8 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
 
   // Deletion
   const handleDeleteQuestion = async (QuestionID: string) => {
+    // const userConfirmed = confirm(`Are you sure you want to delete this question?`);
+    // if (!userConfirmed) return;
     try {
       setIsLoading(true);
       await deleteQuestion(params.accessKey, params.surveyID, QuestionID);

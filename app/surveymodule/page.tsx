@@ -225,6 +225,11 @@ export default function SurveyModule() {
       }
   };
 
+  const reverifyEmail = async () => {
+    await auth.currentUser.reload();
+    setIsVerified(auth.currentUser.emailVerified);
+  }
+
   return (
     <div>
       {(!verified || !withInfo || !isVerified) ?
@@ -234,7 +239,7 @@ export default function SurveyModule() {
             {(!isVerified) ? 
             <div>
               <h1 className={styles.verifytext}>Please verify your email address to continue. Click on the link sent to your email to activate your account.</h1> 
-              <h1 className={styles.verifytext}>Already verified? Reload the page to recheck verification status.</h1>
+              <button onClick={() => reverifyEmail()} className={styles.signouttext}>Already verified? Reload verification status here</button>
               <button onClick={() => signOut()} className={styles.signouttext}>Sign Out</button>
               <button onClick={async () => {await sendEmailVerification(auth.currentUser)}} className={styles.signouttext}>Resend Verification Email</button>
             </div>

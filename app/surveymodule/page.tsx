@@ -24,10 +24,10 @@ import { auth } from "../../firebase"
 import { sign } from "crypto";
 import { red } from "@mui/material/colors";
 import Tooltip from '@mui/material/Tooltip';
-import { set } from "firebase/database";
+import { set, update } from "firebase/database";
 import EditIcon from '@mui/icons-material/Edit';
 import build from "next/dist/build";
-
+import { sendEmailVerification } from "firebase/auth";
 
 
 export default function SurveyModule() {
@@ -66,11 +66,7 @@ export default function SurveyModule() {
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
-      if (user.emailVerified) {
-        setIsVerified(true);
-      } else {
-        setIsVerified(false);
-      }
+      setIsVerified(user.emailVerified);
     });
   }, []);
   const [builderEmail, setBuilderEmail] = useState(""); 
@@ -237,8 +233,10 @@ export default function SurveyModule() {
             <CircularProgress color="inherit" size={50}/>
             {(!isVerified) ? 
             <div>
-              <h1 className={styles.verifytext}>Please verify your email address to continue. Click on the link sent to your email to activate</h1> 
+              <h1 className={styles.verifytext}>Please verify your email address to continue. Click on the link sent to your email to activate your account.</h1> 
+              <h1 className={styles.verifytext}>Already verified? Reload the page to recheck verification status.</h1>
               <button onClick={() => signOut()} className={styles.signouttext}>Sign Out</button>
+              <button onClick={async () => {await sendEmailVerification(auth.currentUser)}} className={styles.signouttext}>Resend Verification Email</button>
             </div>
             : null}
           </Stack>

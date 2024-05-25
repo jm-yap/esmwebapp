@@ -85,83 +85,15 @@ export async function getAllResponseSummary(
         }
         responseSummary.push(userSummary);
     }
-    responseSummary.push(
-        {
-            'userEmail': 'hello',
-            'name': 'brobrobrobrobrobrobrobrob robrobrobrob robrobrobrob robrobro brobrobrobrobr obrobrobrobrobro',
-            'firstResponse': 'today',
-            'lastResponse': 'ago',
-            'numberOfSessions': 7,
-        }
-    )
-    responseSummary.push(
-        {
-            'userEmail': 'hellasao',
-            'name': 'RYAN DECENE',
-            'firstResponse': 'today',
-            'lastResponse': 'ago',
-            'numberOfSessions': 7,
-        }
-    )
-
-    responseSummary.push(
-        {
-            'userEmail': 'headadllo',
-            'name': 'bro',
-            'firstResponse': 'today',
-            'lastResponse': 'ago',
-            'numberOfSessions': 7,
-        }
-    )
-    responseSummary.push(
-        {
-            'userEmail': 'refffffff',
-            'name': 'bro',
-            'firstResponse': 'today',
-            'lastResponse': 'ago',
-            'numberOfSessions': 7,
-        }
-    )
-
-    responseSummary.push(
-        {
-            'userEmail': 'reffafffff',
-            'name': 'bro',
-            'firstResponse': 'today',
-            'lastResponse': 'ago',
-            'numberOfSessions': 7,
-        }
-    )
-
-    responseSummary.push(
-        {
-            'userEmail': 'refff',
-            'name': 'bro',
-            'firstResponse': 'today',
-            'lastResponse': 'ago',
-            'numberOfSessions': 7,
-        }
-    )
-
-    responseSummary.push(
-        {
-            'userEmail': 'rAfff',
-            'name': 'bro',
-            'firstResponse': 'today',
-            'lastResponse': 'ago',
-            'numberOfSessions': 7,
-        }
-    )
-
-    responseSummary.push(
-        {
-            'userEmail': 'NAA',
-            'name': 'bro',
-            'firstResponse': 'today',
-            'lastResponse': 'ago',
-            'numberOfSessions': 7,
-        }
-    )
-    console.log(responseSummary)
+    // responseSummary.push(
+    //     {
+    //         'userEmail': 'hello',
+    //         'name': 'brobrobrob',
+    //         'firstResponse': 'today',
+    //         'lastResponse': 'ago',
+    //         'numberOfSessions': 3,
+    //     }
+    // )
+   
     return responseSummary
 }

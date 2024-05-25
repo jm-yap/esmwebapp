@@ -13,9 +13,9 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../firebase";
-import {Timestamp} from "firebase/firestore";
-import { getClientAccountByEmail } from "@/actions/clients";
-import { access } from "fs";
+// import {Timestamp} from "firebase/firestore";
+// import { getClientAccountByEmail } from "@/actions/clients";
+// import { access } from "fs";
 
 // For every Response to a Survey, fetches all the 
 export async function getResponses(
@@ -60,7 +60,7 @@ export async function getResponses(
           Response: doc.data().Response,
         };
       });
-
+      console.log(docsToObj, 'docsToObj')
       // arrange the responseInstances according to the order of the questions
       let arrangedResponseInstances: any[] = []; 
       
@@ -85,8 +85,10 @@ export async function getResponses(
         }
       }
 
-      const date = new Date(response.data.Timestamp.seconds * 1000);
-      const dateString = date.toLocaleString();
+      // const date = new Date(response.data.Timestamp.seconds * 1000);
+      const date = response.data.Timestamp.seconds * 1000
+      // const dateString = date.toLocaleString();
+      const dateString = date;  //definitely not a string, but it is in seconds * 1000  
       let processedResponse = {respID: response.id, clientName: associateEmailToClient[response.data.ClientEmail], time: dateString, list: arrangedResponseInstances};
       // console.log(out)
       return processedResponse;
@@ -122,52 +124,3 @@ export async function getModuleAnon(
     anon: fetchedModuleInfo.data().IsAnonymous,
   }
 }
-
-// export async function downloadCSV (
-//   headerQuestions: any[], 
-//   responses: any[],
-//   anonymity?: boolean,
-// ): Promise<any> {
-
-//   let questionIDToText = [];
-//   let questionIDToResponseInst = [];
-
-//   questionIDToText = headerQuestions?.map((object, index)=>{
-//     return {
-//       id: object.id,
-//       displayName: object.data.QuestionText
-//     };
-//   })
-
-//   // Required: Timestamp column
-//   // if anon: response ID, if not anon: name
-
-//   questionIDToResponseInst = responses.map((responseObj, responseIdx) => {
-//     // questionIDToResponseInst[responseObj.QuestionID] = responseObj.Response;
-
-//     // responseObj.map()
-//     let perRow = {}; //Assuming anonymous pa to ah
-
-//     responseObj.list.forEach((value: any)=>{
-//       // perRow[value.QuestionID] 
-//       if (Array.isArray(value.Response)) {
-//         if (!value.Response.length) {
-//           // empty array
-//           perRow[value.QuestionID] = ""
-//         } else {
-//           perRow[value.QuestionID] = value.Response.join(', ')
-//         }
-//       } else {
-//         perRow[value.QuestionID] = value.Response
-//       }
-
-//     })
-
-//     return perRow;
-//   })
-
-  
-//   console.log("hellaurssssss",questionIDToText, "mangaa");
-//   console.log("obiwan", questionIDToResponseInst)
-//   return [questionIDToText, questionIDToResponseInst]
-// }

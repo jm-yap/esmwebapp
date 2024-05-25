@@ -165,6 +165,7 @@
   font-size: 100%;
   font-weight: 400;
   padding: 10px; /* Increased padding */
+  overflow: hidden;
   overflow-wrap: break-word;
   max-width: 20px;
 }

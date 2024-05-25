@@ -85,6 +85,11 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
     setFilterName(e.target.value)
   }
 
+  const secondToDateString = (seconds: number) => {
+    const date = new Date(seconds);
+    return date?.toLocaleString();
+  }
+
   const downloadCSVHandler = () => {
 
     let questionIDToText: object[] = [];
@@ -114,7 +119,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
         let perRow = {};
         if (moduleAnon === false) perRow["Name"] =  responseObj.clientName
       
-        perRow["Timestamp"] = responseObj.time;
+        perRow["Timestamp"] = secondToDateString(responseObj.time);
 
         responseObj.list.forEach((value: any)=>{
  
@@ -176,7 +181,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
               <div className="surveyTitleBack">
                 <Link href={`/surveymodule/${params.accessKey}`} onClick={handleClick}>
                   <ArrowBackIcon sx={{ fontSize: 60 }}/>
-                </Link> 
+                </Link>                 
                 <h1 className="surveyTitle">{surveyInfo?.Title}</h1>
               </div>
               <div className="surveyInfoLeftBottom">
@@ -187,6 +192,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                 <span className="roundedRec">{surveyInfo?.Sessions}</span></h1>
                 <h1 style={{marginBottom: '2%'}}><span className="surveyDescHeader">Minimum Interval (in hours)</span>
                 <span className="roundedRec">{surveyInfo?.Interval}</span> </h1>
+
                 {((responses.length !== 0) && (moduleAnon === false)) &&
                     <select 
                     className={styles.sidebarTextField}
@@ -196,7 +202,11 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                     {clientNames.map((data)=>{return <option key={data} value={data}>{data}</option>})}
                   </select>           
                 }
+                <Link href={`/surveymodule/${params.accessKey}/${params.surveyID}/responses/responsesummary`} onClick={handleClick}>
+                  <text className="downloadCSVText">Survey Respondents' Status</text>
+                </Link> 
               </div>
+              
               
             </div>
 
@@ -272,7 +282,8 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
 
                           {(filterName === 'None' || response.clientName === filterName) && (
                             <>
-                              <td className="tableCell tr:hover">{response.time}</td>
+                              {/* <td className="tableCell tr:hover">{response.time}</td>  */}
+                              <td className="tableCell tr:hover">{secondToDateString(response.time)}</td> 
                               {response.list.map((perResponse: any) => {
                               if (perResponse.Response === "") {
                                 return (

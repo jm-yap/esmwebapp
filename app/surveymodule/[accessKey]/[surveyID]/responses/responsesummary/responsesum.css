@@ -57,7 +57,7 @@
 }
 
 .summaryCardName{
-  font-size: 1.6em;
+  font-size: 1.7vw;
   font-weight: bold;
   text-align: left;
   display: -webkit-box;
@@ -74,6 +74,7 @@
     /* background-color: black; */
     padding-top: 10px;
     height:20%;
+    width: 100%;
 }
 .timeResponseChild{
     /* max-width: fit-content; */

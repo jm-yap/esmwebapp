@@ -104,15 +104,15 @@ export default function ResponseSummaryPage({ params }:ResponseSumPageProps){
                                               fontSize: 25,
                                             },
                                           }}
-                                        width={420}
-                                        height={200}
+                                        width={336}
+                                        height={160}
                                         slotProps={{
                                             legend: {
                                             direction: 'column',
                                             position: { vertical: 'middle', horizontal: 'right' },                                           
                                             },                                            
                                         }}                              
-                                        margin={{left: -120, top: 20, bottom: 0}}
+                                        margin={{left: -90, top: 20, bottom: 0}}
                                     />
                                     {/* <ResponsiveChartContainer
                                         series={[

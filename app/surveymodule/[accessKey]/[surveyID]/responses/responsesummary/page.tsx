@@ -2,15 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { getAllResponseSummary } from "@/actions/surveyresponsesummary";
-import { getResponses, getSurveyDetails, getModuleAnon, } from "@/actions/surveyresponse";
+import {getSurveyDetails, getModuleAnon, } from "@/actions/surveyresponse";
 import '../response.css';
 import './responsesum.css'
 import Link from "next/link";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useSession } from "next-auth/react";
 import { LinearProgress, Stack } from "@mui/material";
-import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
-import { Padding } from "@mui/icons-material";
 import { PieChart, ResponsiveChartContainer, PiePlot, ChartsLegend,pieArcLabelClasses, axisClasses, BarChart  } from "@mui/x-charts";
 interface ResponseSumPageProps {
     params: {
@@ -18,9 +15,7 @@ interface ResponseSumPageProps {
       surveyID: string;
     };
   }
-// This page must not be accessible if the responses page has 0 responses.
-// This page must display a summary of the responses to the survey.
-// The page must 
+
 export default function ResponseSummaryPage({ params }:ResponseSumPageProps){
     const [isLoading, setIsLoading] = useState(true);
     const [summaryArray, setSummaryArray] = useState([]);
@@ -45,8 +40,6 @@ export default function ResponseSummaryPage({ params }:ResponseSumPageProps){
         };
 
         fetchData();
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     let clientDataSet = [];
@@ -63,12 +56,8 @@ export default function ResponseSummaryPage({ params }:ResponseSumPageProps){
 
     for (let point of clientDataSet) {
         for (let userSummary of [...summaryCopy]) {
-            // console.log(point.category === objekt.numberOfSessions, point, objekt)
             if (point.category === userSummary.numberOfSessions) {
                 point['count'] += 1
-                // console.log('')
-                // console.log(point)
-                // console.log(objekt)
                 let indexDeleted = summaryCopy.indexOf(userSummary)
                 summaryCopy.splice(indexDeleted , 1)                    
             }                
@@ -216,7 +205,6 @@ export default function ResponseSummaryPage({ params }:ResponseSumPageProps){
                                             <span className="responseSumRoundedRec">{summary.firstResponse}</span></h1>
                                         </div>
                                         <div className="timeResponseChild">
-                                            {/* <text>Latest Response: {summary.lastResponse}</text> */}
                                             <h1><span className="responseSumDescHeader">Latest Response: </span>
                                             <span className="responseSumRoundedRec">{summary.lastResponse}</span></h1>
                                         </div>

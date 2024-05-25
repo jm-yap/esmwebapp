@@ -2,30 +2,11 @@
 
 import {
   collection,
-  addDoc,
-  getDoc,
   getDocs,
-  QuerySnapshot,
   query,
-  onSnapshot,
-  deleteDoc,
-  doc,
   where,
 } from "firebase/firestore";
 import { db } from "../firebase";
-
-
-/**
- * This function determines the response count of a user given a survey
-*/
-async function getResponseCount(collection: any, surveyID: string, email: string) {
-    // collection is the response Document Collection
-    const specificQuery = query(collection, where("SurveyID", "==", `${surveyID}`), where("Email", "==", `${email}`));
-    const responseList = await getDocs(specificQuery);
-    return responseList?.docs.length;
-}
-
-// to get the first and last response of a user, dapat we should process its responses 
 
 /**
  * This function processes the response summary of all users in a survey. 

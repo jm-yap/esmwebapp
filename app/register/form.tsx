@@ -37,9 +37,7 @@ export default function Form() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (email.slice(-10) !== "@up.edu.ph") {
-      setError("Email must be a UP email");
-    } else if (password !== repassword) {
+    if (password !== repassword) {
       setError("Passwords do not match");
     } else if (/(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{6,15})$/.test(password) === false) { 
       setError("Password must be alphanumeric");

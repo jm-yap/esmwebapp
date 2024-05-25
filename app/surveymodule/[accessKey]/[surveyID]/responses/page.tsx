@@ -185,7 +185,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                 <h1 className="surveyDesc"> {surveyInfo?.Description}</h1>
                 <h1><span className="surveyDescHeader">Required No. of Sessions</span>
                 <span className="roundedRec">{surveyInfo?.Sessions}</span></h1>
-                <h1><span className="surveyDescHeader">Minimum Interval (in hours)</span>
+                <h1 style={{marginBottom: '2%'}}><span className="surveyDescHeader">Minimum Interval (in hours)</span>
                 <span className="roundedRec">{surveyInfo?.Interval}</span> </h1>
                 {((responses.length !== 0) && (moduleAnon === false)) &&
                     <select 
@@ -238,7 +238,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                       <th scope="col" className="tableHeader">ResponseID</th>            
                     }
                     {(moduleAnon === false) &&                    
-                      <th scope="col" className="tableHeader">Name</th>
+                      <th scope="col" className="tableHeader">Name of Participant</th>
                     }     
                     <th scope="col" className="tableHeader">Timestamp</th>
                     {

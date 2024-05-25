@@ -61,7 +61,7 @@
 }
 
 .surveyInfoLeft{
-
+    white-space: nowrap;
     vertical-align:middle;
     align-items: center;
     max-width: 60%;
@@ -164,7 +164,6 @@
   border-bottom: 3px solid #F1F1F1;
   font-size: 100%;
   font-weight: 400;
-  white-space: nowrap; /* Added */
   padding: 10px; /* Increased padding */
   overflow-wrap: break-word;
   max-width: 20px;

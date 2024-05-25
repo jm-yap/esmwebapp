@@ -35,6 +35,7 @@ export default function SurveyModule() {
   const [verified, setVerified] = useState(false);
   const [withInfo, setWithInfo] = useState(false);
   const [isVerified, setIsVerified] = useState(true);
+  const [userNow, setUser] = useState(null);
 
   const session = useSession({
     required: true,
@@ -66,9 +67,11 @@ export default function SurveyModule() {
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
-      setIsVerified(user.emailVerified);
+      if (user) {setIsVerified(user.emailVerified);}
+      // else {setIsLoading(false);}
     });
   }, []);
+
   const [builderEmail, setBuilderEmail] = useState(""); 
   const [surveyModules, setSurveyModules] = useState(null);
   const [isNull, setIsNull] = useState(true);

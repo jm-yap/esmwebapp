@@ -22,6 +22,7 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Tooltip from '@mui/material/Tooltip';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 interface SurveyPageProps {
   params: {
@@ -217,11 +218,27 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
                 </div>
               </div>
               <div className={styles.sidebarFormBit}>
-                <label className={styles.sidebarLabel}>Required No. of Sessions</label>
+                <div style={{display: "flex", flexDirection: "row"}}>
+                  <label className={styles.sidebarLabel}>Required No. of Sessions</label>
+                  <Tooltip title="Number of sessions required to complete the survey"
+                    placement="top" arrow
+                    slotProps={{ tooltip: { sx: { fontSize: '0.8em' } } }}
+                  >
+                    <HelpOutlineIcon style={{color: "#E07954", fontSize: "1.3rem", marginLeft: '2%', marginTop: '0.5%'}} />
+                  </Tooltip>
+                </div>
                 <input type="number" required min="1" name="Sessions" className={styles.sidebarTextField} />
               </div>
               <div className={styles.sidebarFormBit}>
-                <label className={styles.sidebarLabel}>Minimum Interval (in hours)</label>
+                <div style={{display: "flex", flexDirection: "row"}}>
+                  <label className={styles.sidebarLabel}>Minimum Interval (in hours)</label>
+                  <Tooltip title="Minimum time gap to answer sessions"
+                    placement="top" arrow
+                    slotProps={{ tooltip: { sx: { fontSize: '0.8em' } } }}
+                  >
+                    <HelpOutlineIcon style={{color: "#E07954", fontSize: "1.3rem", marginLeft: '2%', marginTop: '0.5%'}} />
+                  </Tooltip>
+                </div>
                 <input type="number" required min="0" step="0.5" name="Interval" className={styles.sidebarTextField} />
               </div>
               {error && <p className={styles.errorMessage}>{error}</p>}

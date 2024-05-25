@@ -53,7 +53,7 @@ export async function getAllResponseSummary(
         const responseLength = filtered.length
         if (responseLength > 0) {
             // Get the first and latest timestamp
-            filtered.sort((a, b) => a.data.Timestamp - b.data.Timestamp);
+            filtered.sort((a, b) => a.data.Timestamp - b.data.Timestamp); // this looks expensive given that the timestamp is in epoch
             let first = new Date(filtered[0].data.Timestamp.seconds * 1000)
             let last = new Date(filtered[responseLength - 1].data.Timestamp.seconds * 1000)
             userSummary['firstResponse'] = first.toLocaleString()

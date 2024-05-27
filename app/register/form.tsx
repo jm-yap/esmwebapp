@@ -13,6 +13,10 @@ import Link from "next/link";
 import styles from "./styles.module.css";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { Tooltip } from "@mui/material";
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 export default function Form() {
   const { data: session } = useSession();
@@ -34,15 +38,21 @@ export default function Form() {
   const [password, setPassword] = useState<string>("");
   const [repassword, setRepassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [passCheck1, setPassCheck1] = useState<boolean>(false);
+  const [passCheck2, setPassCheck2] = useState<boolean>(false);
+  const [passCheck3, setPassCheck3] = useState<boolean>(false);
+  const [passCheck4, setPassCheck4] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showRepassword, setShowRepassword] = useState<boolean>(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (password !== repassword) {
-      setError("Passwords do not match");
-    } else if (/(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{6,15})$/.test(password) === false) { 
-      setError("Password must be alphanumeric");
-    } else if (password.length < 8) {
-      setError("Password must be at least 8 characters long");
+    console.log(password);
+    setTimeout(() => {
+      setError(null);
+    }, 3000);
+    if (!passCheck1 || !passCheck2 || !passCheck3 || !passCheck4) {
+      setError("Satisfy all password requirements");
     } else {
       createUserWithEmailAndPassword(auth, email, password)
         .then(async (userCredential) => {
@@ -65,6 +75,29 @@ export default function Form() {
     }
   };
 
+  useEffect(() => {
+    if (/(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{0,1000})$/.test(password) === true) {
+      setPassCheck1(true);
+    } else {
+      setPassCheck1(false);
+    }
+    if (password.length >= 8) {
+      setPassCheck2(true);
+    } else {
+      setPassCheck2(false);
+    }
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) {
+      setPassCheck3(true);
+    } else {
+      setPassCheck3(false);
+    }
+    if (password === repassword && password !== "" && repassword !== "") {
+      setPassCheck4(true);
+    } else {
+      setPassCheck4(false);
+    }
+  }, [password, repassword]);
+
   return (
     <form 
       onSubmit={handleSubmit}
@@ -85,34 +118,67 @@ export default function Form() {
         <div className={styles.inputContainer}>
           <div style={{display: "flex", flexDirection: "row"}}>
             <label className={styles.inputLabel}>Password</label>
+            <button type="button" onClick={() => setShowPassword(!showPassword)}>
+              {!showPassword ?
+                <VisibilityIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}}/> :
+                <VisibilityOffIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}}/>
+              }
+            </button>
             <Tooltip title="Password must be alphanumeric and at least 8 characters long"
               placement="top" arrow
               slotProps={{ tooltip: { sx: { fontSize: '0.8em' } } }}
             >
               <HelpOutlineIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}} />
             </Tooltip>
+
           </div>
           <input
               className={styles.input}
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
         </div>
         <div className={styles.inputContainer}>
-          <label className={styles.inputLabel}>Confirm Password</label>
+          <div style={{display: "flex", flexDirection: "row"}}>
+            <label className={styles.inputLabel}>Confirm Password</label>
+            <button type="button" onClick={() => setShowRepassword(!showRepassword)}>
+              {!showRepassword ?
+                <VisibilityIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}}/> :
+                <VisibilityOffIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}}/>
+              }
+            </button>
+          </div>
           <input
             className={styles.input}
-            type="password"
+            type={showRepassword ? "text" : "password"}
             placeholder="Confirm Password"
             value={repassword}
             onChange={(e) => setRepassword(e.target.value)}
           />
+          
         </div>
       </div>
       <div className={styles.errorContainer}>
         {error && <p className={styles.errorText}>{error}</p>}
+        <div style={{color: passCheck4 ? "#008000" : "#ED4337"}}>
+          Passwords match
+          {passCheck4 ? <CheckIcon/> : <ClearIcon/>} 
+        </div>
+        <div style={{color: passCheck1 ? "#008000" : "#ED4337"}}>
+          Password is alphanumeric
+          {passCheck1 ? <CheckIcon/> : <ClearIcon/>} 
+        </div>
+        <div style={{color: passCheck2 ? "#008000" : "#ED4337"}}> 
+          Password is at least 8 characters long
+          {passCheck2 ? <CheckIcon/> : <ClearIcon/>}
+        </div>
+        <div style={{color: passCheck3 ? "#008000" : "#ED4337"}}>
+          Password contains uppercase and lowercase letters
+          {passCheck3 ? <CheckIcon/> : <ClearIcon/>} 
+        </div>
+        
       </div>
       <div className={styles.buttonContainer}>
 

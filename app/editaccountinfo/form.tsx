@@ -29,13 +29,11 @@ export default function Form() {
 
   useEffect(() => {
     const email = sessionStorage.getItem("userEmail");
-
     if (email) {
       setEmail(email);
     } else {
       signOut();
     }
-    
   }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

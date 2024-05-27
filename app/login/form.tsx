@@ -5,11 +5,14 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import styles from './styles.module.css';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 export default function Form() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const { data: session, status } = useSession();
   if (status === "authenticated") {
@@ -47,10 +50,18 @@ export default function Form() {
       </div>
 
       <div className={styles.inputContainer}>
-        <p className={styles.inputLabel}>Password</p>
+        <div style={{display: "flex", flexDirection: "row", marginRight: '2%'}}>
+          <p className={styles.inputLabel}>Password</p>
+          <button type="button" onClick={() => setShowPassword(!showPassword)}>
+              {!showPassword ?
+                <VisibilityIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}}/> :
+                <VisibilityOffIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}}/>
+              }
+            </button>
+        </div>
         <input
           className={styles.emailInput}
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}

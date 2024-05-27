@@ -252,7 +252,7 @@ export default function SurveyModule() {
         <div className={styles.container}>
           {/* <div> */}
             <div className={styles.navbar}>
-              <Link href="/surveymodule" className={styles.navtext} onClick={handleClick}>
+              <Link href="/surveymodule" className={styles.navtext}>
                 <h1 className={styles.navblack}>Sagot</h1>
                 <h1 className={styles.navwhite}>Kita</h1>
                 <h1 className={styles.navblack}>.</h1>

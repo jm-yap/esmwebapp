@@ -13,6 +13,9 @@ import { LinearProgress, Stack } from "@mui/material";
 import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
 import { set } from "firebase/database";
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import Tooltip from '@mui/material/Tooltip';
+import DownloadIcon from '@mui/icons-material/Download';
 
 
 interface ResponsePageProps {
@@ -85,6 +88,11 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
     setFilterName(e.target.value)
   }
 
+  const secondToDateString = (seconds: number) => {
+    const date = new Date(seconds);
+    return date?.toLocaleString();
+  }
+
   const downloadCSVHandler = () => {
 
     let questionIDToText: object[] = [];
@@ -114,7 +122,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
         let perRow = {};
         if (moduleAnon === false) perRow["Name"] =  responseObj.clientName
       
-        perRow["Timestamp"] = responseObj.time;
+        perRow["Timestamp"] = secondToDateString(responseObj.time);
 
         responseObj.list.forEach((value: any)=>{
  
@@ -176,7 +184,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
               <div className="surveyTitleBack">
                 <Link href={`/surveymodule/${params.accessKey}`} onClick={handleClick}>
                   <ArrowBackIcon sx={{ fontSize: 60 }}/>
-                </Link> 
+                </Link>                 
                 <h1 className="surveyTitle">{surveyInfo?.Title}</h1>
               </div>
               <div className="surveyInfoLeftBottom">
@@ -185,39 +193,58 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                 <h1 className="surveyDesc"> {surveyInfo?.Description}</h1>
                 <h1><span className="surveyDescHeader">Required No. of Sessions</span>
                 <span className="roundedRec">{surveyInfo?.Sessions}</span></h1>
-                <h1><span className="surveyDescHeader">Minimum Interval (in hours)</span>
+                <h1 style={{marginBottom: '2%'}}><span className="surveyDescHeader">Minimum Interval (in hours)</span>
                 <span className="roundedRec">{surveyInfo?.Interval}</span> </h1>
+
+                <Link href={`/surveymodule/${params.accessKey}/${params.surveyID}/responses/responsesummary`} onClick={handleClick}>
+                  <div style={{display: 'flex', alignItems: 'center', marginTop: '2%', marginBottom: '2%'}}>
+                    <PeopleAltIcon sx={{ fontSize: 40 }} style={{color: '#E07961'}}/>
+                    <text className="downloadCSVText">Survey Respondents Status</text>
+                  </div>
+                </Link> 
+
                 {((responses.length !== 0) && (moduleAnon === false)) &&
                     <select 
-                    className={styles.sidebarTextField}
+                    className="sidebarTextField"
                     value = {filterName}                
                     onChange = {handleNameFilter}>
                     <option value='None'>Filter by Name</option>
                     {clientNames.map((data)=>{return <option key={data} value={data}>{data}</option>})}
                   </select>           
                 }
+                {/* <Link href={`/surveymodule/${params.accessKey}/${params.surveyID}/responses/responsesummary`} onClick={handleClick}>
+                  <div style={{display: 'flex', alignItems: 'center', marginTop: '2%'}}>
+                    <PeopleAltIcon sx={{ fontSize: 40 }} style={{color: '#E07961', marginLeft: '3%'}}/>
+                    <text className="downloadCSVText">Survey Respondents Status</text>
+                  </div>
+                </Link>  */}
               </div>
+              
               
             </div>
 
             <div className="surveyInfoRight">
               {/* right */}
-              {(responses.length !== 0) && 
-                <CsvDownloader 
-                  className="downloadCSVText"
-                  filename = {csvFileName}
-                  extension = ".csv"
-                  separator=";"
-                  text="Download CSV file"
-                  meta= {true}
-                  title = {csvFileName}
-                  columns = {csvData[0]}
-                  datas = {csvData[1]}    
-                  // wrapColumnChar = '""'            
-                />              
-              }
-              <h1><span className="surveyDescHeader">Module Anonymity: </span>
-              <span className="roundedRec">{`${moduleAnon ? 'Anonymous' : 'Not Anonymous'}`}</span></h1>
+              <div style={{display: 'flex', alignItems: 'center', marginBottom: '2%'}}>
+                <DownloadIcon sx={{ fontSize: 40 }} style={{color: '#E07961', marginBottom: '2%'}}/>
+                {(responses.length !== 0) && 
+                  <CsvDownloader 
+                    className="downloadCSVText"
+                    filename = {csvFileName}
+                    extension = ".csv"
+                    separator=";"
+                    text="Download CSV file"
+                    meta= {true}
+                    title = {csvFileName}
+                    columns = {csvData[0]}
+                    datas = {csvData[1]}    
+                    // wrapColumnChar = '""'   
+                    style = {{marginBottom: '5%'}}         
+                  />         
+                }
+              </div>  
+              <h1><span className="surveyDescHeader">Anonymous?: </span>
+              <span className="roundedRec">{`${moduleAnon ? 'Yes' : 'No'}`}</span></h1>
               <h1><span className="surveyDescHeader">Opens on: </span>
               <span className="roundedRec">{startDate}</span></h1>
               <h1><span className="surveyDescHeader">Closes on: </span>
@@ -238,7 +265,7 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
                       <th scope="col" className="tableHeader">ResponseID</th>            
                     }
                     {(moduleAnon === false) &&                    
-                      <th scope="col" className="tableHeader">Name</th>
+                      <th scope="col" className="tableHeader">Name of Participant</th>
                     }     
                     <th scope="col" className="tableHeader">Timestamp</th>
                     {
@@ -272,7 +299,8 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
 
                           {(filterName === 'None' || response.clientName === filterName) && (
                             <>
-                              <td className="tableCell tr:hover">{response.time}</td>
+                              {/* <td className="tableCell tr:hover">{response.time}</td>  */}
+                              <td className="tableCell tr:hover">{secondToDateString(response.time)}</td> 
                               {response.list.map((perResponse: any) => {
                               if (perResponse.Response === "") {
                                 return (

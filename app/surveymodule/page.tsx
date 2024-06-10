@@ -24,10 +24,10 @@ import { auth } from "../../firebase"
 import { sign } from "crypto";
 import { red } from "@mui/material/colors";
 import Tooltip from '@mui/material/Tooltip';
-import { set } from "firebase/database";
+import { set, update } from "firebase/database";
 import EditIcon from '@mui/icons-material/Edit';
 import build from "next/dist/build";
-
+import { sendEmailVerification } from "firebase/auth";
 
 
 export default function SurveyModule() {
@@ -35,6 +35,7 @@ export default function SurveyModule() {
   const [verified, setVerified] = useState(false);
   const [withInfo, setWithInfo] = useState(false);
   const [isVerified, setIsVerified] = useState(true);
+  const [userNow, setUser] = useState(null);
 
   const session = useSession({
     required: true,
@@ -66,13 +67,11 @@ export default function SurveyModule() {
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
-      if (user.emailVerified) {
-        setIsVerified(true);
-      } else {
-        setIsVerified(false);
-      }
+      if (user) {setIsVerified(user.emailVerified);}
+      // else {setIsLoading(false);}
     });
   }, []);
+
   const [builderEmail, setBuilderEmail] = useState(""); 
   const [surveyModules, setSurveyModules] = useState(null);
   const [isNull, setIsNull] = useState(true);
@@ -215,17 +214,24 @@ export default function SurveyModule() {
     setSurveyMod(surveyModule.id);
   }
 
-  const handleDeleteSurveyModule = async (surveyModuleID: string) => {
-    try {
-      setIsLoading(true);
-      await deleteSurveyModule(surveyModuleID);
-      const updatedModules = await getSurveyModules(builderEmail);
-      setSurveyModules(updatedModules);
-      setIsLoading(false);
-    } catch (error: any) {
-      console.error("Error deleting survey module:", error.message);
-    }
+  const handleDeleteSurveyModule = async (surveyModuleID: string, surveyModuleTitle) => {
+    const userConfirmed = window.confirm(`Are you sure you want to delete the Survey Module "${surveyModuleTitle}"?`);
+    if (!userConfirmed) return;
+      try {
+        setIsLoading(true);
+        await deleteSurveyModule(surveyModuleID);
+        const updatedModules = await getSurveyModules(builderEmail);
+        setSurveyModules(updatedModules);
+        setIsLoading(false);
+      } catch (error: any) {
+        console.error("Error deleting survey module:", error.message);
+      }
   };
+
+  const reverifyEmail = async () => {
+    await auth.currentUser.reload();
+    setIsVerified(auth.currentUser.emailVerified);
+  }
 
   return (
     <div>
@@ -235,8 +241,10 @@ export default function SurveyModule() {
             <CircularProgress color="inherit" size={50}/>
             {(!isVerified) ? 
             <div>
-              <h1 className={styles.verifytext}>Please verify your email address to continue. Click on the link sent to your email to activate</h1> 
+              <h1 className={styles.verifytext}>Please verify your email address to continue. Click on the link sent to your email to activate your account.</h1> 
+              <button onClick={() => reverifyEmail()} className={styles.signouttext}>Already verified? Reload verification status here</button>
               <button onClick={() => signOut()} className={styles.signouttext}>Sign Out</button>
+              <button onClick={async () => {await sendEmailVerification(auth.currentUser)}} className={styles.signouttext}>Resend Verification Email</button>
             </div>
             : null}
           </Stack>
@@ -244,7 +252,7 @@ export default function SurveyModule() {
         <div className={styles.container}>
           {/* <div> */}
             <div className={styles.navbar}>
-              <Link href="/surveymodule" className={styles.navtext} onClick={handleClick}>
+              <Link href="/surveymodule" className={styles.navtext}>
                 <h1 className={styles.navblack}>Sagot</h1>
                 <h1 className={styles.navwhite}>Kita</h1>
                 <h1 className={styles.navblack}>.</h1>
@@ -351,7 +359,7 @@ export default function SurveyModule() {
             }
             {verified && surveyModules.map((surveyModule: any) => (
               <div key={surveyModule.id} className={styles.SurveyContainer}>
-                <div className={styles.sidebarRow}>
+                <div className={styles.mainRow}>
                   <Link href={`/surveymodule/${surveyModule.id}`} onClick={handleClick}>
                     <button onClick={() =>
                       localStorage.setItem("surveyModule", JSON.stringify(surveyModule))} // export survey module details
@@ -366,14 +374,16 @@ export default function SurveyModule() {
                       </button>
                     </Tooltip>
                     <Tooltip title="Delete" arrow placement="top">
-                      <button onClick={() => handleDeleteSurveyModule(surveyModule.id)}>
+                      <button onClick={() => handleDeleteSurveyModule(surveyModule.id, surveyModule.data.Title)}>
                         <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
                       </button>
                     </Tooltip>
                   </div>
                 </div>
-                <h1 className={styles.SurveyDescription}>{surveyModule.data.Description}</h1>
-                <h1 className={styles.BuilderInfo}>Prepared by: {
+                <div className="SurveyDescriptionDiv">
+                  <h1 className={styles.SurveyDescription}>{surveyModule.data.Description}</h1>
+                </div>
+                <h1 className={styles.BuilderInfo}><span style={{fontWeight: 'bold'}}>Prepared by:</span> {
                     surveyModule.data.BuilderID.map((id: string, index: number) => {
                       if (id === builderEmail) {
                         return surveyModule.data.BuilderID.length === 1 ? `${firstName} ${lastName}` : `${firstName} ${lastName}, `;

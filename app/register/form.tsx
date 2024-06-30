@@ -20,9 +20,6 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 export default function Form() {
   const { data: session } = useSession();
-  if (session) {
-    redirect("/surveymodule");
-  }
 
   // try {
   //   const isMasterKeyPresent = sessionStorage.getItem("masterKey");

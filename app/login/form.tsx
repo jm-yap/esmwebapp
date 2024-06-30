@@ -1,25 +1,21 @@
 "use client";
-import { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState, useEffect  } from "react";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from './styles.module.css';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 export default function Form() {
+  const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const { data: session, status } = useSession();
-  if (status === "authenticated") {
-    sessionStorage.setItem("userEmail", email);
-    sessionStorage.setItem("validInfo", "true");
-    redirect("/");
-  }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,6 +29,8 @@ export default function Form() {
       setError("Email or password is incorrect");
     } else if (response.error === "ConfigurationError") {
       setError("Invalid action");
+    } else if (response.ok) {
+      router.push("/surveymodule");
     }
   };
 

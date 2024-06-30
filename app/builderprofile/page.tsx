@@ -9,13 +9,6 @@ import { set } from "firebase/database";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export default function ClientAccount() {
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect("/login");
-    },
-  });
-
   try {
     const isMasterKeyPresent = sessionStorage.getItem("masterKey");
     if (isMasterKeyPresent !== "true") {

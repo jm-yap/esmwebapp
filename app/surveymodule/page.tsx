@@ -37,14 +37,14 @@ export default function SurveyModule() {
   const [isVerified, setIsVerified] = useState(true);
   const [userNow, setUser] = useState(null);
 
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      // console.log("Unauthenticated, redirecting to login")
-      sessionStorage.removeItem("userEmail");
-      redirect("/login");
-    },
-  });
+  // const session = useSession({
+  //   required: true,
+  //   onUnauthenticated() {
+  //     // console.log("Unauthenticated, redirecting to login")
+  //     sessionStorage.removeItem("userEmail");
+  //     redirect("/login");
+  //   },
+  // });
 
   useEffect(() => {
     const fetchMasterKey = async () => {

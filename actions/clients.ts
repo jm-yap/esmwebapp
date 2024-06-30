@@ -1,4 +1,4 @@
-"use server";
+"use client";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 

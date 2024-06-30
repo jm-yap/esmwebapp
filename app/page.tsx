@@ -9,18 +9,21 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 import { set } from "firebase/database";
 import { useEffect } from "react";
+import { auth } from "@/firebase";
 
 function HomePage() {
   const router = useRouter();
   const [masterKey, setMasterKey] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect("/login");
-    },
-  });
+  // const session = useSession({
+  //   required: true,
+  //   onUnauthenticated() {
+  //     redirect("/login");
+  //   },
+  // });
+
+  const session = useSession();
 
   useEffect(() => {
 
@@ -47,8 +50,7 @@ function HomePage() {
         sessionStorage.setItem("validInfo", "true");
         router.push("/surveymodule");
         
-        // router.push(session.status === "unauthenticated" ? "/login" : "/surveymodule"); // Replace with the actual path of your login/signup page
-      } else {
+        } else {
         setError("Invalid master key");
       }   
     } catch (error: any) {

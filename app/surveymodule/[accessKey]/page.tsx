@@ -33,13 +33,6 @@ interface SurveyPageProps {
 
 export default function QuestionsPage({ params }: SurveyPageProps) {
   const router = useRouter();
-
-  // const session = useSession({
-  //   required: true,
-  //   onUnauthenticated() {
-  //     redirect("/login");
-  //   },
-  // });
   const session = useSession();
 
   useEffect(() => {

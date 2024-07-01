@@ -1,5 +1,6 @@
 "use server";
 import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 export async function getClientAccountByEmail(email: string): Promise<any> {
   try {

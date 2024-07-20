@@ -1,12 +1,11 @@
 "use client";
-import { FormEvent, useState, useEffect } from "react";
-import { signIn } from "next-auth/react";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import styles from './styles.module.css';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+import { FormEvent, useState, useEffect } from "react";
+import styles from "./styles.module.css";
 
 export default function Form() {
   const [email, setEmail] = useState<string>("");
@@ -50,14 +49,29 @@ export default function Form() {
       </div>
 
       <div className={styles.inputContainer}>
-        <div style={{display: "flex", flexDirection: "row", marginRight: '2%'}}>
+        <div
+          style={{ display: "flex", flexDirection: "row", marginRight: "2%" }}
+        >
           <p className={styles.inputLabel}>Password</p>
           <button type="button" onClick={() => setShowPassword(!showPassword)}>
-              {!showPassword ?
-                <VisibilityIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}}/> :
-                <VisibilityOffIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}}/>
-              }
-            </button>
+            {!showPassword ? (
+              <VisibilityIcon
+                style={{
+                  color: "#E07954",
+                  fontSize: "1.5rem",
+                  marginLeft: "2%",
+                }}
+              />
+            ) : (
+              <VisibilityOffIcon
+                style={{
+                  color: "#E07954",
+                  fontSize: "1.5rem",
+                  marginLeft: "2%",
+                }}
+              />
+            )}
+          </button>
         </div>
         <input
           className={styles.emailInput}
@@ -73,16 +87,13 @@ export default function Form() {
       </div>
 
       <div className={styles.buttonContainer}>
-
-        <Link href="/register" className={styles.clickableText}>Create Account</Link>
+        <Link href="/register" className={styles.clickableText}>
+          Create Account
+        </Link>
         <button className={styles.button} type="submit">
           L O G I N
         </button>
       </div>
-
-      
     </form>
-
-
   );
 }

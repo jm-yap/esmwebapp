@@ -1,14 +1,13 @@
 "use client";
-import React, { useState, FormEvent } from "react";
+import { on } from "events";
+import CircularProgress from "@mui/material/CircularProgress";
+import Stack from "@mui/material/Stack";
+import { set } from "firebase/database";
 import { useRouter, redirect } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+import React, { useState, FormEvent, useEffect } from "react";
 import { fetchMasterKey } from "@/actions/masterkey";
 import styles from "./styles.module.css";
-import { useSession, signOut } from "next-auth/react";
-import { on } from "events";
-import CircularProgress from '@mui/material/CircularProgress';
-import Stack from '@mui/material/Stack';
-import { set } from "firebase/database";
-import { useEffect } from "react";
 
 function HomePage() {
   const router = useRouter();
@@ -23,14 +22,11 @@ function HomePage() {
   });
 
   useEffect(() => {
-
     if (localStorage.getItem("userEmail") !== null) {
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    
   }, [session]);
-
 
   const handleMasterKeySubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,11 +42,11 @@ function HomePage() {
         setIsLoading(false);
         sessionStorage.setItem("validInfo", "true");
         router.push("/surveymodule");
-        
+
         // router.push(session.status === "unauthenticated" ? "/login" : "/surveymodule"); // Replace with the actual path of your login/signup page
       } else {
         setError("Invalid master key");
-      }   
+      }
     } catch (error: any) {
       console.error("Error validating master key:", error.message);
       setError("An error occurred while validating the master key");
@@ -59,19 +55,21 @@ function HomePage() {
 
   return (
     <div>
-      {isLoading ? 
-        <div className={styles.loadingContainer}> 
-        <Stack sx={{ color: '#E07961' }} spacing={2} direction="row">
-          <CircularProgress color="inherit" size={50}/>
-        </Stack>
-        </div> :
+      {isLoading ? (
+        <div className={styles.loadingContainer}>
+          <Stack sx={{ color: "#E07961" }} spacing={2} direction="row">
+            <CircularProgress color="inherit" size={50} />
+          </Stack>
+        </div>
+      ) : (
         <div>
           <div className={styles.container}>
             <div className={styles.centerBox}>
               <div className={styles.titleBox}>
                 <div className={styles.titleWebPage}>
-                  <h1>Sagot</h1><h1 className={styles.titleOrange}>Kita</h1><h1>.</h1>
-                  
+                  <h1>Sagot</h1>
+                  <h1 className={styles.titleOrange}>Kita</h1>
+                  <h1>.</h1>
                 </div>
               </div>
               <div className={styles.titleBox}>
@@ -85,8 +83,8 @@ function HomePage() {
                       value={masterKey}
                       onChange={(e) => setMasterKey(e.target.value)}
                     />
-                    {error && <p  className={styles.errorText}>{error}</p>}
-                    <button className={styles.submitButton} type="submit"> 
+                    {error && <p className={styles.errorText}>{error}</p>}
+                    <button className={styles.submitButton} type="submit">
                       N E X T
                     </button>
                   </div>
@@ -95,7 +93,7 @@ function HomePage() {
             </div>
           </div>
         </div>
-      }
+      )}
     </div>
   );
 }

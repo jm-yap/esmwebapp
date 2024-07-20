@@ -1,8 +1,8 @@
 "use client";
-import { useEffect } from "react";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
+import { useEffect } from "react";
 import { auth } from "../../firebase";
 
 export default function Form() {
@@ -21,7 +21,7 @@ export default function Form() {
       redirect("/login");
     },
   });
-  
+
   const router = useRouter();
 
   return (

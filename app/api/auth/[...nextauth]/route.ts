@@ -1,6 +1,6 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../../firebase";
 
 const handler = NextAuth({
@@ -18,7 +18,7 @@ const handler = NextAuth({
         return await signInWithEmailAndPassword(
           auth,
           credentials.email,
-          credentials.password
+          credentials.password,
         )
           .then((userCredential) => {
             if (userCredential.user) {

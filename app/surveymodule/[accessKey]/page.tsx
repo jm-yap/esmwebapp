@@ -1,35 +1,42 @@
 "use client";
-import SurveyCard from "@/app/components/surveys";
-import { getSurveys, deleteSurvey, addSurvey } from "@/actions/survey";
-import { useEffect, useState } from "react";
-import { addDoc, collection, doc, updateDoc, increment } from "firebase/firestore";
-import { db, auth } from "@/firebase";
-import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
-import { SurveyCardProps } from "@/app/components/surveys";
-import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
-import TextField from "@mui/material/TextField";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
+
+// MUI Icons
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { clear } from "console";
-import LinearProgress from '@mui/material/LinearProgress';
-import Stack from '@mui/material/Stack';
-import { set } from "firebase/database";
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import Tooltip from '@mui/material/Tooltip';
-import {CopyToClipboard} from 'react-copy-to-clipboard';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
+
+// MUI Components
+import LinearProgress from "@mui/material/LinearProgress";
+import Stack from "@mui/material/Stack";
+import Tooltip from "@mui/material/Tooltip";
+
+// Firebase imports
+import { doc, updateDoc, increment } from "firebase/firestore";
+
+// React and Next.js imports
+import Link from "next/link";
+import { redirect, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+
+// Third-party libraries
+import { CopyToClipboard } from "react-copy-to-clipboard";
+
+// Local components and styles
+import { getSurveys, deleteSurvey, addSurvey } from "@/actions/survey";
+import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
+
+import { db } from "@/firebase";
 
 interface SurveyPageProps {
   params: {
     accessKey: string;
   };
 }
-
 
 export default function QuestionsPage({ params }: SurveyPageProps) {
   const router = useRouter();
@@ -72,19 +79,25 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
     try {
       setIsLoading(true);
       const survey_details = {
-        AccessCode : params.accessKey,
-        BuilderID : session.data.user?.email,
-        Title : e.target.elements.Title.value,
-        Description : e.target.elements.Description.value,
-        StartDate : new Date(e.target.elements.StartDate.value),
-        EndDate : new Date(e.target.elements.EndDate.value),
-        Sessions : e.target.elements.Sessions.value,
-        Interval : e.target.elements.Interval.value,
-        TotalQuestions : 0,
-        QuestionOrder: []
+        AccessCode: params.accessKey,
+        BuilderID: session.data.user?.email,
+        Title: e.target.elements.Title.value,
+        Description: e.target.elements.Description.value,
+        StartDate: new Date(e.target.elements.StartDate.value),
+        EndDate: new Date(e.target.elements.EndDate.value),
+        Sessions: e.target.elements.Sessions.value,
+        Interval: e.target.elements.Interval.value,
+        TotalQuestions: 0,
+        QuestionOrder: [],
       };
 
-      const hourGap = ((survey_details.EndDate.getTime() - survey_details.StartDate.getTime()) / (1000 * 3600)) - ((survey_details.EndDate.getDate() - survey_details.StartDate.getDate()) * 9);
+      const hourGap =
+        (survey_details.EndDate.getTime() -
+          survey_details.StartDate.getTime()) /
+          (1000 * 3600) -
+        (survey_details.EndDate.getDate() -
+          survey_details.StartDate.getDate()) *
+          9;
 
       if (survey_details.StartDate > survey_details.EndDate) {
         SetError("Start Date must be before End Date");
@@ -99,11 +112,13 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
         SetError("Number of required sessions must be greater than 0");
         return;
       } else if (hourGap / survey_details.Sessions < survey_details.Interval) {
-        SetError("Minimum interval must be less than the time gap between sessions");
+        SetError(
+          "Minimum interval must be less than the time gap between sessions",
+        );
         return;
       }
-      
-      await addSurvey({survey: survey_details});
+
+      await addSurvey({ survey: survey_details });
       const updatedSurveys = await getSurveys(params.accessKey);
       setSurveyList(updatedSurveys);
       setIsLoading(false);
@@ -112,7 +127,6 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
       await updateDoc(surveyModuleRef, {
         TotalSurveys: increment(1),
       });
-
 
       SetError(null);
     } catch (error) {
@@ -144,7 +158,9 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
 
   // Deletion
   const handleDeleteSurvey = async (SurveyID: string, SurveyTitle: string) => {
-    const userConfirmed = confirm(`Are you sure you want to delete the survey "${SurveyTitle}"?`);
+    const userConfirmed = confirm(
+      `Are you sure you want to delete the survey "${SurveyTitle}"?`,
+    );
     if (!userConfirmed) return;
     try {
       setIsLoading(true);
@@ -157,8 +173,6 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
     }
   };
 
-
-
   // get the survey modules from local storage
   const surveyModuleStr = localStorage.getItem("surveyModule");
   // parse it
@@ -167,13 +181,12 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   const firstName = sessionStorage.getItem("firstName");
   const lastName = sessionStorage.getItem("lastName");
 
-
-  const [tooltipContent, setTooltipContent] = useState('Click to copy');
+  const [tooltipContent, setTooltipContent] = useState("Click to copy");
 
   const handleCopy = () => {
-    setTooltipContent('Copied!');
+    setTooltipContent("Copied!");
     setTimeout(() => {
-      setTooltipContent('Click to copy');
+      setTooltipContent("Click to copy");
     }, 2000); // Reset tooltip content after 2 seconds
   };
 
@@ -181,13 +194,23 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
   return (
     <div className={styles.container}>
       <div className={styles.navbar}>
-        <Link href="/surveymodule" className={styles.navtext} onClick={handleClick}>
+        <Link
+          href="/surveymodule"
+          className={styles.navtext}
+          onClick={handleClick}
+        >
           <h1 className={styles.navblack}>Sagot</h1>
           <h1 className={styles.navwhite}>Kita</h1>
           <h1 className={styles.navblack}>.</h1>
         </Link>
-        <Link href="/builderprofile" className={styles.navprofilecontainer} onClick={handleClick}>
-          <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
+        <Link
+          href="/builderprofile"
+          className={styles.navprofilecontainer}
+          onClick={handleClick}
+        >
+          <h1 className={styles.navinfotext}>
+            {firstName} {lastName}
+          </h1>
           <AccountCircleIcon fontSize="large" />
         </Link>
       </div>
@@ -201,112 +224,211 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
             <form className={styles.sidebarFormComp} onSubmit={handleAddSurvey}>
               <div className={styles.sidebarFormBit}>
                 <label className={styles.sidebarLabel}>Title</label>
-                <input type="text" required name="Title" className={styles.sidebarTextField} />
+                <input
+                  type="text"
+                  required
+                  name="Title"
+                  className={styles.sidebarTextField}
+                />
               </div>
               <div className={styles.sidebarFormBit}>
                 <label className={styles.sidebarLabel}>Description</label>
-                <textarea required rows={2}  name="Description" className={styles.sidebarTextField} />
+                <textarea
+                  required
+                  rows={2}
+                  name="Description"
+                  className={styles.sidebarTextField}
+                />
               </div>
               <div className={styles.sidebarRow}>
                 <div className={styles.sidebarFormBit}>
                   <label className={styles.sidebarLabel}>Opens on</label>
-                  <input type="datetime-local" required name="StartDate" className={styles.sidebarDateField}/>
+                  <input
+                    type="datetime-local"
+                    required
+                    name="StartDate"
+                    className={styles.sidebarDateField}
+                  />
                 </div>
                 <div className={styles.sidebarFormBit}>
                   <label className={styles.sidebarLabel}>Closes on</label>
-                  <input type="datetime-local" required name="EndDate" className={styles.sidebarDateField}/>
+                  <input
+                    type="datetime-local"
+                    required
+                    name="EndDate"
+                    className={styles.sidebarDateField}
+                  />
                 </div>
               </div>
               <div className={styles.sidebarFormBit}>
-                <div style={{display: "flex", flexDirection: "row"}}>
-                  <label className={styles.sidebarLabel}>Required No. of Sessions</label>
-                  <Tooltip title="Number of sessions required to complete the survey"
-                    placement="top" arrow
-                    slotProps={{ tooltip: { sx: { fontSize: '0.8em' } } }}
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <label className={styles.sidebarLabel}>
+                    Required No. of Sessions
+                  </label>
+                  <Tooltip
+                    title="Number of sessions required to complete the survey"
+                    placement="top"
+                    arrow
+                    slotProps={{ tooltip: { sx: { fontSize: "0.8em" } } }}
                   >
-                    <HelpOutlineIcon style={{color: "#E07954", fontSize: "1.3rem", marginLeft: '2%', marginTop: '0.5%'}} />
+                    <HelpOutlineIcon
+                      style={{
+                        color: "#E07954",
+                        fontSize: "1.3rem",
+                        marginLeft: "2%",
+                        marginTop: "0.5%",
+                      }}
+                    />
                   </Tooltip>
                 </div>
-                <input type="number" required min="1" name="Sessions" className={styles.sidebarTextField} />
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  name="Sessions"
+                  className={styles.sidebarTextField}
+                />
               </div>
               <div className={styles.sidebarFormBit}>
-                <div style={{display: "flex", flexDirection: "row"}}>
-                  <label className={styles.sidebarLabel}>Minimum Interval (in hours)</label>
-                  <Tooltip title="Minimum time gap to answer sessions"
-                    placement="top" arrow
-                    slotProps={{ tooltip: { sx: { fontSize: '0.8em' } } }}
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <label className={styles.sidebarLabel}>
+                    Minimum Interval (in hours)
+                  </label>
+                  <Tooltip
+                    title="Minimum time gap to answer sessions"
+                    placement="top"
+                    arrow
+                    slotProps={{ tooltip: { sx: { fontSize: "0.8em" } } }}
                   >
-                    <HelpOutlineIcon style={{color: "#E07954", fontSize: "1.3rem", marginLeft: '2%', marginTop: '0.5%'}} />
+                    <HelpOutlineIcon
+                      style={{
+                        color: "#E07954",
+                        fontSize: "1.3rem",
+                        marginLeft: "2%",
+                        marginTop: "0.5%",
+                      }}
+                    />
                   </Tooltip>
                 </div>
-                <input type="number" required min="0" step="0.5" name="Interval" className={styles.sidebarTextField} />
+                <input
+                  type="number"
+                  required
+                  min="0"
+                  step="0.5"
+                  name="Interval"
+                  className={styles.sidebarTextField}
+                />
               </div>
               {error && <p className={styles.errorMessage}>{error}</p>}
-              <button className={styles.sidebarButton} type="submit">C R E A T E</button>
+              <button className={styles.sidebarButton} type="submit">
+                C R E A T E
+              </button>
             </form>
           </div>
         </div>
       </div>
 
       <main className={styles.main}>
-        <div style={{position: 'fixed', width: '100%'}}>
+        <div style={{ position: "fixed", width: "100%" }}>
           {isLoading && (
-            <div style={{ marginTop: '-20px', marginLeft: '-20px' }}>
-              <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
-                <LinearProgress color="inherit" sx={{ width: '100%', height: '7px' }} />
+            <div style={{ marginTop: "-20px", marginLeft: "-20px" }}>
+              <Stack sx={{ width: "100%", color: "#cf6851" }} spacing={2}>
+                <LinearProgress
+                  color="inherit"
+                  sx={{ width: "100%", height: "7px" }}
+                />
               </Stack>
             </div>
           )}
         </div>
         <div className={styles.mainRow}>
           <Link href={`/surveymodule/`} onClick={handleClick}>
-            <ArrowBackIcon sx={{ fontSize: 40 }}/>
+            <ArrowBackIcon sx={{ fontSize: 40 }} />
           </Link>
-          <h1 className={styles.SurveyModuleTitle}>{surveyModule.data.Title}</h1>
+          <h1 className={styles.SurveyModuleTitle}>
+            {surveyModule.data.Title}
+          </h1>
         </div>
-        <h2 className={styles.SurveyModuleDescription}>{surveyModule.data.Description}</h2>
-        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'left', gap: '10px'}}>
-        <h3 className={styles.SurveyModuleAccessCode}>Access Code: {surveyModule.id}</h3>
-        <CopyToClipboard text={surveyModule.id} onCopy={handleCopy}>
-          <Tooltip title={tooltipContent} arrow placement="top">
-            <div style={{ cursor: 'pointer' }}>
-              <ContentCopyIcon sx={{ fontSize: 30, color: '#E07961' }} />
-            </div>
-          </Tooltip>
-        </CopyToClipboard>
+        <h2 className={styles.SurveyModuleDescription}>
+          {surveyModule.data.Description}
+        </h2>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "left",
+            gap: "10px",
+          }}
+        >
+          <h3 className={styles.SurveyModuleAccessCode}>
+            Access Code: {surveyModule.id}
+          </h3>
+          <CopyToClipboard text={surveyModule.id} onCopy={handleCopy}>
+            <Tooltip title={tooltipContent} arrow placement="top">
+              <div style={{ cursor: "pointer" }}>
+                <ContentCopyIcon sx={{ fontSize: 30, color: "#E07961" }} />
+              </div>
+            </Tooltip>
+          </CopyToClipboard>
         </div>
 
-        {SurveyList.length === 0 && !isLoading &&
+        {SurveyList.length === 0 && !isLoading && (
           <div className={styles.empty}>
-            <AutoAwesomeIcon sx={{ fontSize: 100, color: '#ddd' }} style={{marginBottom: '20px'}}/>
+            <AutoAwesomeIcon
+              sx={{ fontSize: 100, color: "#ddd" }}
+              style={{ marginBottom: "20px" }}
+            />
             <h1>No surveys here, try making one :D</h1>
           </div>
-        }
+        )}
         {SurveyList.map((survey: any) => (
           <div key={survey.id}>
             <div className={styles.SurveyContainer}>
               <div className={styles.cardRow}>
-                <Link href={`/surveymodule/${params.accessKey}/${survey.id}/questions`} onClick={handleClick}>
-                  <button className={styles.SurveyTitle} onClick={() => localStorage.setItem("survey", JSON.stringify(survey))}>
+                <Link
+                  href={`/surveymodule/${params.accessKey}/${survey.id}/questions`}
+                  onClick={handleClick}
+                >
+                  <button
+                    className={styles.SurveyTitle}
+                    onClick={() =>
+                      localStorage.setItem("survey", JSON.stringify(survey))
+                    }
+                  >
                     {survey.data.Title}
                   </button>
                 </Link>
                 <div className={styles.cardRow}>
-                <Tooltip title="Responses" arrow placement="top">
-                  <Link href={`/surveymodule/${params.accessKey}/${survey.id}/responses`} onClick={handleClick}>
-                    <ListAltOutlinedIcon sx={{ fontSize: 30, color: '#E07961' }}/>
-                  </Link>
-                </Tooltip>
+                  <Tooltip title="Responses" arrow placement="top">
+                    <Link
+                      href={`/surveymodule/${params.accessKey}/${survey.id}/responses`}
+                      onClick={handleClick}
+                    >
+                      <ListAltOutlinedIcon
+                        sx={{ fontSize: 30, color: "#E07961" }}
+                      />
+                    </Link>
+                  </Tooltip>
 
-                <Tooltip title="Delete" arrow placement="top">
-                <button onClick={() => handleDeleteSurvey(survey.id, survey.data.Title)}>
-                  <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
-                </button>
-                </Tooltip>
+                  <Tooltip title="Delete" arrow placement="top">
+                    <button
+                      onClick={() =>
+                        handleDeleteSurvey(survey.id, survey.data.Title)
+                      }
+                    >
+                      <DeleteOutlineIcon
+                        sx={{ fontSize: 30, color: "#E07961" }}
+                      />
+                    </button>
+                  </Tooltip>
                 </div>
               </div>
-              <h1 className={styles.SurveyDescription}>{survey.data.Description}</h1>
-              <h1 className={styles.BuilderInfo}>Prepared by: {survey.data.BuilderID}</h1>
+              <h1 className={styles.SurveyDescription}>
+                {survey.data.Description}
+              </h1>
+              <h1 className={styles.BuilderInfo}>
+                Prepared by: {survey.data.BuilderID}
+              </h1>
             </div>
           </div>
         ))}
@@ -314,4 +436,3 @@ export default function QuestionsPage({ params }: SurveyPageProps) {
     </div>
   );
 }
-

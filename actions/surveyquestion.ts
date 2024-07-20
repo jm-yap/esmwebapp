@@ -34,9 +34,9 @@ export async function getQuestions(
     };
   });
 
-  const sortedItemsArr = survey.QuestionOrder
-  .map((id) => itemsArr.find((item) => item.id === id))
-  .filter((item) => item !== undefined);
+  const sortedItemsArr = survey.QuestionOrder.map((id) =>
+    itemsArr.find((item) => item.id === id),
+  ).filter((item) => item !== undefined);
 
   return sortedItemsArr;
 }
@@ -45,7 +45,7 @@ export async function editQuestion(
   questionID: string,
   questionText: string,
   questionType: string,
-  choices: string[]
+  choices: string[],
 ): Promise<boolean> {
   try {
     const surveyModuleCollection = collection(db, "SurveyQuestion");
@@ -66,7 +66,7 @@ export async function editQuestion(
 export async function deleteQuestion(
   AccessCode: string,
   surveyID: string,
-  questionID: string
+  questionID: string,
 ): Promise<boolean> {
   try {
     const questionCollection = collection(db, `/SurveyQuestion`);
@@ -75,7 +75,10 @@ export async function deleteQuestion(
     await deleteDoc(doc(questionCollection, questionID));
     console.log("Question deleted with ID: ", questionID);
 
-    const queryResponse = query(responseCollection, where("SurveyID", "==", surveyID));
+    const queryResponse = query(
+      responseCollection,
+      where("SurveyID", "==", surveyID),
+    );
     const queryResponseSnapshot = await getDocs(queryResponse);
     for (const response of queryResponseSnapshot.docs) {
       await deleteDoc(doc(responseCollection, response.id));
@@ -83,12 +86,12 @@ export async function deleteQuestion(
     }
 
     const surveyRef = doc(db, "/Survey", surveyID);
-      await updateDoc(surveyRef, {
+    await updateDoc(surveyRef, {
       TotalQuestions: increment(-1),
       // remove id from question order array
-      QuestionOrder: arrayRemove(questionID)
-      });
-    
+      QuestionOrder: arrayRemove(questionID),
+    });
+
     return true;
   } catch (error) {
     console.error("Error deleting question", error);

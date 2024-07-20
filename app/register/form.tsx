@@ -1,22 +1,21 @@
 "use client";
-import { FormEvent, useState, useEffect } from "react";
-import { auth } from "../../firebase";
+import CheckIcon from "@mui/icons-material/Check";
+import ClearIcon from "@mui/icons-material/Clear";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { Tooltip } from "@mui/material";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { useRouter } from "next/navigation";
-import { useSession, signIn } from "next-auth/react";
-import { redirect } from "next/navigation";
 import Link from "next/link";
+import { redirect, useRouter } from "next/navigation";
+import { useSession, signIn } from "next-auth/react";
+import { FormEvent, useState, useEffect } from "react";
+import { auth } from "../../firebase";
 import styles from "./styles.module.css";
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { Tooltip } from "@mui/material";
-import CheckIcon from '@mui/icons-material/Check';
-import ClearIcon from '@mui/icons-material/Clear';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 export default function Form() {
   const { data: session } = useSession();
@@ -76,7 +75,10 @@ export default function Form() {
   };
 
   useEffect(() => {
-    if (/(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{0,1000})$/.test(password) === true) {
+    if (
+      /(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{0,1000})$/.test(password) ===
+      true
+    ) {
       setPassCheck1(true);
     } else {
       setPassCheck1(false);
@@ -99,9 +101,7 @@ export default function Form() {
   }, [password, repassword]);
 
   return (
-    <form 
-      onSubmit={handleSubmit}
-    >
+    <form onSubmit={handleSubmit}>
       <div className={styles.rowInputContainer}>
         <div className={styles.oneInputContainer}>
           <label className={styles.inputLabel}>Email</label>
@@ -116,38 +116,77 @@ export default function Form() {
       </div>
       <div className={styles.rowInputContainer}>
         <div className={styles.inputContainer}>
-          <div style={{display: "flex", flexDirection: "row"}}>
+          <div style={{ display: "flex", flexDirection: "row" }}>
             <label className={styles.inputLabel}>Password</label>
-            <button type="button" onClick={() => setShowPassword(!showPassword)}>
-              {!showPassword ?
-                <VisibilityIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}}/> :
-                <VisibilityOffIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}}/>
-              }
-            </button>
-            <Tooltip title="Password must be alphanumeric and at least 8 characters long"
-              placement="top" arrow
-              slotProps={{ tooltip: { sx: { fontSize: '0.8em' } } }}
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
             >
-              <HelpOutlineIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}} />
+              {!showPassword ? (
+                <VisibilityIcon
+                  style={{
+                    color: "#E07954",
+                    fontSize: "1.5rem",
+                    marginLeft: "2%",
+                  }}
+                />
+              ) : (
+                <VisibilityOffIcon
+                  style={{
+                    color: "#E07954",
+                    fontSize: "1.5rem",
+                    marginLeft: "2%",
+                  }}
+                />
+              )}
+            </button>
+            <Tooltip
+              title="Password must be alphanumeric and at least 8 characters long"
+              placement="top"
+              arrow
+              slotProps={{ tooltip: { sx: { fontSize: "0.8em" } } }}
+            >
+              <HelpOutlineIcon
+                style={{
+                  color: "#E07954",
+                  fontSize: "1.5rem",
+                  marginLeft: "2%",
+                }}
+              />
             </Tooltip>
-
           </div>
           <input
-              className={styles.input}
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            className={styles.input}
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </div>
         <div className={styles.inputContainer}>
-          <div style={{display: "flex", flexDirection: "row"}}>
+          <div style={{ display: "flex", flexDirection: "row" }}>
             <label className={styles.inputLabel}>Confirm Password</label>
-            <button type="button" onClick={() => setShowRepassword(!showRepassword)}>
-              {!showRepassword ?
-                <VisibilityIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}}/> :
-                <VisibilityOffIcon style={{color: "#E07954", fontSize: "1.5rem", marginLeft: '2%'}}/>
-              }
+            <button
+              type="button"
+              onClick={() => setShowRepassword(!showRepassword)}
+            >
+              {!showRepassword ? (
+                <VisibilityIcon
+                  style={{
+                    color: "#E07954",
+                    fontSize: "1.5rem",
+                    marginLeft: "2%",
+                  }}
+                />
+              ) : (
+                <VisibilityOffIcon
+                  style={{
+                    color: "#E07954",
+                    fontSize: "1.5rem",
+                    marginLeft: "2%",
+                  }}
+                />
+              )}
             </button>
           </div>
           <input
@@ -157,36 +196,32 @@ export default function Form() {
             value={repassword}
             onChange={(e) => setRepassword(e.target.value)}
           />
-          
         </div>
       </div>
       <div className={styles.errorContainer}>
         {error && <p className={styles.errorText}>{error}</p>}
-        <div style={{color: passCheck4 ? "#008000" : "#ED4337"}}>
+        <div style={{ color: passCheck4 ? "#008000" : "#ED4337" }}>
           Passwords match
-          {passCheck4 ? <CheckIcon/> : <ClearIcon/>} 
+          {passCheck4 ? <CheckIcon /> : <ClearIcon />}
         </div>
-        <div style={{color: passCheck1 ? "#008000" : "#ED4337"}}>
+        <div style={{ color: passCheck1 ? "#008000" : "#ED4337" }}>
           Password is alphanumeric
-          {passCheck1 ? <CheckIcon/> : <ClearIcon/>} 
+          {passCheck1 ? <CheckIcon /> : <ClearIcon />}
         </div>
-        <div style={{color: passCheck2 ? "#008000" : "#ED4337"}}> 
+        <div style={{ color: passCheck2 ? "#008000" : "#ED4337" }}>
           Password is at least 8 characters long
-          {passCheck2 ? <CheckIcon/> : <ClearIcon/>}
+          {passCheck2 ? <CheckIcon /> : <ClearIcon />}
         </div>
-        <div style={{color: passCheck3 ? "#008000" : "#ED4337"}}>
+        <div style={{ color: passCheck3 ? "#008000" : "#ED4337" }}>
           Password contains uppercase and lowercase letters
-          {passCheck3 ? <CheckIcon/> : <ClearIcon/>} 
+          {passCheck3 ? <CheckIcon /> : <ClearIcon />}
         </div>
-        
       </div>
       <div className={styles.buttonContainer}>
-
-        <Link href="/login" className={styles.clickableText}>Back</Link>
-        <button
-          className={styles.button}
-          type="submit"
-        >
+        <Link href="/login" className={styles.clickableText}>
+          Back
+        </Link>
+        <button className={styles.button} type="submit">
           N E X T
         </button>
       </div>

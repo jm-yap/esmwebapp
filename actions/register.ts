@@ -15,7 +15,7 @@ export async function AddClient(
   firstName: string,
   lastName: string,
   middleName: string,
-  contactNumber: string
+  contactNumber: string,
 ) {
   try {
     const clientCollection = collection(db, "Builder");

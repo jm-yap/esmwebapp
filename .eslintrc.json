@@ -23,6 +23,13 @@
           "caseInsensitive": true
         }
       }
+    ],
+    "no-unused-vars": [
+      "error",
+      {
+        "args": "none",
+        "ignoreRestSiblings": true
+      }
     ]
   }
 }

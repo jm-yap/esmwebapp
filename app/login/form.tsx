@@ -4,7 +4,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
-import { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState } from "react";
 import styles from "./styles.module.css";
 
 export default function Form() {
@@ -13,7 +13,7 @@ export default function Form() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  const { data: session, status } = useSession();
+  const { data: status } = useSession();
   if (status === "authenticated") {
     sessionStorage.setItem("userEmail", email);
     sessionStorage.setItem("validInfo", "true");

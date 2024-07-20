@@ -1,9 +1,8 @@
 "use client";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { set } from "firebase/database";
 import Link from "next/link";
 import { redirect, useRouter } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import React, { FormEvent, useEffect, useState } from "react";
 import { AddClient } from "@/actions/register";
 import styles from "./styles.module.css";
@@ -17,8 +16,6 @@ export default function Form() {
   } catch (error) {
     redirect("/");
   }
-
-  const { data: session } = useSession();
 
   const router = useRouter();
 

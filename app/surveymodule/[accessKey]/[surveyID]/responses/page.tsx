@@ -11,7 +11,6 @@ import { LinearProgress, Stack } from "@mui/material";
 
 // React and Next.js imports
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import React, { useState, useEffect } from "react";
 import CsvDownloader from "react-csv-downloader";
 
@@ -42,8 +41,6 @@ export default function ResponsesPage({ params }: ResponsePageProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetching: Fetch the responses once the questions have been fetched
-
-  const { data: session } = useSession();
 
   const handleClick = (e) => {
     setIsLoading(true);

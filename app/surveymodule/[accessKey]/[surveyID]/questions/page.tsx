@@ -55,7 +55,6 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   const [error, setError] = useState(null);
   const [question, setQuestion] = useState(null);
   const [questionText, setQuestionText] = useState("");
-  const [choices, setChoices] = useState([]);
   const [questionType, setQuestionType] = useState("1");
   const [editing, setEditing] = useState(false);
 

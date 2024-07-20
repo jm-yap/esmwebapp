@@ -1,21 +1,13 @@
 "use client";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { set } from "firebase/database";
 import Link from "next/link";
 import { redirect, useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import React, { useState, useEffect } from "react";
 import { getClientAccountByEmail } from "@/actions/clients";
 import styles from "./styles.module.css";
 
 export default function ClientAccount() {
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect("/login");
-    },
-  });
-
   try {
     const isMasterKeyPresent = sessionStorage.getItem("masterKey");
     if (isMasterKeyPresent !== "true") {
@@ -71,24 +63,19 @@ export default function ClientAccount() {
     router.push("/editinfo");
   }
 
-  const [userdata, setUserData] = useState<any>(null);
-
   useEffect(() => {
     const email = sessionStorage.getItem("userEmail");
 
     if (email) {
       setEmail(email);
       getUserData(email).then((data: any) => {
-        if (data) setUserData(data);
-        else router.push("/editaccountinfo");
+        if (!data) router.push("/editaccountinfo");
       });
     } else {
       signOut();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const { FirstName, MiddleName, LastName, ContactNumber } = userdata || {};
 
   return (
     <div className={styles.container}>

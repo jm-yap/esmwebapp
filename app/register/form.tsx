@@ -8,11 +8,10 @@ import { Tooltip } from "@mui/material";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
-  signInWithEmailAndPassword,
 } from "firebase/auth";
 import Link from "next/link";
 import { redirect, useRouter } from "next/navigation";
-import { useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { FormEvent, useState, useEffect } from "react";
 import { auth } from "../../firebase";
 import styles from "./styles.module.css";

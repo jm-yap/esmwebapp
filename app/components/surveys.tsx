@@ -1,5 +1,3 @@
-import { Timestamp } from "firebase/firestore";
-// import styles from "@/app/components/survey.module.css";
 import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
 
 export interface NewSurveyProps {

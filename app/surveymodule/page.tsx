@@ -22,7 +22,7 @@ import { sendEmailVerification } from "firebase/auth";
 // React and Next.js imports
 import Link from "next/link";
 import { redirect, useRouter } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import React, { useState, useEffect } from "react";
 
 // Local components and styles
@@ -42,16 +42,6 @@ export default function SurveyModule() {
   const [verified, setVerified] = useState(false);
   const [withInfo, setWithInfo] = useState(false);
   const [isVerified, setIsVerified] = useState(true);
-  const [userNow, setUser] = useState(null);
-
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      // console.log("Unauthenticated, redirecting to login")
-      sessionStorage.removeItem("userEmail");
-      redirect("/login");
-    },
-  });
 
   useEffect(() => {
     const fetchMasterKey = async () => {
@@ -83,7 +73,6 @@ export default function SurveyModule() {
 
   const [builderEmail, setBuilderEmail] = useState("");
   const [surveyModules, setSurveyModules] = useState(null);
-  const [isNull, setIsNull] = useState(true);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");

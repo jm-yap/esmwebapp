@@ -1,4 +1,3 @@
-import React, { FormEvent } from "react";
 import Form from "./form";
 import styles from "./styles.module.css";
 

@@ -1,9 +1,7 @@
 "use client";
 import Link from "next/link";
 import { redirect, useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
-import { useEffect } from "react";
-import { auth } from "../../firebase";
+import { useSession } from "next-auth/react";
 
 export default function Form() {
   try {

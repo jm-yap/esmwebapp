@@ -1,10 +1,8 @@
 "use client";
-import { on } from "events";
 import CircularProgress from "@mui/material/CircularProgress";
 import Stack from "@mui/material/Stack";
-import { set } from "firebase/database";
 import { useRouter, redirect } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import React, { useState, FormEvent, useEffect } from "react";
 import { fetchMasterKey } from "@/actions/masterkey";
 import styles from "./styles.module.css";

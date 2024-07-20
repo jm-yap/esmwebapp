@@ -13,7 +13,7 @@ export default function Form() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  const { data: status } = useSession();
+  const { status } = useSession();
   if (status === "authenticated") {
     sessionStorage.setItem("userEmail", email);
     sessionStorage.setItem("validInfo", "true");

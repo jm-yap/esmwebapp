@@ -1,6 +1,7 @@
 "use client";
 import {
   collection,
+  doc,
   getDocs,
   QueryDocumentSnapshot,
   addDoc,
@@ -8,11 +9,8 @@ import {
   query,
   where,
   updateDoc,
-  arrayUnion,
 } from "firebase/firestore";
 import { db } from "../firebase";
-import { doc } from "firebase/firestore";
-import { update } from "firebase/database";
 
 export async function getSurveyModules(builderEmail: string): Promise<any> {
   const surveyModuleCollection = collection(db, "ResearchModules");
@@ -92,7 +90,7 @@ export async function addSurveyModule(
 ) {
   try {
     const surveyModuleCollection = collection(db, "ResearchModules");
-    const newSurveyModule = await addDoc(surveyModuleCollection, {
+    await addDoc(surveyModuleCollection, {
       BuilderID: [builderEmail],
       Title: title,
       Description: description,

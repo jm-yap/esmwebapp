@@ -2,19 +2,16 @@
 import {
   collection,
   addDoc,
-  getDoc,
   getDocs,
-  QuerySnapshot,
   query,
-  onSnapshot,
   deleteDoc,
   doc,
   where,
   updateDoc,
   increment,
 } from "firebase/firestore";
+import { NewSurveyProps } from "@/app/components/surveys";
 import { db } from "../firebase";
-import { NewSurveyProps, SurveyCardProps } from "@/app/components/surveys";
 
 export async function getSurveys(AccessCode: string): Promise<any> {
   const Ref = collection(db, `/Survey`);
@@ -34,7 +31,7 @@ export async function getSurveys(AccessCode: string): Promise<any> {
 export async function addSurvey({ survey }: NewSurveyProps) {
   const surveyRef = collection(db, `Survey`);
   try {
-    const docRef = await addDoc(surveyRef, {
+    await addDoc(surveyRef, {
       AccessCode: survey.AccessCode,
       BuilderID: survey.BuilderID,
       Title: survey.Title,

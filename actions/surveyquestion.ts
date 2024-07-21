@@ -1,12 +1,8 @@
 "use client";
 import {
   collection,
-  addDoc,
-  getDoc,
   getDocs,
-  QuerySnapshot,
   query,
-  onSnapshot,
   deleteDoc,
   doc,
   where,

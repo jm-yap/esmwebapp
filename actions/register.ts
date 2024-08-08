@@ -1,25 +1,21 @@
 "use client";
 import {
   collection,
-  getDoc,
-  QueryDocumentSnapshot,
-  addDoc,
-  deleteDoc,
-  setDoc,
+  doc,
+  setDoc
 } from "firebase/firestore";
-import { db, auth } from "../firebase";
-import { doc } from "firebase/firestore";
+import { db } from "../firebase";
 
 export async function AddClient(
   email: string,
   firstName: string,
   lastName: string,
   middleName: string,
-  contactNumber: string
+  contactNumber: string,
 ) {
   try {
     const clientCollection = collection(db, "Builder");
-    const newClient = await setDoc(doc(clientCollection, email), {
+    await setDoc(doc(clientCollection, email), {
       FirstName: firstName,
       LastName: lastName,
       MiddleName: middleName,

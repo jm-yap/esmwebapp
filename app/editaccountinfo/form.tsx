@@ -1,11 +1,9 @@
 "use client";
-import React, { FormEvent, useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { AddClient } from "@/actions/register";
-import { set } from "firebase/database";
 import styles from "./styles.module.css";
-import { sign } from "crypto";
 
 export default function Form() {
   try {
@@ -17,10 +15,8 @@ export default function Form() {
     redirect("/");
   }
 
-  const { data: session } = useSession();
-
   const router = useRouter();
-  const [email, setEmail] = useState<string>(""); 
+  const [email, setEmail] = useState<string>("");
   const [contactNumber, setNumber] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
@@ -38,9 +34,9 @@ export default function Form() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email || !contactNumber || !firstName || !lastName ) {
+    if (!email || !contactNumber || !firstName || !lastName) {
       setError("Please fill out all required fields");
-    } else if (isNaN(Number(contactNumber))) {  
+    } else if (isNaN(Number(contactNumber))) {
       setError("Contact number can only contain numbers");
     } else if (contactNumber.slice(0, 2) !== "09") {
       setError("Invalid contact number format");
@@ -52,7 +48,7 @@ export default function Form() {
         firstName,
         lastName,
         middleName,
-        contactNumber
+        contactNumber,
       );
       if (response) {
         if (sessionStorage.getItem("validInfo") === "true") {
@@ -67,9 +63,7 @@ export default function Form() {
   };
 
   return (
-    <form 
-      onSubmit={handleSubmit}
-    >
+    <form onSubmit={handleSubmit}>
       <div className={styles.rowInputContainer}>
         <div className={styles.inputContainer}>
           <p className={styles.inputLabel}>First Name</p>
@@ -125,47 +119,46 @@ export default function Form() {
       </div>
     </form>
 
+    //   <form
+    //     onSubmit={handleSubmit}
+    //     className="flex flex-col gap-4 mx-auto max-w-md mt-10"
+    //   >
+    //     <h1 className="text-3xl font-bold mb-4 text-center">Edit Account Profile</h1>
+    //     <input
+    //       className="border border-gray-300 rounded-md py-2 px-4"
+    //       type="text"
+    //       placeholder="Contact Number"
+    //       value={contactNumber}
+    //       onChange={(e) => setNumber(e.target.value)}
+    //     />
 
-  //   <form
-  //     onSubmit={handleSubmit}
-  //     className="flex flex-col gap-4 mx-auto max-w-md mt-10"
-  //   >
-  //     <h1 className="text-3xl font-bold mb-4 text-center">Edit Account Profile</h1>
-  //     <input
-  //       className="border border-gray-300 rounded-md py-2 px-4"
-  //       type="text"
-  //       placeholder="Contact Number"
-  //       value={contactNumber}
-  //       onChange={(e) => setNumber(e.target.value)}
-  //     />
+    //     <input
+    //       className="border border-gray-300 rounded-md py-2 px-4"
+    //       type="text"
+    //       placeholder="First Name"
+    //       value={firstName}
+    //       onChange={(e) => setFirstName(e.target.value)}
+    //     />
 
-  //     <input
-  //       className="border border-gray-300 rounded-md py-2 px-4"
-  //       type="text"
-  //       placeholder="First Name"
-  //       value={firstName}
-  //       onChange={(e) => setFirstName(e.target.value)}
-  //     />
+    //     <input
+    //       className="border border-gray-300 rounded-md py-2 px-4"
+    //       type="text"
+    //       placeholder="Last Name"
+    //       value={lastName}
+    //       onChange={(e) => setLastName(e.target.value)}
+    //     />
 
-  //     <input
-  //       className="border border-gray-300 rounded-md py-2 px-4"
-  //       type="text"
-  //       placeholder="Last Name"
-  //       value={lastName}
-  //       onChange={(e) => setLastName(e.target.value)}
-  //     />
-
-  //     <input
-  //       className="border border-gray-300 rounded-md py-2 px-4"
-  //       type="text"
-  //       placeholder="Middle Name"
-  //       value={middleName}
-  //       onChange={(e) => setMiddleName(e.target.value)}
-  //     />
-  //     {error && <p className="text-red-500">{error}</p>}
-  //     <button className="bg-blue-500 text-white rounded-md py-2 px-4" type="submit">
-  //       Update Account Information
-  //     </button>
-  //   </form>
+    //     <input
+    //       className="border border-gray-300 rounded-md py-2 px-4"
+    //       type="text"
+    //       placeholder="Middle Name"
+    //       value={middleName}
+    //       onChange={(e) => setMiddleName(e.target.value)}
+    //     />
+    //     {error && <p className="text-red-500">{error}</p>}
+    //     <button className="bg-blue-500 text-white rounded-md py-2 px-4" type="submit">
+    //       Update Account Information
+    //     </button>
+    //   </form>
   );
 }

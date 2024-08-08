@@ -16,12 +16,11 @@
 //     id: string;
 //     data: {
 //       QuestionID: string;
-//       Response: string; 
+//       Response: string;
 //       ResponseID: string;
 //     };
 //   };
 // }
-
 
 // function PerResponse({ perresponse }: PerResponseProps) {
 //   return (
@@ -47,7 +46,7 @@
 // }
 
 // export default function ResponseTable(responseIDList: any[], questionsList: any[]) {
-    
+
 //   return (
 //     <table className="min-w-full divide-y divide-gray-200">
 //         <thead className="bg-gray-50">
@@ -65,6 +64,6 @@
 //           </tr>
 //         </thead>
 
-//       </table>  
+//       </table>
 //   )
 // }

@@ -1,21 +1,13 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { signOut, useSession } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
-import { getClientAccountByEmail } from "@/actions/clients";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Link from "next/link";
+import { redirect, useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
+import React, { useState, useEffect } from "react";
+import { getClientAccountByEmail } from "@/actions/clients";
 import styles from "./styles.module.css";
-import { set } from "firebase/database";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export default function ClientAccount() {
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect("/login");
-    },
-  });
-
   try {
     const isMasterKeyPresent = sessionStorage.getItem("masterKey");
     if (isMasterKeyPresent !== "true") {
@@ -24,7 +16,7 @@ export default function ClientAccount() {
   } catch (error) {
     redirect("/");
   }
-  
+
   const router = useRouter();
 
   const [email, setEmail] = useState<string>("");
@@ -41,7 +33,7 @@ export default function ClientAccount() {
       const lastName = sessionStorage.getItem("lastName");
       const middleName = sessionStorage.getItem("middleName");
       const contactNumber = sessionStorage.getItem("contactNumber");
-      
+
       setFirstName(firstName);
       setLastName(lastName);
       setMiddleName(middleName);
@@ -61,7 +53,6 @@ export default function ClientAccount() {
         sessionStorage.setItem("middleName", userdata.MiddleName);
         sessionStorage.setItem("contactNumber", userdata.ContactNumber);
         return userdata;
-      
       } else {
         return null;
       }
@@ -72,24 +63,19 @@ export default function ClientAccount() {
     router.push("/editinfo");
   }
 
-  const [userdata, setUserData] = useState<any>(null);
-
   useEffect(() => {
     const email = sessionStorage.getItem("userEmail");
 
     if (email) {
       setEmail(email);
       getUserData(email).then((data: any) => {
-        if (data) setUserData(data);
-        else router.push("/editaccountinfo");
+        if (!data) router.push("/editaccountinfo");
       });
     } else {
       signOut();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const { FirstName, MiddleName, LastName, ContactNumber } = userdata || {};
 
   return (
     <div className={styles.container}>
@@ -100,13 +86,14 @@ export default function ClientAccount() {
           <h1 className={styles.navblack}>.</h1>
         </Link>
         <div className={styles.navprofilecontainer}>
-          <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
+          <h1 className={styles.navinfotext}>
+            {firstName} {lastName}
+          </h1>
           <AccountCircleIcon fontSize="large" />
         </div>
       </div>
 
       <div className={styles.contentContainer}>
-
         <div className={styles.labelInfoContainer}>
           <label className={styles.label}>Email</label>
           <p className={styles.info}>{email}</p>
@@ -117,10 +104,12 @@ export default function ClientAccount() {
           <p className={styles.info}>{firstName}</p>
         </div>
 
-        {middleName && <div className={styles.labelInfoContainer}>
-          <label className={styles.label}>Middle Name</label>
-          <p className={styles.info}>{middleName}</p>
-        </div>} 
+        {middleName && (
+          <div className={styles.labelInfoContainer}>
+            <label className={styles.label}>Middle Name</label>
+            <p className={styles.info}>{middleName}</p>
+          </div>
+        )}
 
         <div className={styles.labelInfoContainer}>
           <label className={styles.label}>Last Name</label>
@@ -133,13 +122,20 @@ export default function ClientAccount() {
         </div>
 
         <div className={styles.buttonContainer}>
-          <button className={styles.button} onClick={() => editClientAccount()}>E D I T</button>
-          <button className={styles.button} onClick={() => {
-            sessionStorage.setItem("validInfo", "false");
-            sessionStorage.removeItem("masterKey");
-            localStorage.removeItem("userEmail");
-            signOut();
-          }}>L O G O U T</button>
+          <button className={styles.button} onClick={() => editClientAccount()}>
+            E D I T
+          </button>
+          <button
+            className={styles.button}
+            onClick={() => {
+              sessionStorage.setItem("validInfo", "false");
+              sessionStorage.removeItem("masterKey");
+              localStorage.removeItem("userEmail");
+              signOut();
+            }}
+          >
+            L O G O U T
+          </button>
         </div>
       </div>
     </div>

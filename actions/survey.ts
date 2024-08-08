@@ -2,19 +2,16 @@
 import {
   collection,
   addDoc,
-  getDoc,
   getDocs,
-  QuerySnapshot,
   query,
-  onSnapshot,
   deleteDoc,
   doc,
   where,
   updateDoc,
   increment,
 } from "firebase/firestore";
+import { NewSurveyProps } from "@/app/components/surveys";
 import { db } from "../firebase";
-import { NewSurveyProps, SurveyCardProps } from "@/app/components/surveys";
 
 export async function getSurveys(AccessCode: string): Promise<any> {
   const Ref = collection(db, `/Survey`);
@@ -31,31 +28,31 @@ export async function getSurveys(AccessCode: string): Promise<any> {
   return surveyArr;
 }
 
-export async function addSurvey({survey}:NewSurveyProps){
-  const surveyRef = collection(db,`Survey`);
+export async function addSurvey({ survey }: NewSurveyProps) {
+  const surveyRef = collection(db, `Survey`);
   try {
-      const docRef = await addDoc(surveyRef, {
-        AccessCode: survey.AccessCode,
-        BuilderID: survey.BuilderID,
-        Title: survey.Title,
-        Description: survey.Description,
-        StartDate: survey.StartDate,
-        EndDate: survey.EndDate,
-        Sessions: survey.Sessions,
-        Interval: survey.Interval,
-        TotalQuestions: survey.TotalQuestions,
-        QuestionOrder: []
-      });
+    await addDoc(surveyRef, {
+      AccessCode: survey.AccessCode,
+      BuilderID: survey.BuilderID,
+      Title: survey.Title,
+      Description: survey.Description,
+      StartDate: survey.StartDate,
+      EndDate: survey.EndDate,
+      Sessions: survey.Sessions,
+      Interval: survey.Interval,
+      TotalQuestions: survey.TotalQuestions,
+      QuestionOrder: [],
+    });
 
-      // console.log("Survey added with ID:", docRef.id);
-    } catch (error) {
-      console.error("Error adding  survey:", error);
-    }
+    // console.log("Survey added with ID:", docRef.id);
+  } catch (error) {
+    console.error("Error adding  survey:", error);
+  }
 }
 
 export async function deleteSurvey(
   AccessCode: string,
-  SurveyID: string
+  SurveyID: string,
 ): Promise<boolean> {
   try {
     const surveyCollection = collection(db, `/Survey`);
@@ -64,15 +61,21 @@ export async function deleteSurvey(
 
     await deleteDoc(doc(surveyCollection, SurveyID));
     // console.log("Survey deleted with ID: ", SurveyID);
-    
-    const queryQuestion = query(surveyQuestionCollection, where("SurveyID", "==", SurveyID));
+
+    const queryQuestion = query(
+      surveyQuestionCollection,
+      where("SurveyID", "==", SurveyID),
+    );
     const queryQuestionSnapshot = await getDocs(queryQuestion);
     for (const question of queryQuestionSnapshot.docs) {
       await deleteDoc(doc(surveyQuestionCollection, question.id));
       // console.log("Question deleted with ID: ", question.id);
     }
 
-    const queryResponse = query(responseCollection, where("SurveyID", "==", SurveyID));
+    const queryResponse = query(
+      responseCollection,
+      where("SurveyID", "==", SurveyID),
+    );
     const queryResponseSnapshot = await getDocs(queryResponse);
     for (const response of queryResponseSnapshot.docs) {
       await deleteDoc(doc(responseCollection, response.id));
@@ -81,7 +84,7 @@ export async function deleteSurvey(
 
     const surveyModuleRef = doc(db, "ResearchModules", AccessCode);
     await updateDoc(surveyModuleRef, {
-      TotalSurveys: increment(-1)
+      TotalSurveys: increment(-1),
     });
 
     return true;

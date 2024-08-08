@@ -12,19 +12,18 @@
   overflow-x: hidden;
   overflow-y: auto;
   height: 100%;
-  background-color: #F1F1F1;
+  background-color: #f1f1f1;
 }
 
-.surveyInformation{
-    display: flex;
-    background-color: #F1F1F1;
-    padding-left: 70px;
-    padding-right: 70px;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    justify-content: space-between;
-    /* gap: 10%; */
-    
+.surveyInformation {
+  display: flex;
+  background-color: #f1f1f1;
+  padding-left: 70px;
+  padding-right: 70px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  justify-content: space-between;
+  /* gap: 10%; */
 }
 
 .empty {
@@ -47,10 +46,10 @@
   font-size: 1em;
   font-weight: bold;
   border-radius: 20px;
-  padding: 0.5% 2%;;
+  padding: 0.5% 2%;
   color: #fff;
-  background-color: #E07961;
-  width:fit-content;
+  background-color: #e07961;
+  width: fit-content;
   margin-left: 10px;
 }
 
@@ -60,89 +59,87 @@
   /* text-decoration: underline; */
 }
 
-.surveyInfoLeft{
-    white-space: nowrap;
-    vertical-align:middle;
-    align-items: center;
-    max-width: 60%;
+.surveyInfoLeft {
+  white-space: nowrap;
+  vertical-align: middle;
+  align-items: center;
+  max-width: 60%;
 }
 
 .surveyInfoRight {
-    margin-top: 75px;
-    width: fit-content;
-    white-space: nowrap;
-    margin-right: 10%;
+  margin-top: 75px;
+  width: fit-content;
+  white-space: nowrap;
+  margin-right: 10%;
 }
 
-.surveyTitle{
-    font-weight: 625;
-    font-size:  45px;
-    margin: 7px;
+.surveyTitle {
+  font-weight: 625;
+  font-size: 45px;
+  margin: 7px;
 }
 .surveyInfoText {
-    font-weight: 625;
-    font-size: 25px;
-    margin: 5px;
-  
+  font-weight: 625;
+  font-size: 25px;
+  margin: 5px;
 }
 
 .downloadCSVText {
-    font-weight: 625;
-    font-size: 120%;
-    margin: 5px;
-    color:#E07961;
+  font-weight: 625;
+  font-size: 120%;
+  margin: 5px;
+  color: #e07961;
 }
 
 .downloadCSVText:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
-
-.surveyTitleBack{
-    display:flex;
-    align-items: center;
+.surveyTitleBack {
+  display: flex;
+  align-items: center;
 }
 
 .banner {
-    background-color: #E07961;
-    height:100px;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
+  background-color: #e07961;
+  height: 100px;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
 }
 
 .bannerTitle {
-    margin-left: 35px;
+  margin-left: 35px;
 }
 .bannerTitleChild {
-    font-size: xx-large;
-    font-weight: bold;    
-    display: inline-block;    
+  font-size: xx-large;
+  font-weight: bold;
+  display: inline-block;
 }
 
 .bannerKita {
-    color: white;
+  color: white;
 }
 
 .builderName {
-    margin-right: 90px;
-    color: white;
-    font-size: 25px;
-    font-weight: bold;
+  margin-right: 90px;
+  color: white;
+  font-size: 25px;
+  font-weight: bold;
 }
 
 .sidebarTextField {
-    margin-top: 10%;
-    font-size: 120%;
-    border-radius: 10px;
-    padding: 10px;
-    width: 90%;
-    height: 10%;
-    /* border: 3px solid #E07961; */
+  margin-top: 10%;
+  font-size: 120%;
+  border-radius: 10px;
+  padding: 10px;
+  width: 90%;
+  height: 10%;
+  /* border: 3px solid #E07961; */
 }
 
 .tableDiv {
-  background-color: #F1F1F1;
+  background-color: #f1f1f1;
   /* background-color: black; */
   justify-content: center;
   display: flex;
@@ -164,26 +161,26 @@
 }
 
 .tableHeader {
-    background-color: #F1F1F1;
-    font-size: 100%;
-    font-weight: bold;
-    text-align: left;
-    padding: 10px;
-    word-wrap: break-word;
-    white-space: normal;
-    max-width: 200px;
-    border-bottom: solid 1px #080808;
+  background-color: #f1f1f1;
+  font-size: 100%;
+  font-weight: bold;
+  text-align: left;
+  padding: 10px;
+  word-wrap: break-word;
+  white-space: normal;
+  max-width: 200px;
+  border-bottom: solid 1px #080808;
 }
 
 .tableCell {
-    background-color: #FFFFFF;
-    border-bottom: 3px solid #F1F1F1;
-    font-size: 90%;
-    font-weight: 400;
-    padding: 10px;
-    overflow: hidden;
-    overflow-wrap: break-word;
-    max-width: 20px;
+  background-color: #ffffff;
+  border-bottom: 3px solid #f1f1f1;
+  font-size: 90%;
+  font-weight: 400;
+  padding: 10px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  max-width: 20px;
 }
 
 .tr:hover {
@@ -191,14 +188,13 @@
 }
 
 .nothingDiv {
-    justify-content: center;
-    /* background-color: pink; */
-    display:flex;
+  justify-content: center;
+  /* background-color: pink; */
+  display: flex;
 }
-.nothingH2{
-    font-size: 80px;
-    align-self: center;
-    font-weight: bold;
-    margin-top: 10%;
-
+.nothingH2 {
+  font-size: 80px;
+  align-self: center;
+  font-weight: bold;
+  margin-top: 10%;
 }

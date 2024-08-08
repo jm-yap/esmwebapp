@@ -1,29 +1,45 @@
 "use client";
-import QuestionCard from "@/app/components/questions";
-import { getQuestions, deleteQuestion, editQuestion } from "@/actions/surveyquestion";
-import { useEffect, useState } from "react";
-import { addDoc, collection, doc, updateDoc, increment, arrayUnion} from "firebase/firestore";
-import { db } from "@/firebase";
-import Link from "next/link";
-import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import FormGroup from '@mui/material/FormGroup';
-import Checkbox from '@mui/material/Checkbox';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+
+// MUI Icons
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Box from '@mui/material/Box';
-import Slider from '@mui/material/Slider';
-import { set } from "firebase/database";
-import LinearProgress from '@mui/material/LinearProgress';
-import Stack from '@mui/material/Stack';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import Tooltip from '@mui/material/Tooltip';
-import EditIcon from '@mui/icons-material/Edit';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import EditIcon from "@mui/icons-material/Edit";
+
+// MUI Core
+import {
+  Box,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  LinearProgress,
+  Radio,
+  RadioGroup,
+  Slider,
+  Stack,
+  Tooltip,
+} from "@mui/material";
+
+import {
+  addDoc,
+  collection,
+  doc,
+  updateDoc,
+  increment,
+  arrayUnion,
+} from "firebase/firestore";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import {
+  getQuestions,
+  deleteQuestion,
+  editQuestion,
+} from "@/actions/surveyquestion";
+import styles from "@/app/surveymodule/[accessKey]/styles.module.css";
+import { db } from "@/firebase";
 
 interface QuestionPageProps {
   params: {
@@ -32,8 +48,6 @@ interface QuestionPageProps {
   };
 }
 
-
-
 export default function QuestionsPage({ params }: QuestionPageProps) {
   const [QuestionsList, setQuestionsList] = useState([]);
   const [survey, setSurvey] = useState(null);
@@ -41,8 +55,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   const [error, setError] = useState(null);
   const [question, setQuestion] = useState(null);
   const [questionText, setQuestionText] = useState("");
-  const [choices, setChoices] = useState([]);
-  const [questionType, setQuestionType] = useState('1');
+  const [questionType, setQuestionType] = useState("1");
   const [editing, setEditing] = useState(false);
 
   const handleClick = (e) => {
@@ -55,20 +68,18 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     setSurvey(parsedSurvey);
     // if (survey) setQuestionOrder(survey.data.QuestionOrder);
   }, [params.surveyID]);
-  
+
   const cancelEditing = () => {
     setEditing(false);
     setQuestion(null);
     setQuestionText("");
     setQuestionType("1");
     setFields([]);
-  }
-
+  };
 
   // Adding
   const handleAddQuestion = async (e: any) => {
-
-    if (editing === true)  {
+    if (editing === true) {
       handleEditQuestion(e);
       return;
     }
@@ -123,7 +134,6 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
         setIsLoading(false);
         // console.log("Question added with ID:", docRef.id);
       }
-
 
       // add 1 to total questions of survey
       const surveyRef = doc(db, "/Survey", params.surveyID);
@@ -184,7 +194,10 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     try {
       setIsLoading(true);
       await deleteQuestion(params.accessKey, params.surveyID, QuestionID);
-      const updatedQuestions = await getQuestions(params.accessKey,params.surveyID);
+      const updatedQuestions = await getQuestions(
+        params.accessKey,
+        params.surveyID,
+      );
       setQuestionsList(updatedQuestions);
       setIsLoading(false);
     } catch (error: any) {
@@ -199,7 +212,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     setQuestionType(ques.data.QuestionType);
     setNumFields(ques.data.Choices.length);
     setFields(ques.data.Choices);
-  }
+  };
 
   const handleEditQuestion = async (e: any) => {
     setIsLoading(true);
@@ -209,8 +222,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
       // Add a new document with a generated id
       if (questionType === "1" || questionType === "4") {
         await editQuestion(question.id, questionText, questionType, []);
-      }
-      else {
+      } else {
         await editQuestion(question.id, questionText, questionType, fields);
       }
       // await editQuestion(question.id, questionText, questionType, fields);
@@ -233,7 +245,7 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     } catch (error) {
       console.error("Error editing  Question:", error);
     }
-  }
+  };
 
   // Question Type
 
@@ -246,8 +258,8 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   };
 
   const ClearChoices = () => {
-    setFields([...fields.fill('')]);
-  }
+    setFields([...fields.fill("")]);
+  };
 
   const [numFields, setNumFields] = useState(0);
   const [fields, setFields] = useState([]);
@@ -257,9 +269,8 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     setNumFields(value);
 
     if (value > fields.length) {
-      setFields([...fields, ...Array(value - fields.length).fill('')]);
-    }
-    else if (value < fields.length) {
+      setFields([...fields, ...Array(value - fields.length).fill("")]);
+    } else if (value < fields.length) {
       setFields(fields.slice(0, value));
     }
   };
@@ -278,11 +289,10 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
     return marks;
   };
 
-
-  const newStart = new Date(survey?.data.StartDate.seconds * 1000)
+  const newStart = new Date(survey?.data.StartDate.seconds * 1000);
   const startDate = newStart.toLocaleString();
 
-  const newEnd = new Date(survey?.data.EndDate.seconds * 1000)
+  const newEnd = new Date(survey?.data.EndDate.seconds * 1000);
   const endDate = newEnd.toLocaleString();
 
   const firstName = sessionStorage.getItem("firstName");
@@ -295,82 +305,160 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
   // Rendering
   return (
     <div className={styles.container}>
-      { survey && (
+      {survey && (
         <>
-        {/* Navbar */}
-        <div className={styles.navbar}>
-          <Link href="/surveymodule" className={styles.navtext} onClick={handleClick}>
-            <h1 className={styles.navblack}>Sagot</h1>
-            <h1 className={styles.navwhite}>Kita</h1>
-            <h1 className={styles.navblack}>.</h1>
-          </Link>
-          <Link href="/builderprofile" className={styles.navprofilecontainer} onClick={handleClick}>
-            <h1 className={styles.navinfotext}>{firstName} {lastName}</h1>
-            <AccountCircleIcon fontSize="large" />
-          </Link>
-        </div>
+          {/* Navbar */}
+          <div className={styles.navbar}>
+            <Link
+              href="/surveymodule"
+              className={styles.navtext}
+              onClick={handleClick}
+            >
+              <h1 className={styles.navblack}>Sagot</h1>
+              <h1 className={styles.navwhite}>Kita</h1>
+              <h1 className={styles.navblack}>.</h1>
+            </Link>
+            <Link
+              href="/builderprofile"
+              className={styles.navprofilecontainer}
+              onClick={handleClick}
+            >
+              <h1 className={styles.navinfotext}>
+                {firstName} {lastName}
+              </h1>
+              <AccountCircleIcon fontSize="large" />
+            </Link>
+          </div>
 
-        {/* Sidebar - Create Question */}
-        <div className={styles.sidebar}>
-          <div className={styles.sidebarContent}>
-            <div className={styles.sidebarTitle}>
-              <h1 className={styles.SurveyModuleTitle}>Create Question</h1>
-            </div>
-            <div className={styles.sidebarForm}>
-              <form className={styles.sidebarFormComp} onSubmit={handleAddQuestion}>
-                <div className={styles.sidebarFormBit}>
-                  <label className={styles.sidebarLabel}>Question</label>
-                  <textarea rows={2} required name="QuestionText" value={questionText} onChange={(e) => setQuestionText(e.target.value)} className={styles.sidebarTextField} />
-                </div>
-                <div className={styles.sidebarFormBit}>
-                  <label className={styles.sidebarLabel}>Type</label>
-                  <select name="QuestionType" className={styles.sidebarTextField} 
-                    value={questionType}
-                    onChange={handleQuestionTypeChange}
-                    defaultValue={"1"}>
-                    <option value="1">Text</option>
-                    <option value="2">Multiple Choice</option>
-                    <option value="3">Checkbox</option>
-                    <option value="4">Date</option>
-                    <option value="5">Slider</option>
-                  </select>
-                </div>
-                {
-                  (questionType === "2" || questionType === "3") ? ( 
+          {/* Sidebar - Create Question */}
+          <div className={styles.sidebar}>
+            <div className={styles.sidebarContent}>
+              <div className={styles.sidebarTitle}>
+                <h1 className={styles.SurveyModuleTitle}>Create Question</h1>
+              </div>
+              <div className={styles.sidebarForm}>
+                <form
+                  className={styles.sidebarFormComp}
+                  onSubmit={handleAddQuestion}
+                >
+                  <div className={styles.sidebarFormBit}>
+                    <label className={styles.sidebarLabel}>Question</label>
+                    <textarea
+                      rows={2}
+                      required
+                      name="QuestionText"
+                      value={questionText}
+                      onChange={(e) => setQuestionText(e.target.value)}
+                      className={styles.sidebarTextField}
+                    />
+                  </div>
+                  <div className={styles.sidebarFormBit}>
+                    <label className={styles.sidebarLabel}>Type</label>
+                    <select
+                      name="QuestionType"
+                      className={styles.sidebarTextField}
+                      value={questionType}
+                      onChange={handleQuestionTypeChange}
+                      defaultValue={"1"}
+                    >
+                      <option value="1">Text</option>
+                      <option value="2">Multiple Choice</option>
+                      <option value="3">Checkbox</option>
+                      <option value="4">Date</option>
+                      <option value="5">Slider</option>
+                    </select>
+                  </div>
+                  {questionType === "2" || questionType === "3" ? (
                     <div className={styles.sidebarFormBit}>
-                      <label className={styles.sidebarLabel}>Number of Choices</label>
-                      <input value={numFields} type="number" required onChange={handleNumFieldsChange} min="1" max="20" name="NumOptions" className={styles.sidebarTextField} />
-                      <button className={styles.clearButton} onClick={ClearChoices}>Clear Choices</button>
+                      <label className={styles.sidebarLabel}>
+                        Number of Choices
+                      </label>
+                      <input
+                        value={numFields}
+                        type="number"
+                        required
+                        onChange={handleNumFieldsChange}
+                        min="1"
+                        max="20"
+                        name="NumOptions"
+                        className={styles.sidebarTextField}
+                      />
+                      <button
+                        className={styles.clearButton}
+                        onClick={ClearChoices}
+                      >
+                        Clear Choices
+                      </button>
                       {fields.map((field, index) => (
                         <label key={index} className={styles.sidebarLabel}>
                           Option {index + 1}:
                           <input
-                          className={styles.sidebarOptionField}
-                          type="text"
-                          required
-                          value={field}
-                          onChange={(e) => handleFieldChange(e, index)}
+                            className={styles.sidebarOptionField}
+                            type="text"
+                            required
+                            value={field}
+                            onChange={(e) => handleFieldChange(e, index)}
                           />
                         </label>
                       ))}
                     </div>
-                  ) : 
-                  (questionType === "5") ? (
+                  ) : questionType === "5" ? (
                     <div className={styles.sidebarFormBit}>
-                      <label className={styles.sidebarLabel}>Minimum Value</label>
-                      <input type="number" value={fields[0]} onChange={(e) => setFields(prevFields => [e.target.value, ...prevFields.slice(1)])} required name="MinValue" className={styles.sidebarTextField} />
-                      <label className={styles.sidebarLabel}>Maximum Value</label>
-                      <input type="number" value={fields[1]} onChange={(e) => setFields(prevFields => [prevFields[0], e.target.value, ...prevFields.slice(2)])} required name="MaxValue" className={styles.sidebarTextField} />
+                      <label className={styles.sidebarLabel}>
+                        Minimum Value
+                      </label>
+                      <input
+                        type="number"
+                        value={fields[0]}
+                        onChange={(e) =>
+                          setFields((prevFields) => [
+                            e.target.value,
+                            ...prevFields.slice(1),
+                          ])
+                        }
+                        required
+                        name="MinValue"
+                        className={styles.sidebarTextField}
+                      />
+                      <label className={styles.sidebarLabel}>
+                        Maximum Value
+                      </label>
+                      <input
+                        type="number"
+                        value={fields[1]}
+                        onChange={(e) =>
+                          setFields((prevFields) => [
+                            prevFields[0],
+                            e.target.value,
+                            ...prevFields.slice(2),
+                          ])
+                        }
+                        required
+                        name="MaxValue"
+                        className={styles.sidebarTextField}
+                      />
                       <label className={styles.sidebarLabel}>Step</label>
-                      <input type="number" value={fields[2]} onChange={(e) => setFields(prevFields => [...prevFields.slice(0, 2), e.target.value])} required name="Step" className={styles.sidebarTextField} />
-                      <div style={{marginLeft: 10}}>
-                        {error && <p style={{color: 'red', fontSize: 15}}>{error}</p>}
+                      <input
+                        type="number"
+                        value={fields[2]}
+                        onChange={(e) =>
+                          setFields((prevFields) => [
+                            ...prevFields.slice(0, 2),
+                            e.target.value,
+                          ])
+                        }
+                        required
+                        name="Step"
+                        className={styles.sidebarTextField}
+                      />
+                      <div style={{ marginLeft: 10 }}>
+                        {error && (
+                          <p style={{ color: "red", fontSize: 15 }}>{error}</p>
+                        )}
                       </div>
-
                     </div>
-                  ) : null
-                }
-                {/* {fields.map((field, index) => (
+                  ) : null}
+                  {/* {fields.map((field, index) => (
                   <div key={index} className={styles.sidebarFormBit}>
                     <label className={styles.sidebarLabel}>
                       Option {index + 1}:
@@ -385,150 +473,205 @@ export default function QuestionsPage({ params }: QuestionPageProps) {
                   </div>
                 ))} */}
 
-                {editing ? 
-                  <div>
-                  <button className={styles.sidebarButton} type="submit">E D I T</button> 
-                  <button onClick={cancelEditing} style={{color: '#E07961', marginTop: 10}}>C A N C E L</button>
-                  </div>
-                  :
-                  <button className={styles.sidebarButton} type="submit">C R E A T E</button>
-                }
-              </form>
+                  {editing ? (
+                    <div>
+                      <button className={styles.sidebarButton} type="submit">
+                        E D I T
+                      </button>
+                      <button
+                        onClick={cancelEditing}
+                        style={{ color: "#E07961", marginTop: 10 }}
+                      >
+                        C A N C E L
+                      </button>
+                    </div>
+                  ) : (
+                    <button className={styles.sidebarButton} type="submit">
+                      C R E A T E
+                    </button>
+                  )}
+                </form>
+              </div>
             </div>
           </div>
-        </div>
 
-        <main className={styles.main}>
-          <div style={{position: 'fixed', width: '100%'}}>
-            {isLoading && (
-              <div style={{ marginTop: '-20px', marginLeft: '-20px' }}>
-                <Stack sx={{ width: '100%', color: '#cf6851' }} spacing={2}>
-                  <LinearProgress color="inherit" sx={{ width: '100%', height: '7px' }} />
-                </Stack>
+          <main className={styles.main}>
+            <div style={{ position: "fixed", width: "100%" }}>
+              {isLoading && (
+                <div style={{ marginTop: "-20px", marginLeft: "-20px" }}>
+                  <Stack sx={{ width: "100%", color: "#cf6851" }} spacing={2}>
+                    <LinearProgress
+                      color="inherit"
+                      sx={{ width: "100%", height: "7px" }}
+                    />
+                  </Stack>
+                </div>
+              )}
+            </div>
+            <div className={styles.mainRow}>
+              <Link
+                href={`/surveymodule/${params.accessKey}`}
+                onClick={handleClick}
+              >
+                <ArrowBackIcon sx={{ fontSize: 40 }} />
+              </Link>
+              <h1 className={styles.SurveyModuleTitle}>{survey.data.Title}</h1>
+            </div>
+            <h2 className={styles.SurveyInfo}>{survey.data.Description}</h2>
+            <div className={styles.cardRow}>
+              <h2 className={styles.SurveyInfo}>
+                Required No. of Sessions: {survey.data.Sessions}
+              </h2>
+              <h2 className={styles.SurveyInfo}>Opens on: {startDate}</h2>
+            </div>
+            <div className={styles.cardRow}>
+              <h2 className={styles.SurveyInfo}>
+                Minimum Interval (in hours): {survey.data.Interval}
+              </h2>
+              <h2 className={styles.SurveyInfo}>Closes on: {endDate}</h2>
+            </div>
+
+            {QuestionsList.length === 0 && isLoading === false && (
+              <div className={styles.empty}>
+                <AutoAwesomeIcon
+                  sx={{ fontSize: 100, color: "#ddd" }}
+                  style={{ marginBottom: "20px" }}
+                />
+                <h1>So clean! There are no questions yet.</h1>
               </div>
             )}
-          </div>
-          <div className={styles.mainRow}>
-            <Link href={`/surveymodule/${params.accessKey}`} onClick={handleClick}>
-              <ArrowBackIcon sx={{ fontSize: 40 }}/>
-            </Link>
-            <h1 className={styles.SurveyModuleTitle}>{survey.data.Title}</h1>
-          </div>
-          <h2 className={styles.SurveyInfo}>{survey.data.Description}</h2>
-          <div className={styles.cardRow}>
-            <h2 className={styles.SurveyInfo}>Required No. of Sessions: {survey.data.Sessions}</h2>
-            <h2 className={styles.SurveyInfo}>Opens on: {startDate}</h2>
-          </div>
-          <div className={styles.cardRow}>
-            <h2 className={styles.SurveyInfo}>Minimum Interval (in hours): {survey.data.Interval}</h2>
-            <h2 className={styles.SurveyInfo}>Closes on: {endDate}</h2>
-          </div>
 
-          {(QuestionsList.length === 0) && isLoading === false &&
-            <div className={styles.empty}>
-              <AutoAwesomeIcon sx={{ fontSize: 100, color: '#ddd' }} style={{marginBottom: '20px'}}/>
-              <h1>So clean! There are no questions yet.</h1>
-            </div>
-          }
-          
-          {QuestionsList.map((Question: any) => (
-          <div key={Question.id}> 
-            <div className={styles.QuestionContainer}>
-              <div className={styles.cardRow}>
-                <h1 className={styles.QuestionTitle}>{Question.data.QuestionText}</h1>
-                <div className={styles.cardRow} style={{gap: '10px'}}>
-                  <Tooltip title="Edit" arrow placement="top">
-                    <button onClick={() => handleEditQuestionDetails(Question)}>
-                      <EditIcon sx={{ fontSize: 30, color: '#E07961' }}/>
-                    </button>
-                  </Tooltip>
-                  <Tooltip title="Delete" arrow placement="top">
-                    <button onClick={() => handleDeleteQuestion(Question.id)}>
-                      <DeleteOutlineIcon sx={{ fontSize: 30, color: '#E07961' }}/>
-                    </button>
-                  </Tooltip>
+            {QuestionsList.map((Question: any) => (
+              <div key={Question.id}>
+                <div className={styles.QuestionContainer}>
+                  <div className={styles.cardRow}>
+                    <h1 className={styles.QuestionTitle}>
+                      {Question.data.QuestionText}
+                    </h1>
+                    <div className={styles.cardRow} style={{ gap: "10px" }}>
+                      <Tooltip title="Edit" arrow placement="top">
+                        <button
+                          onClick={() => handleEditQuestionDetails(Question)}
+                        >
+                          <EditIcon sx={{ fontSize: 30, color: "#E07961" }} />
+                        </button>
+                      </Tooltip>
+                      <Tooltip title="Delete" arrow placement="top">
+                        <button
+                          onClick={() => handleDeleteQuestion(Question.id)}
+                        >
+                          <DeleteOutlineIcon
+                            sx={{ fontSize: 30, color: "#E07961" }}
+                          />
+                        </button>
+                      </Tooltip>
+                    </div>
+                  </div>
+                  {
+                    // Type 1 - Text
+                    Question.data.QuestionType === "1" ? (
+                      <div className={styles.sidebarFormBit}>
+                        <textarea
+                          rows={1}
+                          name="QuestionText"
+                          className={styles.sidebarTextField}
+                        />
+                      </div>
+                    ) : // Type 2 - Radio
+                    Question.data.QuestionType === "2" ? (
+                      <FormControl>
+                        <RadioGroup
+                          row
+                          aria-labelledby="demo-row-radio-buttons-group-label"
+                          name="row-radio-buttons-group"
+                        >
+                          {Question.data.Choices.map((choice, index) => {
+                            return (
+                              <FormControlLabel
+                                key={index}
+                                value={choice}
+                                control={
+                                  <Radio
+                                    className="ChoiceCard"
+                                    sx={{
+                                      color: "#E07961",
+                                      "&.Mui-checked": {
+                                        color: "#E07961",
+                                      },
+                                    }}
+                                  />
+                                }
+                                label={choice}
+                              />
+                            );
+                          })}
+                        </RadioGroup>
+                      </FormControl>
+                    ) : // Type 3 - Checkbox
+                    Question.data.QuestionType === "3" ? (
+                      <FormControl>
+                        <FormGroup row>
+                          {Question.data.Choices.map((choice, index) => {
+                            return (
+                              <FormControlLabel
+                                key={index}
+                                value={choice}
+                                control={
+                                  <Checkbox
+                                    sx={{
+                                      color: "#E07961",
+                                      "&.Mui-checked": {
+                                        color: "#E07961",
+                                      },
+                                    }}
+                                  />
+                                }
+                                label={choice}
+                              />
+                            );
+                          })}
+                        </FormGroup>
+                      </FormControl>
+                    ) : // Type 4 - Date
+                    Question.data.QuestionType === "4" ? (
+                      <div className={styles.sidebarFormBit}>
+                        <input
+                          type="date"
+                          name="QuestionText"
+                          value={questionText}
+                          className={styles.sidebarTextField}
+                        />
+                      </div>
+                    ) : // Type 5 - Slider
+                    Question.data.QuestionType === "5" ? (
+                      <Box sx={{ width: "100%" }}>
+                        {}
+                        <Slider
+                          aria-label="Temperature"
+                          defaultValue={0}
+                          getAriaValueText={valuetext}
+                          valueLabelDisplay="auto"
+                          step={Question.data.Choices[2]}
+                          min={Question.data.Choices[0]}
+                          max={Question.data.Choices[1]}
+                          marks={generateMarks(
+                            Question.data.Choices[0],
+                            Question.data.Choices[1],
+                            Question.data.Choices[2],
+                          )}
+                          sx={{
+                            color: "#E07961",
+                            width: "100%",
+                          }}
+                        />
+                      </Box>
+                    ) : null
+                  }
                 </div>
               </div>
-              {
-                // Type 1 - Text
-                (Question.data.QuestionType === "1") ? (
-                <div className={styles.sidebarFormBit}>
-                    <textarea rows={1}  name="QuestionText" className={styles.sidebarTextField} />
-                  </div>
-                ) :
-                
-                // Type 2 - Radio
-                (Question.data.QuestionType === "2") ? (
-                  <FormControl>
-                    <RadioGroup
-                      row
-                      aria-labelledby="demo-row-radio-buttons-group-label"
-                      name="row-radio-buttons-group"
-                      >
-                      {Question.data.Choices.map((choice, index) => {
-                        return <FormControlLabel key={index} value={choice} control={<Radio className="ChoiceCard" sx={{
-                        color: '#E07961',
-                        '&.Mui-checked': {
-                          color: '#E07961',
-                        },
-                      }}/>} label={choice} />
-                      })}
-                    </RadioGroup>
-                  </FormControl> ) : 
-                // Type 3 - Checkbox
-                (Question.data.QuestionType === "3") ? (
-                  <FormControl>
-                    <FormGroup row>
-                      {Question.data.Choices.map((choice, index) => {
-                        return <FormControlLabel key={index} value={choice} control={<Checkbox sx={{
-                        color: '#E07961',
-                        '&.Mui-checked': {
-                          color: '#E07961',
-                        },
-                      }} />} label={choice} />
-                      })}
-                    </FormGroup>
-                  </FormControl>
-                ) :
-                // Type 4 - Date
-                (Question.data.QuestionType === "4") ? (
-                  <div className={styles.sidebarFormBit}>
-                    <input type="date" name="QuestionText" value={questionText} className={styles.sidebarTextField} />
-                  </div>
-                ) : 
-                // Type 5 - Slider
-                (Question.data.QuestionType === "5") ? (
-                  <Box sx={{ width: '100%'}}>
-                    {
-
-                    }
-                    <Slider
-                      aria-label="Temperature"
-                      defaultValue={0}
-                      getAriaValueText={valuetext}
-                      valueLabelDisplay="auto"
-                      
-                      step={Question.data.Choices[2]}
-                      min={Question.data.Choices[0]}
-                      max={Question.data.Choices[1]}
-                      marks = {
-                        generateMarks(Question.data.Choices[0], 
-                        Question.data.Choices[1], 
-                        Question.data.Choices[2])
-                      }
-                      sx={{
-                        color: '#E07961',
-                        width: '100%',
-                        }}
-                    />
-                  </Box>
-                ) : null
-              }
-            </div>
-          </div>
-          ))}
-        </main>
-      </>
+            ))}
+          </main>
+        </>
       )}
     </div>
   );

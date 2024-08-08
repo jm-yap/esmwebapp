@@ -1,49 +1,49 @@
 .responseSumMain {
-    width: 100%;
-    box-sizing: border-box;
-    overflow-x: hidden;
-    overflow-y: auto;
-    height: 100%;
-    background-color: white;
-  }
-
-.aboveSummaryMain{
-    margin-left: 2%;
-    margin-right: 2%;
-    height: 12%;
-    /* /* align-items: center; */
-    justify-content: flex-start; 
-    /* background-color: antiquewhite; */
-    padding: 20px;
-    flex-direction: row;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
+  background-color: white;
 }
 
-.clientSummaryMain{
-    overflow-y: scroll;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 43%;
-    background-color: white;
-    justify-content: center;
-    height: 100%;
-    gap: 1vw;
-    margin-left: 2%;
-    margin-right: 2%;
-    /* flex-wrap: wrap; */
+.aboveSummaryMain {
+  margin-left: 2%;
+  margin-right: 2%;
+  height: 12%;
+  /* /* align-items: center; */
+  justify-content: flex-start;
+  /* background-color: antiquewhite; */
+  padding: 20px;
+  flex-direction: row;
+}
+
+.clientSummaryMain {
+  overflow-y: scroll;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 43%;
+  background-color: white;
+  justify-content: center;
+  height: 100%;
+  gap: 1vw;
+  margin-left: 2%;
+  margin-right: 2%;
+  /* flex-wrap: wrap; */
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
 .summaryMain::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .summaryMain {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
-.summaryCard{
+.summaryCard {
   width: 100%;
   max-height: 100%; /* Limit the maximum height of the container */
   overflow: auto; /* Allow scrolling if content exceeds the max-height */
@@ -60,7 +60,7 @@
   justify-content: space-evenly;
 }
 
-.summaryCardName{
+.summaryCardName {
   font-size: 1.7vw;
   font-weight: bold;
   text-align: left;
@@ -72,20 +72,19 @@
 }
 
 .timeResponseParent {
-    flex-direction: row; 
-    /* margin-top: 10; */
-    justify-content: flex-end;
-    /* background-color: black; */
-    padding-top: 10px;
-    height:20%;
-    width: 100%;
+  flex-direction: row;
+  /* margin-top: 10; */
+  justify-content: flex-end;
+  /* background-color: black; */
+  padding-top: 10px;
+  height: 20%;
+  width: 100%;
 }
-.timeResponseChild{
-    /* max-width: fit-content; */
-    /* margin-left: 25px; */
-    margin-top: 0px
+.timeResponseChild {
+  /* max-width: fit-content; */
+  /* margin-left: 25px; */
+  margin-top: 0px;
 }
-
 
 .responseSumDescHeader {
   font-size: 2.3vh;
@@ -97,15 +96,15 @@
   font-size: 1.9vh;
   font-weight: bold;
   border-radius: 20px;
-  padding: 0.5% 2%;;
+  padding: 0.5% 2%;
   color: #fff;
-  background-color: #E07961;
-  width:fit-content;
+  background-color: #e07961;
+  width: fit-content;
   margin-left: 10px;
 }
 
-.otherStatsMain{
-  margin:auto;
+.otherStatsMain {
+  margin: auto;
   width: 90vw;
   background-color: #f1f1f1f1; /*for now*/
   border-radius: 20px;
@@ -113,22 +112,21 @@
   /* height: 58%; */
 }
 
-
-.otherStatsMainInfo{
+.otherStatsMainInfo {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   padding: 1.3vw;
 }
 
-.barChartDiv{
+.barChartDiv {
   /* background-color: #f1f1f1; */
-  width: 100%;  
+  width: 100%;
   /* padding: 20px; */
   /* height: 20vw; */
   /* width: 50vw; */
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding-bottom: 2vw;
@@ -137,8 +135,8 @@
 .rotatedText {
   transform: rotate(-90deg);
   font-size: 1.07vw;
-  height:fit-content;
+  height: fit-content;
   align-self: center;
-  background-color: #E07961;
+  background-color: #e07961;
   margin: 0;
 }

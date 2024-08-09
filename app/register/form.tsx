@@ -21,15 +21,6 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 export default function Form() {
   const { data: session } = useSession();
 
-  // try {
-  //   const isMasterKeyPresent = sessionStorage.getItem("masterKey");
-  //   if (isMasterKeyPresent !== "true") {
-  //     redirect("/");
-  //   }
-  // } catch (error) {
-  //   redirect("/");
-  // }
-
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
